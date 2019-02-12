@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FourSquareAPITesting</string>
+    <string name="generate_url">Generate URL</string>
+    <string name="send_request">Send request</string>
+</resources>
