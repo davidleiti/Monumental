@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/nav_home"
+            app:startDestination="@id/startDestination">
+
+    <fragment
+            android:id="@+id/startDestination"
+            android:name="ubb.license.david.monumentalv0.ui.home.StartFragment"
+            android:label="fragment_home_start"
+            tools:layout="@layout/fragment_start" >
+        <action
+                android:id="@+id/actionAdvance"
+                app:destination="@id/detailsDestination"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim" />
+    </fragment>
+    <fragment
+            android:id="@+id/detailsDestination"
+            android:name="ubb.license.david.monumentalv0.ui.home.DetailsFragment"
+            android:label="fragment_radius"
+            tools:layout="@layout/fragment_details" >
+        <action
+                android:id="@+id/actionAdvance"
+                app:destination="@id/categoriesFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+            android:id="@+id/categoriesFragment"
+            android:name="ubb.license.david.monumentalv0.ui.home.CategoriesFragment"
+            android:label="fragment_categories"
+            tools:layout="@layout/fragment_categories" >
+        <argument
+                android:name="radius"
+                app:argType="integer"
+                android:defaultValue="0" />
+        <argument
+                android:name="limit"
+                app:argType="integer"
+                android:defaultValue="0" />
+        <action
+                android:id="@+id/actionAdvance"
+                app:destination="@id/landmarkResultsFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+            android:id="@+id/landmarkResultsFragment"
+            android:name="ubb.license.david.monumentalv0.ui.home.LandmarkResultsFragment"
+            android:label="fragment_landmark_results"
+            tools:layout="@layout/fragment_landmark_results" >
+        <argument
+                android:name="limit"
+                app:argType="integer"
+                android:defaultValue="0" />
+        <argument
+                android:name="radius"
+                app:argType="integer"
+                android:defaultValue="0" />
+        <argument
+                android:name="categories"
+                app:argType="string"
+                app:nullable="true"
+                android:defaultValue='""' />
+    </fragment>
+    <fragment
+            android:id="@+id/locationDestination"
+            android:name="ubb.license.david.monumentalv0.ui.home.LocationFragment"
+            android:label="fragment_location"
+            tools:layout="@layout/fragment_location" />
+</navigation>
