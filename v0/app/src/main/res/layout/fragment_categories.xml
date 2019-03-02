@@ -5,7 +5,7 @@
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
                                                    android:orientation="vertical"
-                                                   tools:context=".ui.home.CategoriesFragment">
+                                                   tools:context=".ui.session.setup.CategoriesFragment">
 
     <TextView
             android:id="@+id/textView5"
@@ -22,46 +22,38 @@
 
     <ListView
             android:id="@+id/list_categories"
-            android:layout_width="0dp"
+            android:layout_width="379dp"
             android:layout_height="0dp"
-            android:layout_margin="@dimen/margin_default"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"
             android:scrollbars="none"
             android:divider="@null"
             android:dividerHeight="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/button_select_all"
             app:layout_constraintTop_toBottomOf="@+id/textView5"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/button_select_all" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
+    <ubb.license.david.monumentalv0.ui.FlatButton
             android:id="@+id/button_select_all"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:text="@string/select_all"
-            android:textColor="@color/primary"
-            android:background="?selectableItemBackground"
+            app:text="@string/select_all"
+            app:invertColors="true"
+            app:layout_constraintBottom_toTopOf="@+id/button_next"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/button_go" />
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-            android:id="@+id/button_go"
-            android:layout_width="match_parent"
+    <ubb.license.david.monumentalv0.ui.FlatButton
+            android:id="@+id/button_next"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/primary"
-            android:text="@string/button_go"
+            app:text="@string/next"
+            android:transitionName="bottomButtonTransition"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

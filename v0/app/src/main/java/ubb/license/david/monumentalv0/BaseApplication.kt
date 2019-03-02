@@ -10,7 +10,7 @@ class BaseApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        FacebookSdk.setApplicationId(BuildConfig.FACEBOOK_APP_ID)
+        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
         FacebookSdk.sdkInitialize(applicationContext)
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)

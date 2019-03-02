@@ -2,11 +2,8 @@ package ubb.license.david.foursquareapi
 
 import io.reactivex.Single
 import ubb.license.david.foursquareapi.model.Photo
-import ubb.license.david.foursquareapi.model.Photos
 import ubb.license.david.foursquareapi.model.Venue
-import ubb.license.david.foursquareapi.responses.PhotosResponse
-import ubb.license.david.foursquareapi.responses.VenueDetailsResponse
-import ubb.license.david.foursquareapi.responses.VenuesResponse
+import java.util.*
 
 class FoursquareApi {
 
@@ -14,21 +11,32 @@ class FoursquareApi {
         val INSTANCE = FoursquareApi()
     }
 
-    private val clientId: String = System.getProperty("FOURSQUARE_CLIENT_ID")
-    private val clientSecret: String = System.getProperty("FOURSQUARE_CLIENT_SECRET")
-    private val version: String = System.getProperty("FOURSQUARE_CLIENT_NUMBER")
+    private val clientId: String
+    private val clientSecret: String
+    private val version: String
     private val service: FoursquareService =
         RetrofitBuilder.build().create(FoursquareService::class.java)
 
-    fun fetchAll(location: String, radius: Int, limit: Int, categories: String): Single<Array<Venue>> =
-        service.fetchAll(location, radius, limit, categories, clientId, clientSecret, version)
+    init {
+        val resources = ResourceBundle.getBundle("config")
+        clientId = resources.getString("FoursquareClientID")
+        clientSecret = resources.getString("FoursquareClientSecret")
+        version = resources.getString("FoursquareVersionNumber")
+    }
+
+    fun searchVenues(location: String, radius: Int, categories: String): Single<Array<Venue>> =
+        service.fetchAll(location, radius, categories, clientId, clientSecret, version)
             .map { response -> response.body.venues }
 
-    fun fetchDetails(venueId: String): Single<Venue> =
+    fun searchVenuesLimited(location: String, radius: Int, limit: Int, categories: String): Single<Array<Venue>> =
+        service.fetchLimited(location, radius, limit, categories, clientId, clientSecret, version)
+            .map { response -> response.body.venues }
+
+    fun venueDetails(venueId: String): Single<Venue> =
         service.fetchDetails(venueId, clientId, clientSecret, version)
             .map { response -> response.body.venue }
 
-    fun fetchPhotos(venueId: String): Single<Array<Photo>> =
+    fun venuePhotos(venueId: String): Single<Array<Photo>> =
         service.fetchPhotos(venueId, clientId, clientSecret, version)
             .map { response -> response.body.photos.items }
 

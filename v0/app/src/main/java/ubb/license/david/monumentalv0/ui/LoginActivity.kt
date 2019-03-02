@@ -1,12 +1,9 @@
 package ubb.license.david.monumentalv0.ui
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -17,40 +14,36 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_login.*
 import ubb.license.david.monumentalv0.R
-import ubb.license.david.monumentalv0.ui.home.HomeActivity
-import ubb.license.david.monumentalv0.utils.attachProgressOverlay
-import ubb.license.david.monumentalv0.utils.fadeIn
-import ubb.license.david.monumentalv0.utils.fadeOut
-import ubb.license.david.monumentalv0.utils.hideSoftKeyboard
+import ubb.license.david.monumentalv0.utils.*
 
-class LoginActivity : Activity(), View.OnClickListener {
+class LoginActivity : ProgressOverlayActivity(), View.OnClickListener {
+
+    private val logTag = "MonumentalAuth"
+    private val googleAuthRc = 1234
 
     private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mCallbackManager: CallbackManager
-    private lateinit var mProgress: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        setupUi()
 
+        setupUi()
         setupGoogleAuth()
         setupFacebookAuth()
 
-        if (intent.hasExtra(EXTRA_SIGNED_OUT)) signOut()
+        if (intent.hasExtra(EXTRA_SIGNED_OUT))
+            signOut()
     }
 
     private fun setupUi() {
-        mProgress = attachProgressOverlay(content_root)
-
         button_sign_in.setOnClickListener(this)
         button_sign_in_google.setOnClickListener(this)
         button_facebook_custom.setOnClickListener(this)
@@ -81,13 +74,14 @@ class LoginActivity : Activity(), View.OnClickListener {
         }
     }
 
+    // TODO try to find better solution to eliminate back navigation to SplashScreenActivity
     override fun onBackPressed() = finish()
 
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.content_root -> {
                 hideSoftKeyboard()
-                content_root.clearFocus()
+                clearFocus()
             }
             R.id.button_sign_in_google -> googleSignIn()
             R.id.button_sign_in -> emailSignIn()
@@ -108,94 +102,79 @@ class LoginActivity : Activity(), View.OnClickListener {
         button_sign_in_facebook.setReadPermissions("email", "public_profile")
         button_sign_in_facebook.registerCallback(mCallbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(result: LoginResult) {
-                Log.d(TAG_LOGGER, "Facebook access token granted: ${result.accessToken}")
+                info(logTag, "Facebook access token granted: ${result.accessToken}")
 
                 val credentials = FacebookAuthProvider.getCredential(result.accessToken.token)
-                firebaseAuth(credentials, PROVIDER_FACEBOOK)
+                firebaseAuth(credentials, "Facebook")
             }
 
             override fun onCancel() {
-                Log.d(TAG_LOGGER, "Facebook sign-in has been cancelled.")
-                Toast.makeText(this@LoginActivity, "Sign in attempt cancelled.", Toast.LENGTH_SHORT).show()
+                warn(logTag, "Facebook sign-in has been cancelled.")
+                shortToast(getString(R.string.message_sign_in_cancelled))
             }
 
             override fun onError(error: FacebookException?) {
-                Log.d(TAG_LOGGER, "Failed to receive Facebook access token, cause: $error")
-                Snackbar.make(this@LoginActivity.window.decorView,
-                    ERROR_PROVIDER, Snackbar.LENGTH_SHORT).show()
+                debug(logTag, "Failed to receive Facebook access token, cause: $error")
+                this@LoginActivity.window.decorView.longSnack(getString(R.string.warning_sign_in_provider))
             }
         })
     }
 
     private fun googleSignIn() {
         val signInIntent: Intent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        startActivityForResult(signInIntent, googleAuthRc)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == googleAuthRc) {    // Returned from Google authentication activity
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                val credentials = GoogleAuthProvider.getCredential(account?.idToken, null)
+                info(logTag, "Google authentication has been successful, retrieved account: $account")
+
+                firebaseAuth(credentials, "Google")
+            } catch (e: ApiException) {
+                debug(logTag, "Google authentication has failed, cause: ${e.message}")
+                window.decorView.longSnack(getString(R.string.warning_sign_in_provider))
+            }
+        } else {    // Returned from Facebook authentication, propagate result up to the CallbackManager's listener
+            mCallbackManager.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
     private fun emailSignIn() {
         if (validateFields()) {
+            hideSoftKeyboard()
             showLoading()
             mAuth.signInWithEmailAndPassword(field_email.text.toString(), field_password.text.toString())
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        Log.d(
-                            TAG_LOGGER, "Firebase authentication with email/password has succeeded...closing activity.")
+                        info(logTag, "Firebase authentication with email/password has been successful.")
                         finishSignIn()
                     } else {
-                        Log.d(
-                            TAG_LOGGER,
+                        debug(logTag,
                             "Firebase authentication with email/password has failed, issue: ${task.exception?.message}")
-                        Snackbar.make(window.decorView,
-                            ERROR_SIGN_IN_EMAIL, Snackbar.LENGTH_LONG).show()
+                        window.decorView.longSnack(getString(R.string.warning_sign_in_email))
                         hideLoading()
                     }
                 }
         }
     }
 
-    private fun finishSignIn() {
-        startActivity(Intent(this, HomeActivity::class.java))
-        finish()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == RC_SIGN_IN) {    // Returned from Google authentication activity
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                val account = task.getResult(ApiException::class.java)
-                Log.d(TAG_LOGGER, "Google authentication has succeeded, retrieved account: $account")
-
-                val credentials = GoogleAuthProvider.getCredential(account?.idToken, null)
-                firebaseAuth(credentials, PROVIDER_GOOGLE)
-            } catch (e: ApiException) {
-                Snackbar.make(window.decorView,
-                    ERROR_PROVIDER, Snackbar.LENGTH_LONG).show()
-                Log.w(TAG_LOGGER, "Google sign in failed", e)
-            }
-        } else {    // Returned from Facebook authentication
-            mCallbackManager.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
     private fun firebaseAuth(credentials: AuthCredential, provider: String) {
         showLoading()
         mAuth.signInWithCredential(credentials).addOnCompleteListener(this) { task ->
-            run {
-                if (task.isSuccessful) {
-                    Log.d(
-                        TAG_LOGGER, "Firebase authentication via provider $provider was successful...closing activity.")
-                    finishSignIn()
-                } else {
-                    Log.d(
-                        TAG_LOGGER,
-                        "Firebase authentication with via provider $provider has failed, issue: ${task.exception?.message}")
-                    Snackbar.make(window.decorView,
-                        ERROR_PROVIDER, Snackbar.LENGTH_LONG).show()
-                    hideLoading()
-                }
+            if (task.isSuccessful) {
+                info(logTag, "Firebase authentication via provider $provider was successful...closing activity.")
+                finishSignIn()
+            } else {
+                debug(logTag,
+                    "Firebase authentication with via provider $provider has failed, issue: ${task.exception?.message}")
+                window.decorView.longSnack(getString(R.string.warning_sign_in_email))
+                hideLoading()
             }
         }
     }
@@ -215,7 +194,7 @@ class LoginActivity : Activity(), View.OnClickListener {
             field_email.error = null
             return true
         }
-        field_email.error = "Not a valid address."
+        field_email.error = getString(R.string.error_email)
         return false
     }
 
@@ -226,8 +205,13 @@ class LoginActivity : Activity(), View.OnClickListener {
             field_password.error = null
             return true
         }
-        field_password.error = "Password must be at least 6 characters long."
+        field_password.error = getString(R.string.error_password)
         return false
+    }
+
+    private fun finishSignIn() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun signOut() {
@@ -236,21 +220,7 @@ class LoginActivity : Activity(), View.OnClickListener {
         LoginManager.getInstance().logOut()
     }
 
-    private fun showLoading() = mProgress.fadeIn()
-
-    private fun hideLoading() = mProgress.fadeOut()
-
     companion object {
-        private const val TAG_LOGGER = "LoginActivity"
-        private const val RC_SIGN_IN = 1234
-
-        private const val ERROR_PROVIDER = "Failed to sign in with third party provider"
-        private const val ERROR_SIGN_IN_EMAIL =
-            "There was a problem signing in, please check your credentials and your internet connection!"
-
-        private const val PROVIDER_GOOGLE = "Google"
-        private const val PROVIDER_FACEBOOK = "Facebook"
-
         const val EXTRA_SIGNED_OUT = "SignOutOnLaunch"
     }
 }

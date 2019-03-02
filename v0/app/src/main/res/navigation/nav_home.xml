@@ -7,7 +7,7 @@
 
     <fragment
             android:id="@+id/startDestination"
-            android:name="ubb.license.david.monumentalv0.ui.home.StartFragment"
+            android:name="ubb.license.david.monumentalv0.ui.session.setup.StartFragment"
             android:label="fragment_home_start"
             tools:layout="@layout/fragment_start" >
         <action
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
             android:id="@+id/detailsDestination"
-            android:name="ubb.license.david.monumentalv0.ui.home.DetailsFragment"
+            android:name="ubb.license.david.monumentalv0.ui.session.setup.DetailsFragment"
             android:label="fragment_radius"
             tools:layout="@layout/fragment_details" >
         <action
@@ -33,7 +33,7 @@
     </fragment>
     <fragment
             android:id="@+id/categoriesFragment"
-            android:name="ubb.license.david.monumentalv0.ui.home.CategoriesFragment"
+            android:name="ubb.license.david.monumentalv0.ui.session.setup.CategoriesFragment"
             android:label="fragment_categories"
             tools:layout="@layout/fragment_categories" >
         <argument
@@ -51,12 +51,15 @@
                 app:exitAnim="@anim/nav_default_exit_anim"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                 app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <argument
+                android:name="location"
+                app:argType="com.google.android.gms.maps.model.LatLng" />
     </fragment>
     <fragment
             android:id="@+id/landmarkResultsFragment"
-            android:name="ubb.license.david.monumentalv0.ui.home.LandmarkResultsFragment"
+            android:name="ubb.license.david.monumentalv0.ui.session.setup.ResultsFragment"
             android:label="fragment_landmark_results"
-            tools:layout="@layout/fragment_landmark_results" >
+            tools:layout="@layout/fragment_results" >
         <argument
                 android:name="limit"
                 app:argType="integer"
@@ -68,12 +71,9 @@
         <argument
                 android:name="categories"
                 app:argType="string"
-                app:nullable="true"
                 android:defaultValue='""' />
+        <argument
+                android:name="location"
+                app:argType="com.google.android.gms.maps.model.LatLng" />
     </fragment>
-    <fragment
-            android:id="@+id/locationDestination"
-            android:name="ubb.license.david.monumentalv0.ui.home.LocationFragment"
-            android:label="fragment_location"
-            tools:layout="@layout/fragment_location" />
 </navigation>

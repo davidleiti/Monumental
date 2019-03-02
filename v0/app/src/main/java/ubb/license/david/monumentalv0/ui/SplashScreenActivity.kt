@@ -6,16 +6,15 @@ import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_splash_screen.*
+import kotlinx.android.synthetic.main.activity_main.*
 import ubb.license.david.monumentalv0.R
-import ubb.license.david.monumentalv0.ui.home.HomeActivity
 
 
 class SplashScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash_screen)
+        setContentView(R.layout.activity_main)
 
         Handler().postDelayed({
             val signedIn = FirebaseAuth.getInstance().currentUser != null
@@ -23,7 +22,7 @@ class SplashScreenActivity : AppCompatActivity() {
             var optionsBundle: Bundle? = null
 
             if (signedIn) {
-                launchIntent = Intent(this, HomeActivity::class.java)
+                launchIntent = Intent(this, MainActivity::class.java)
             } else {
                 launchIntent = Intent(this, LoginActivity::class.java)
                 optionsBundle = ActivityOptionsCompat.makeSceneTransitionAnimation(

@@ -1,155 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent"
-                                                   tools:context=".ui.home.DetailsFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:weightSum="2"
+              tools:context=".ui.session.setup.DetailsFragment">
 
-    <ImageView
-            android:id="@+id/header_details"
-            android:layout_width="0dp"
+    <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/textView4" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:paddingTop="24dp"
-            android:src="@drawable/background_transparent_gradient"
-            android:contentDescription="@string/cd_header"
-            android:background="@drawable/image_header"
-            android:transitionName="transition_header"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/textView4" />
+            android:visibility="visible">
 
-    <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:textSize="32sp"
-            android:text="@string/label_select_radius"
-            app:layout_constraintVertical_bias="0.4"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    <SeekBar
-            android:id="@+id/sb_radius"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="8dp"
-            android:progressTint="@color/primary"
-            android:max="5"
-            android:progress="1"
-            android:scaleY="1.2"
-            android:scaleX="1.1"
-            android:thumbTint="@color/primary_dark"
-            app:layout_constraintTop_toBottomOf="@+id/textView4"
-            app:layout_constraintStart_toStartOf="@+id/textView4"
-            app:layout_constraintEnd_toStartOf="@+id/label_radius" />
-
-    <TextView
-            android:id="@+id/label_radius"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radius_default"
-            android:textSize="20sp"
-            app:layout_constraintTop_toTopOf="@+id/sb_radius"
-            app:layout_constraintBottom_toBottomOf="@+id/sb_radius"
-            app:layout_constraintEnd_toEndOf="@+id/textView4" />
-
-    <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="24dp"
-            android:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@+id/sb_radius"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-        <CheckBox
-                android:id="@+id/cb_limit"
+        <TextView
+                android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:buttonTint="@color/primary"
-                android:textSize="22sp"
-                android:text="@string/label_limit_landmarks" />
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:textSize="32sp"
+                android:text="@string/label_select_radius"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        <SeekBar
+                android:id="@+id/sb_radius"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:progressTint="@color/primary"
+                android:max="5"
+                android:progress="1"
+                android:scaleY="1.2"
+                android:scaleX="1.1"
+                android:thumbTint="@color/primary_dark"
+                app:layout_constraintTop_toBottomOf="@+id/textView4"
+                app:layout_constraintStart_toStartOf="@+id/textView4"
+                app:layout_constraintEnd_toStartOf="@+id/label_radius" />
+
+        <TextView
+                android:id="@+id/label_radius"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/radius_default"
+                android:textSize="20sp"
+                app:layout_constraintTop_toTopOf="@+id/sb_radius"
+                app:layout_constraintBottom_toBottomOf="@+id/sb_radius"
+                app:layout_constraintEnd_toEndOf="@+id/textView4" />
 
         <LinearLayout
-                android:id="@+id/container_limit"
-                android:layout_width="wrap_content"
+                android:id="@+id/linearLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:visibility="gone"
-                android:animateLayoutChanges="true">
+                android:orientation="vertical"
+                android:layout_marginTop="24dp"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@+id/sb_radius"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-            <ImageView
-                    android:id="@+id/button_decrease"
+            <CheckBox
+                    android:id="@+id/cb_limit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/ic_remove_black_36dp"
-                    android:contentDescription="@string/cd_dec_val"
-                    android:background="?selectableItemBackgroundBorderless" />
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:buttonTint="@color/primary"
+                    android:textSize="22sp"
+                    android:text="@string/label_limit_landmarks" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                    android:layout_width="80dp"
+            <LinearLayout
+                    android:id="@+id/container_limit"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:boxStrokeColor="@color/primary">
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    android:animateLayoutChanges="true">
 
-                <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/field_limit"
-                        android:layout_width="match_parent"
+                <ImageView
+                        android:id="@+id/button_decrease"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:text="@string/value_limit_default"
-                        android:inputType="number"
-                        android:focusable="false"
-                        android:clickable="false"
-                        android:maxLines="1" />
-            </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="8dp"
+                        android:src="@drawable/ic_remove_black_36dp"
+                        android:contentDescription="@string/cd_dec_val"
+                        android:background="?selectableItemBackgroundBorderless" />
 
-            <ImageView
-                    android:id="@+id/button_increase"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/ic_add_black_36dp"
-                    android:contentDescription="@string/cd_inc_val"
-                    android:background="?selectableItemBackgroundBorderless" />
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/primary">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/field_limit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:text="@string/value_limit_default"
+                            android:inputType="number"
+                            android:focusable="false"
+                            android:clickable="false"
+                            android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <ImageView
+                        android:id="@+id/button_increase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="8dp"
+                        android:src="@drawable/ic_add_black_36dp"
+                        android:contentDescription="@string/cd_inc_val"
+                        android:background="?selectableItemBackgroundBorderless" />
+            </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
+        <ubb.license.david.monumentalv0.ui.FlatButton
+                android:id="@+id/button_next"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:text="@string/next"
+                android:transitionName="bottomButtonTransition"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-            android:id="@+id/button_next"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/primary"
-            android:text="@string/next"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

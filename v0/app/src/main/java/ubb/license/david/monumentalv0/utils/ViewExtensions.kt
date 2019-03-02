@@ -1,55 +1,28 @@
 package ubb.license.david.monumentalv0.utils
 
 import android.animation.Animator
-import android.app.Activity
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Transformation
-import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.activity_login.*
-import ubb.license.david.monumentalv0.R
 
-fun Activity.attachProgressOverlay(contentRoot: FrameLayout): View {
-    val overlay = layoutInflater.inflate(R.layout.progress_overlay, contentRoot, false)
-    content_root.addView(overlay)
-    return overlay
-}
-
-fun Activity.hideSoftKeyboard() {
-    val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    var view = currentFocus
-    if (view == null) view = View(this)
-    imm.hideSoftInputFromWindow(view.windowToken, 0)
-}
 
 fun View.fadeIn() {
     alpha = 0f
     visibility = View.VISIBLE
-    animate().setDuration(500).alpha(1f)    // TODO check if listener needed
-        .setListener(object : Animator.AnimatorListener {
-            override fun onAnimationEnd(animation: Animator?) {
-                visibility = View.VISIBLE
-            }
-
-            override fun onAnimationRepeat(animation: Animator?) = Unit
-            override fun onAnimationStart(animation: Animator?) = Unit
-            override fun onAnimationCancel(animation: Animator?) = Unit
-        })
+    animate().setDuration(500).alpha(1f)
 }
 
 fun View.fadeOut() {
     animate().setDuration(500).alpha(0f).setListener(object : Animator.AnimatorListener {
-            override fun onAnimationEnd(animation: Animator?) {
-                visibility = View.GONE
-            }
+        override fun onAnimationEnd(animation: Animator?) {
+            visibility = View.GONE
+        }
 
-            override fun onAnimationRepeat(animation: Animator?) = Unit
-            override fun onAnimationStart(animation: Animator?) = Unit
-            override fun onAnimationCancel(animation: Animator?) = Unit
-        })
+        override fun onAnimationRepeat(animation: Animator?) = Unit
+        override fun onAnimationStart(animation: Animator?) = Unit
+        override fun onAnimationCancel(animation: Animator?) = Unit
+    })
 }
 
 fun View.expand() {
