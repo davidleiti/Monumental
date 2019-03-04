@@ -11,12 +11,17 @@
             android:label="fragment_home_start"
             tools:layout="@layout/fragment_start" >
         <action
-                android:id="@+id/actionAdvance"
+                android:id="@+id/actionStartSession"
                 app:destination="@id/detailsDestination"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                 app:popExitAnim="@anim/nav_default_pop_exit_anim"
                 app:enterAnim="@anim/nav_default_enter_anim"
                 app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+                android:id="@+id/actionResumeSession"
+                app:destination="@id/navigationDestionation"
+                app:popUpTo="@+id/startDestination"
+                app:popUpToInclusive="false" />
     </fragment>
     <fragment
             android:id="@+id/detailsDestination"
@@ -57,7 +62,7 @@
     </fragment>
     <fragment
             android:id="@+id/landmarkResultsFragment"
-            android:name="ubb.license.david.monumentalv0.ui.session.setup.ResultsFragment"
+            android:name="ubb.license.david.monumentalv0.ui.session.setup.ResultFragment"
             android:label="fragment_landmark_results"
             tools:layout="@layout/fragment_results" >
         <argument
@@ -75,5 +80,23 @@
         <argument
                 android:name="location"
                 app:argType="com.google.android.gms.maps.model.LatLng" />
+        <action
+                android:id="@+id/actionBeginSession"
+                app:destination="@id/navigationDestionation"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"
+                app:popUpTo="@+id/startDestination"
+                app:launchSingleTop="true" />
+    </fragment>
+    <fragment
+            android:id="@+id/navigationDestionation"
+            android:name="ubb.license.david.monumentalv0.ui.session.tracking.NavigationFragment"
+            android:label="fragment_navigation"
+            tools:layout="@layout/fragment_navigation" >
+        <argument
+                android:name="sessionId"
+                app:argType="long" />
     </fragment>
 </navigation>

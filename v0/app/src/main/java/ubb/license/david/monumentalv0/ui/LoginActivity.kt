@@ -1,5 +1,6 @@
 package ubb.license.david.monumentalv0.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -22,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import ubb.license.david.monumentalv0.R
 import ubb.license.david.monumentalv0.utils.*
 
-class LoginActivity : ProgressOverlayActivity(), View.OnClickListener {
+class LoginActivity : Activity(), View.OnClickListener {
 
     private val logTag = "MonumentalAuth"
     private val googleAuthRc = 1234
@@ -30,10 +31,13 @@ class LoginActivity : ProgressOverlayActivity(), View.OnClickListener {
     private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mCallbackManager: CallbackManager
+    private lateinit var mProgressOverlay: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        mProgressOverlay = findViewById(R.id.progress_overlay)
 
         setupUi()
         setupGoogleAuth()
@@ -219,6 +223,10 @@ class LoginActivity : ProgressOverlayActivity(), View.OnClickListener {
         mGoogleSignInClient.signOut()
         LoginManager.getInstance().logOut()
     }
+
+    private fun showLoading() = mProgressOverlay.fadeIn()
+
+    private fun hideLoading() = mProgressOverlay.fadeOut()
 
     companion object {
         const val EXTRA_SIGNED_OUT = "SignOutOnLaunch"

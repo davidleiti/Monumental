@@ -3,23 +3,26 @@ package ubb.license.david.monumentalv0.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.activity_home.*
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.progress_overlay.*
 import ubb.license.david.monumentalv0.R
-import ubb.license.david.monumentalv0.utils.debug
-import ubb.license.david.monumentalv0.utils.info
-import ubb.license.david.monumentalv0.utils.longToast
+import ubb.license.david.monumentalv0.utils.*
 
-class MainActivity : ProgressOverlayActivity(), NavigationView.OnNavigationItemSelectedListener,
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
                      LocationCallbacks, GoogleApiClient.OnConnectionFailedListener,
                      GoogleApiClient.ConnectionCallbacks {
 
     private val mGoogleApiClient: GoogleApiClient by lazy { initializeGoogleApiClient() }
+    private lateinit var mProgressOverlay: View
     private val logTag = "MainLogger"
 
     override fun getGoogleApiClient(): GoogleApiClient {
@@ -30,8 +33,10 @@ class MainActivity : ProgressOverlayActivity(), NavigationView.OnNavigationItemS
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        mProgressOverlay = findViewById(R.id.progress_overlay)
 
         title = ""
 
@@ -78,6 +83,14 @@ class MainActivity : ProgressOverlayActivity(), NavigationView.OnNavigationItemS
     override fun onConnectionFailed(p0: ConnectionResult) {
         debug(logTag, "Failed to connect to the GoogleApiClient, cause: ${p0.errorMessage}")
         longToast("Failed to connect to map services!")
+    }
+
+    fun showLoading() {
+        mProgressOverlay.fadeIn()
+    }
+
+    fun hideLoading() {
+        mProgressOverlay.fadeOut()
     }
 
     private fun initializeGoogleApiClient(): GoogleApiClient =

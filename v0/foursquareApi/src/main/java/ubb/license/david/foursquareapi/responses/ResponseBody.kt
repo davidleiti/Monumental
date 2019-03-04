@@ -1,5 +1,6 @@
 package ubb.license.david.foursquareapi.responses
 
+import com.google.gson.annotations.SerializedName
 import ubb.license.david.foursquareapi.model.Photos
 import ubb.license.david.foursquareapi.model.Venue
 

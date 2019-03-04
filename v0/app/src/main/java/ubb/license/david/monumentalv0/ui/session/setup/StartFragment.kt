@@ -87,6 +87,6 @@ class StartFragment : Fragment(), View.OnClickListener {
             .addSharedElement(button_start, "bottomButtonTransition")
             .build()
         Navigation.findNavController(activity!!, R.id.nav_host_fragment)
-            .navigate(StartFragmentDirections.actionAdvance(), extras)
+            .navigate(StartFragmentDirections.actionStartSession(), extras)
     }
 }

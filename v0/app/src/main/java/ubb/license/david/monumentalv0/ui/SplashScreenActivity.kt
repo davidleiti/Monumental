@@ -6,7 +6,7 @@ import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_splash.*
 import ubb.license.david.monumentalv0.R
 
 
@@ -14,7 +14,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_splash)
 
         Handler().postDelayed({
             val signedIn = FirebaseAuth.getInstance().currentUser != null

@@ -14,7 +14,6 @@ import android.widget.SeekBar
 import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.transition.Transition
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
