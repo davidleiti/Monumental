@@ -18,7 +18,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import kotlinx.android.synthetic.main.fragment_start.*
 import ubb.license.david.monumentalv0.R
-import ubb.license.david.monumentalv0.utils.longSnack
+import ubb.license.david.monumentalv0.utils.shortToast
 
 
 class StartFragment : Fragment(), View.OnClickListener {
@@ -78,7 +78,7 @@ class StartFragment : Fragment(), View.OnClickListener {
             if (resultCode == RESULT_OK)
                 advance()
             else {
-                button_start.longSnack(getString(R.string.warning_gps_required))
+                context!!.shortToast(getString(R.string.warning_gps_required))
             }
     }
 

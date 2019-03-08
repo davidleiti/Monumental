@@ -9,25 +9,21 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
-import com.google.android.material.snackbar.Snackbar
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_results.*
-import ubb.license.david.foursquareapi.model.Venue
 import ubb.license.david.monumentalv0.Injection
 import ubb.license.david.monumentalv0.R
+import ubb.license.david.monumentalv0.persistence.model.Landmark
 import ubb.license.david.monumentalv0.ui.MainActivity
 import ubb.license.david.monumentalv0.utils.info
-import ubb.license.david.monumentalv0.utils.shortSnack
+import ubb.license.david.monumentalv0.utils.shortToast
 import ubb.license.david.monumentalv0.utils.warn
 
 class ResultFragment : Fragment(), View.OnClickListener {
 
     private val logTag = "SessionSetup"
-    private var mErrorSnack: Snackbar? = null
 
-    private lateinit var mDisposable: Disposable
     private lateinit var mViewModel: ResultViewModel
-    private lateinit var venuesFound: Array<Venue>
+    private lateinit var landmarksRetrieved: Array<Landmark>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,12 +37,22 @@ class ResultFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         button_cancel.setOnClickListener(this)
         button_retry.setOnClickListener(this)
         button_next.setOnClickListener(this)
-        listenToObservables()
-        loadVenues()
+        observeData()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (!::landmarksRetrieved.isInitialized)
+            loadVenues()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        hideLoading()
+        mViewModel.cancelRequests()
     }
 
     override fun onClick(v: View) {
@@ -57,23 +63,23 @@ class ResultFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun listenToObservables() {
-        mViewModel.venuesObservable.observe(this, Observer { venues ->
-            venuesFound = venues
-            info(logTag, "Venues successfully retrieved from the api.")
+    private fun observeData() {
+        mViewModel.getVenuesObservable().observe(viewLifecycleOwner, Observer { venues ->
+            info(logTag, "Venues successfully retrieved from the api. $venues")
+            landmarksRetrieved = venues
             hideLoading()
             displayResult()
         })
-        mViewModel.errorsObservable.observe(this, Observer { errorMessage ->
+        mViewModel.getErrorsObservable().observe(viewLifecycleOwner, Observer { errorMessage ->
             warn(logTag, "Failed to retrieve venues, cause: $errorMessage")
             hideLoading()
-            label_results.shortSnack("An error has occurred, please try again!")
+            context!!.shortToast("An error has occurred, please try again!")
         })
-        mDisposable = mViewModel.sessionIdObservable.subscribe { sessionId ->
+        mViewModel.getSessionIdObservable().observe(viewLifecycleOwner, Observer { sessionId ->
             info(logTag, "Session created with id $sessionId")
             hideLoading()
             beginSession(sessionId)
-        }
+        })
     }
 
     private fun loadVenues() {
@@ -86,21 +92,21 @@ class ResultFragment : Fragment(), View.OnClickListener {
         val location = "${args.location.latitude},${args.location.longitude}"
 
         if (limit > 0)
-            mViewModel.searchVenuesLimited(location, radius, limit, categories)
+            mViewModel.searchLandmarks(location, radius, limit, categories)
         else
-            mViewModel.searchVenues(location, radius, categories)
+            mViewModel.searchLandmarks(location, radius, categories)
     }
 
     private fun setupSession() {
         showLoading()
-        mViewModel.setupSession("dummyUser", "dummyCiy", venuesFound)
+        mViewModel.setupSession("dummyUser", "dummyCiy", landmarksRetrieved)
     }
 
     private fun displayResult() {
         TransitionManager.beginDelayedTransition(container_fragment)
         label_ready.visibility = View.VISIBLE
         label_results.visibility = View.VISIBLE
-        label_results.text = getString(R.string.venues_found, venuesFound.size)
+        label_results.text = getString(R.string.venues_found, landmarksRetrieved.size)
     }
 
     private fun showLoading() =
@@ -116,11 +122,4 @@ class ResultFragment : Fragment(), View.OnClickListener {
 
     private fun navigateStart() =
         Navigation.findNavController(button_cancel).popBackStack(R.id.startDestination, false)
-
-    override fun onStop() {
-        super.onStop()
-        mDisposable.dispose()
-        mViewModel.cancelRequests()
-        mErrorSnack?.dismiss()
-    }
 }

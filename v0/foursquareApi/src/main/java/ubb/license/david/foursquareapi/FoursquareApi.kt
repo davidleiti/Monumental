@@ -1,7 +1,6 @@
 package ubb.license.david.foursquareapi
 
 import io.reactivex.Single
-import sun.rmi.runtime.Log
 import ubb.license.david.foursquareapi.model.Photo
 import ubb.license.david.foursquareapi.model.Venue
 import java.util.*
@@ -23,13 +22,9 @@ object FoursquareApi {
 
     fun searchVenues(location: String, radius: Int, categories: String): Single<Array<Venue>> =
         service.fetchAll(location, radius, categories, clientId, clientSecret, version)
-            .map {
-                    response ->
-                println(response)
-                response.body.venues
-            }
+            .map { response -> response.body.venues }
 
-    fun searchVenuesLimited(location: String, radius: Int, limit: Int, categories: String): Single<Array<Venue>> =
+    fun searchVenues(location: String, radius: Int, limit: Int, categories: String): Single<Array<Venue>> =
         service.fetchLimited(location, radius, limit, categories, clientId, clientSecret, version)
             .map { response -> response.body.venues }
 

@@ -1,58 +1,63 @@
 package ubb.license.david.monumentalv0.ui.session.setup
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
-import ubb.license.david.foursquareapi.FoursquareApi
 import ubb.license.david.foursquareapi.model.Venue
-import ubb.license.david.monumentalv0.persistence.SessionRepository
+import ubb.license.david.monumentalv0.persistence.SessionManager
 import ubb.license.david.monumentalv0.persistence.model.Landmark
 
-class ResultViewModel(private val repository: SessionRepository,
-                      private val fourSquareApi: FoursquareApi) : ViewModel() {
+class ResultViewModel(private val mDataSource: SessionManager) : ViewModel() {
 
-    val venuesObservable = MutableLiveData<Array<Venue>>()
-    val errorsObservable = MutableLiveData<String>()
-    val sessionIdObservable = BehaviorSubject.create<Long>()
+    private val sessionIdObservable = MutableLiveData<Long>()
+    private val landmarksObservable = MutableLiveData<Array<Landmark>>()
+    private val errorsObservable = MutableLiveData<String>()
+    private var mDisposables = CompositeDisposable()
 
-    private val mDisposables = CompositeDisposable()
+    fun getVenuesObservable(): LiveData<Array<Landmark>> = landmarksObservable
 
-    fun searchVenues(location: String, radius: Int, categories: String) =
-        loadVenues(fourSquareApi.searchVenues(location, radius, categories))
+    fun getSessionIdObservable(): LiveData<Long> = sessionIdObservable
 
-    fun searchVenuesLimited(location: String, radius: Int, limit: Int, categories: String) =
-        loadVenues(fourSquareApi.searchVenuesLimited(location, radius, limit, categories))
+    fun getErrorsObservable(): LiveData<String> = errorsObservable
 
-    fun setupSession(userId: String, city: String, venues: Array<Venue>) {
-        val landmarks = venues.map { venue -> Landmark.fromVenue(venue) }.toTypedArray()
-        val disposable = repository.setupSession(userId, city, landmarks)
+    fun cancelRequests() = mDisposables.clear()
+
+    fun searchLandmarks(location: String, radius: Int, categories: String) =
+        loadLandmarks(mDataSource.loadLandmarks(location, radius, categories))
+
+    fun searchLandmarks(location: String, radius: Int, limit: Int, categories: String) =
+            loadLandmarks(mDataSource.loadLandmarks(location, radius, limit, categories))
+
+    fun setupSession(userId: String, city: String, landmarks: Array<Landmark>) {
+        val disposable = mDataSource.setupSession(userId, city, landmarks)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ id ->
-                sessionIdObservable.onNext(id)
+                sessionIdObservable.value = id
             }, {
-                errorsObservable.postValue(it.message)
+                errorsObservable.value = it.message
             })
         mDisposables.add(disposable)
     }
 
-    fun cancelRequests() {
-        mDisposables.dispose()
-    }
-
-    private fun loadVenues(observable: Single<Array<Venue>>) {
+    private fun loadLandmarks(observable: Single<Array<Landmark>>) {
         val disposable = observable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                venuesObservable.postValue(it)
+                landmarksObservable.value = it
             }, {
-                errorsObservable.postValue(it.message)
+                errorsObservable.value = it.message
             })
         mDisposables.add(disposable)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        mDisposables.dispose()
     }
 }

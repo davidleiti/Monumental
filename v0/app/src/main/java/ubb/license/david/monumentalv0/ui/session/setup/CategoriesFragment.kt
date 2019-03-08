@@ -3,6 +3,7 @@ package ubb.license.david.monumentalv0.ui.session.setup
 
 import android.content.Context
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -136,6 +137,7 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
         }
 
         private fun setButtonText() {
+            TransitionManager.beginDelayedTransition(button_select_all)
             val res = if (itemsChecked() == count) R.string.select_none else R.string.select_all
             button_select_all.setText(res)
         }

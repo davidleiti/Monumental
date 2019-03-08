@@ -5,10 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.sqlite.db.SupportSQLiteDatabase
+import org.jetbrains.anko.doAsync
 import ubb.license.david.monumentalv0.persistence.model.Landmark
 import ubb.license.david.monumentalv0.persistence.model.Session
 
-@Database(entities = [Landmark::class, Session::class], version = 1, exportSchema = false)
+@Database(entities = [Landmark::class, Session::class], version = 2, exportSchema = false)
 @TypeConverters(RoomConverter::class)
 abstract class SessionDatabase : RoomDatabase() {
 
@@ -16,7 +18,6 @@ abstract class SessionDatabase : RoomDatabase() {
     abstract fun landmarkDao(): LandmarkDao
 
     companion object {
-
         const val DATABASE_NAME = "db-session-cache"
 
         @Volatile
@@ -31,6 +32,11 @@ abstract class SessionDatabase : RoomDatabase() {
             Room.databaseBuilder(
                 context.applicationContext,
                 SessionDatabase::class.java, DATABASE_NAME
-            ).build()
+            ).addCallback(object : Callback() {
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                    super.onCreate(db)
+                    doAsync { getInstance(context).sessionDao().clearSessions() }
+                }
+            }).build()
     }
 }

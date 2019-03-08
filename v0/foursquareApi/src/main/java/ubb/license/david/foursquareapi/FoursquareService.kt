@@ -15,9 +15,7 @@ import ubb.license.david.foursquareapi.FoursquareApi.PATH_VENUE_ID
 import ubb.license.david.foursquareapi.FoursquareApi.URL_DETAILS
 import ubb.license.david.foursquareapi.FoursquareApi.URL_PHOTOS
 import ubb.license.david.foursquareapi.FoursquareApi.URL_SEARCH
-import ubb.license.david.foursquareapi.responses.PhotosResponse
-import ubb.license.david.foursquareapi.responses.VenueDetailsResponse
-import ubb.license.david.foursquareapi.responses.VenuesResponse
+import ubb.license.david.foursquareapi.responses.ApiResponse
 
 internal interface FoursquareService {
 
@@ -26,7 +24,7 @@ internal interface FoursquareService {
         @Query(PARAM_LAT_LONG) location: String, @Query(PARAM_RADIUS) radius: Int,
         @Query(PARAM_CATEGORIES) categories: String, @Query(PARAM_CLIENT_ID) clientId: String,
         @Query(PARAM_CLIENT_SECRET) clientSecret: String, @Query(PARAM_VERSION) version: String
-    ): Single<VenuesResponse>
+    ): Single<ApiResponse.VenuesResponse>
 
     @GET(URL_SEARCH)
     fun fetchLimited(
@@ -34,18 +32,18 @@ internal interface FoursquareService {
         @Query(PARAM_LIMIT) limit: Int, @Query(PARAM_CATEGORIES) categories: String,
         @Query(PARAM_CLIENT_ID) clientId: String, @Query(PARAM_CLIENT_SECRET) clientSecret: String,
         @Query(PARAM_VERSION) version: String
-    ): Single<VenuesResponse>
+    ): Single<ApiResponse.VenuesResponse>
 
     @GET(URL_PHOTOS)
     fun fetchPhotos(
         @Path(PATH_VENUE_ID) venueId: String, @Query(PARAM_CLIENT_ID) clientId: String,
         @Query(PARAM_CLIENT_SECRET) clientSecret: String, @Query(PARAM_VERSION) version: String
-    ): Single<PhotosResponse>
+    ): Single<ApiResponse.PhotosResponse>
 
     @GET(URL_DETAILS)
     fun fetchDetails(
         @Path(PATH_VENUE_ID) venueId: String, @Query(PARAM_CLIENT_ID) clientId: String,
         @Query(PARAM_CLIENT_SECRET) clientSecret: String, @Query(PARAM_VERSION) version: String
-    ): Single<VenueDetailsResponse>
+    ): Single<ApiResponse.VenueDetailsResponse>
 
 }

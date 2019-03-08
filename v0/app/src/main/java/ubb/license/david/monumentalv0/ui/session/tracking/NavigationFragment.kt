@@ -17,5 +17,4 @@ class NavigationFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_navigation, container, false)
     }
 
-
 }

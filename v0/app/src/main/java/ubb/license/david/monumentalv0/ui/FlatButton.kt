@@ -53,7 +53,7 @@ class FlatButton(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         }
 
     private fun backgroundNormal(): ColorDrawable =
-        ContextCompat.getColor(context, R.color.primary).run{
+        ContextCompat.getColor(context, R.color.primary).run {
             ColorDrawable(this)
         }
 }

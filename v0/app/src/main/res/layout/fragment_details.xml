@@ -143,8 +143,8 @@
                 android:id="@+id/button_next"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:text="@string/next"
                 android:transitionName="bottomButtonTransition"
+                app:text="@string/next"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

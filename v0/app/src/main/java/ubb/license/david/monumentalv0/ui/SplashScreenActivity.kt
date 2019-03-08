@@ -32,7 +32,7 @@ class SplashScreenActivity : AppCompatActivity() {
             }
 
             startActivity(launchIntent, optionsBundle)
-        }, 2000)
+        }, 1250)
     }
 
     override fun onStop() {

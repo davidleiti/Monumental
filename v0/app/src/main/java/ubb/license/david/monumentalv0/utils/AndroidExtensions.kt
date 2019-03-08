@@ -11,7 +11,11 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_login.*
+import ubb.license.david.monumentalv0.BaseApplication
 import ubb.license.david.monumentalv0.R
+
+val Context.appContext: BaseApplication
+    get() = applicationContext as BaseApplication
 
 fun Fragment.requestPermission(permission: String, code: Int) =
     requestPermissions(arrayOf(permission), code)
