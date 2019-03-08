@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Monumental v0</string>
+    <string name="app_name">Monumental</string>
 
     <!-- Strings related to login -->
     <string name="email">Email</string>

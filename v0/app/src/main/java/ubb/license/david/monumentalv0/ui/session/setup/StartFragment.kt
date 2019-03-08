@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigator
 import com.google.android.gms.common.api.ResolvableApiException
@@ -18,10 +17,11 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import kotlinx.android.synthetic.main.fragment_start.*
 import ubb.license.david.monumentalv0.R
+import ubb.license.david.monumentalv0.ui.BaseFragment
 import ubb.license.david.monumentalv0.utils.shortToast
 
 
-class StartFragment : Fragment(), View.OnClickListener {
+class StartFragment : BaseFragment(), View.OnClickListener {
 
     private val checkSettingsRc = 1234
     private val mEnableLocationRequest: LocationRequest = LocationRequest.create().apply {
@@ -36,6 +36,7 @@ class StartFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         button_start.setOnClickListener(this)
+        enableUserNavigation()
     }
 
     override fun onClick(v: View) {

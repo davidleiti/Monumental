@@ -5,14 +5,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_login.*
 import ubb.license.david.monumentalv0.BaseApplication
-import ubb.license.david.monumentalv0.R
 
 val Context.appContext: BaseApplication
     get() = applicationContext as BaseApplication

@@ -1,29 +1,53 @@
 package ubb.license.david.monumentalv0.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation
+import com.facebook.login.LoginManager
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress_overlay.*
 import ubb.license.david.monumentalv0.R
 import ubb.license.david.monumentalv0.utils.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-                     LocationCallbacks, GoogleApiClient.OnConnectionFailedListener,
+class MainActivity : AppCompatActivity(), UiActions, ServiceProvider,
+                     NavigationView.OnNavigationItemSelectedListener,
+                     GoogleApiClient.OnConnectionFailedListener,
                      GoogleApiClient.ConnectionCallbacks {
 
-    private val mGoogleApiClient: GoogleApiClient by lazy { initializeGoogleApiClient() }
-    private lateinit var mProgressOverlay: View
     private val logTag = "MainLogger"
+    private val mGoogleApiClient: GoogleApiClient by lazy { initializeGoogleApiClient() }
+    private val mGoogleSignInClient: GoogleSignInClient by lazy { initializeGoogleSignInClient() }
+    private val mFirebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        setupAppBar()
+        title = ""
+    }
+
+    private fun setupAppBar() {
+        setSupportActionBar(toolbar)
+        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close).apply { syncState() }
+
+        drawer_layout.addDrawerListener(toggle)
+        nav_view.setNavigationItemSelectedListener(this)
+        disableUserNavigation()
+    }
 
     override fun getGoogleApiClient(): GoogleApiClient {
         if (!mGoogleApiClient.isConnected)
@@ -31,22 +55,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return mGoogleApiClient
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+    override fun getGoogleSignInClient(): GoogleSignInClient = mGoogleSignInClient
 
-        mProgressOverlay = findViewById(R.id.progress_overlay)
+    override fun getAuth(): FirebaseAuth = mFirebaseAuth
 
-        title = ""
+    override fun showLoading() = progress_overlay.fadeIn()
 
-        val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close)
-        drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
+    override fun hideLoading() = progress_overlay.fadeOut()
 
-        nav_view.setNavigationItemSelectedListener(this)
+    override fun enableUserNavigation() {
+        supportActionBar?.show()
+        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    }
+
+    override fun disableUserNavigation() {
+        supportActionBar?.hide()
+        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 
     override fun onBackPressed() {
@@ -62,14 +86,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         when (item.itemId) {
             R.id.option_sign_out -> {
-                val launchLoginIntent = Intent(this, LoginActivity::class.java).apply {
-                    putExtra(LoginActivity.EXTRA_SIGNED_OUT, true)
-                }
-                startActivity(launchLoginIntent)
-                finish()
+                signOut()
+                navigateToLogin()
             }
         }
         return true
+    }
+
+    private fun navigateToLogin() {
+        val fragmentView = nav_host_fragment.childFragmentManager.fragments[0].view
+        val options = NavOptions.Builder()
+            .setPopUpTo(R.id.startDestination, true)
+            .setEnterAnim(R.anim.nav_default_enter_anim)
+            .setExitAnim(R.anim.nav_default_exit_anim)
+            .build()
+
+        Navigation.findNavController(fragmentView!!)
+            .navigate(R.id.loginDestination, null, options)
     }
 
     override fun onConnected(p0: Bundle?) {
@@ -82,15 +115,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onConnectionFailed(p0: ConnectionResult) {
         debug(logTag, "Failed to connect to the GoogleApiClient, cause: ${p0.errorMessage}")
-        longToast("Failed to connect to map services!")
-    }
-
-    fun showLoading() {
-        mProgressOverlay.fadeIn()
-    }
-
-    fun hideLoading() {
-        mProgressOverlay.fadeOut()
     }
 
     private fun initializeGoogleApiClient(): GoogleApiClient =
@@ -99,4 +123,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .addOnConnectionFailedListener(this)
             .addApi(LocationServices.API)
             .build()
+
+    private fun initializeGoogleSignInClient() =
+        GoogleSignIn.getClient(this,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build())
+
+    private fun signOut() {
+        getAuth().signOut()
+        mGoogleSignInClient.signOut()
+        LoginManager.getInstance().logOut()
+    }
 }

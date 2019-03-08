@@ -1,57 +1,62 @@
 package ubb.license.david.monumentalv0.ui
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.transition.ChangeBounds
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.transition.addListener
 import androidx.core.widget.addTextChangedListener
+import androidx.navigation.Navigation
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
-import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.fragment_login.*
 import ubb.license.david.monumentalv0.R
 import ubb.license.david.monumentalv0.utils.*
 
-class LoginActivity : Activity(), View.OnClickListener {
+class LoginFragment : BaseFragment(), View.OnClickListener {
 
-    private val logTag = "MonumentalAuth"
+    private val logTag = "Authorization"
     private val googleAuthRc = 1234
 
-    private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private lateinit var mAuth: FirebaseAuth
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mCallbackManager: CallbackManager
-    private lateinit var mProgressOverlay: View
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        sharedElementEnterTransition = ChangeBounds().apply { duration = 300 }
+        return inflater.inflate(R.layout.fragment_login, container, false)
+    }
 
-        mProgressOverlay = findViewById(R.id.progress_overlay)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupUi()
-        setupGoogleAuth()
-        setupFacebookAuth()
+    }
 
-        if (intent.hasExtra(EXTRA_SIGNED_OUT))
-            signOut()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        disableUserNavigation()
+        mAuth = getAuth()
+        mAuth.currentUser?.let { finishSignIn() }
+        mGoogleSignInClient = getGoogleSignInClient()
+        setupFacebookAuth()
     }
 
     private fun setupUi() {
         button_sign_in.setOnClickListener(this)
         button_sign_in_google.setOnClickListener(this)
         button_facebook_custom.setOnClickListener(this)
-        content_root.setOnClickListener(this)
 
         field_email.apply {
             addTextChangedListener {
@@ -78,26 +83,16 @@ class LoginActivity : Activity(), View.OnClickListener {
         }
     }
 
-    // TODO try to find better solution to eliminate back navigation to SplashScreenActivity
-    override fun onBackPressed() = finish()
-
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.content_root -> {
-                hideSoftKeyboard()
-                clearFocus()
+                activity!!.hideSoftKeyboard()
+                activity!!.clearFocus()
             }
             R.id.button_sign_in_google -> googleSignIn()
             R.id.button_sign_in -> emailSignIn()
             R.id.button_facebook_custom -> button_sign_in_facebook.performClick()
         }
-    }
-
-    private fun setupGoogleAuth() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build()
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
     }
 
     private fun setupFacebookAuth() {
@@ -114,12 +109,12 @@ class LoginActivity : Activity(), View.OnClickListener {
 
             override fun onCancel() {
                 warn(logTag, "Facebook sign-in has been cancelled.")
-                shortToast(getString(R.string.message_sign_in_cancelled))
+                context!!.shortToast(getString(R.string.message_sign_in_cancelled))
             }
 
             override fun onError(error: FacebookException?) {
                 debug(logTag, "Failed to receive Facebook access token, cause: $error")
-                this@LoginActivity.window.decorView.longSnack(getString(R.string.warning_sign_in_provider))
+                context!!.longToast(getString(R.string.warning_sign_in_provider))
             }
         })
     }
@@ -142,7 +137,7 @@ class LoginActivity : Activity(), View.OnClickListener {
                 firebaseAuth(credentials, "Google")
             } catch (e: ApiException) {
                 debug(logTag, "Google authentication has failed, cause: ${e.message}")
-                window.decorView.longSnack(getString(R.string.warning_sign_in_provider))
+                context!!.longToast(getString(R.string.warning_sign_in_provider))
             }
         } else {    // Returned from Facebook authentication, propagate result up to the CallbackManager's listener
             mCallbackManager.onActivityResult(requestCode, resultCode, data)
@@ -151,17 +146,17 @@ class LoginActivity : Activity(), View.OnClickListener {
 
     private fun emailSignIn() {
         if (validateFields()) {
-            hideSoftKeyboard()
+            activity!!.hideSoftKeyboard()
             showLoading()
-            mAuth.signInWithEmailAndPassword(field_email.text.toString(), field_password.text.toString())
-                .addOnCompleteListener(this) { task ->
+            getAuth().signInWithEmailAndPassword(field_email.text.toString(), field_password.text.toString())
+                .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         info(logTag, "Firebase authentication with email/password has been successful.")
                         finishSignIn()
                     } else {
                         debug(logTag,
                             "Firebase authentication with email/password has failed, issue: ${task.exception?.message}")
-                        window.decorView.longSnack(getString(R.string.warning_sign_in_email))
+                        context!!.longToast(getString(R.string.warning_sign_in_email))
                         hideLoading()
                     }
                 }
@@ -170,14 +165,14 @@ class LoginActivity : Activity(), View.OnClickListener {
 
     private fun firebaseAuth(credentials: AuthCredential, provider: String) {
         showLoading()
-        mAuth.signInWithCredential(credentials).addOnCompleteListener(this) { task ->
+        getAuth().signInWithCredential(credentials).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 info(logTag, "Firebase authentication via provider $provider was successful...closing activity.")
                 finishSignIn()
             } else {
                 debug(logTag,
                     "Firebase authentication with via provider $provider has failed, issue: ${task.exception?.message}")
-                window.decorView.longSnack(getString(R.string.warning_sign_in_email))
+                context!!.longToast(getString(R.string.warning_sign_in_email))
                 hideLoading()
             }
         }
@@ -214,21 +209,7 @@ class LoginActivity : Activity(), View.OnClickListener {
     }
 
     private fun finishSignIn() {
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
-    }
-
-    private fun signOut() {
-        mAuth.signOut()
-        mGoogleSignInClient.signOut()
-        LoginManager.getInstance().logOut()
-    }
-
-    private fun showLoading() = mProgressOverlay.fadeIn()
-
-    private fun hideLoading() = mProgressOverlay.fadeOut()
-
-    companion object {
-        const val EXTRA_SIGNED_OUT = "SignOutOnLaunch"
+        hideLoading()
+        Navigation.findNavController(button_sign_in).navigate(LoginFragmentDirections.actionAdvance())
     }
 }

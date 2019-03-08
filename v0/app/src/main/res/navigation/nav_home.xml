@@ -3,7 +3,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/nav_home"
-            app:startDestination="@id/startDestination">
+            app:startDestination="@id/splashFragment">
 
     <fragment
             android:id="@+id/startDestination"
@@ -98,5 +98,42 @@
         <argument
                 android:name="sessionId"
                 app:argType="long" />
+    </fragment>
+    <fragment
+            android:id="@+id/loginDestination"
+            android:name="ubb.license.david.monumentalv0.ui.LoginFragment"
+            android:label="LoginFragment"
+            tools:layout="@layout/fragment_login" >
+        <action
+                android:id="@+id/actionAdvance"
+                app:destination="@id/startDestination"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"
+                app:popUpTo="@+id/loginDestination"
+                app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+            android:id="@+id/splashFragment"
+            android:name="ubb.license.david.monumentalv0.ui.SplashFragment"
+            android:label="fragment_splash"
+            tools:layout="@layout/fragment_splash" >
+        <action
+                android:id="@+id/toLoginDestination"
+                app:destination="@id/loginDestination"
+                app:popUpTo="@+id/splashFragment"
+                app:popUpToInclusive="true"
+                app:popEnterAnim="@anim/nav_default_pop_exit_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+                android:id="@+id/toStartDestination"
+                app:destination="@id/startDestination"
+                app:popUpTo="@+id/splashFragment"
+                app:popUpToInclusive="true"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 </navigation>
