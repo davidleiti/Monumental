@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">NavigationDemo</string>
-
-    <string name="label_config">Configuration fragment</string>
-    <string name="label_home">Home fragment</string>
-    <string name="label_navigation">Navigation fragment</string>
-    <string name="label_camera">Camera fragment</string>
-    <string name="button_camera">Open</string>
-</resources>
