@@ -14,6 +14,7 @@ import ubb.license.david.monumentalv0.Injection
 import ubb.license.david.monumentalv0.R
 import ubb.license.david.monumentalv0.persistence.model.Landmark
 import ubb.license.david.monumentalv0.ui.MainActivity
+import ubb.license.david.monumentalv0.utils.getViewModel
 import ubb.license.david.monumentalv0.utils.info
 import ubb.license.david.monumentalv0.utils.shortToast
 import ubb.license.david.monumentalv0.utils.warn
@@ -27,8 +28,7 @@ class ResultFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewModel = Injection.provideViewModelFactory(context!!).create(
-            ResultViewModel::class.java)
+        mViewModel = getViewModel()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

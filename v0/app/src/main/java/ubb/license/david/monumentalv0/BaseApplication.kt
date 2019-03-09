@@ -5,11 +5,12 @@ import com.facebook.FacebookSdk
 
 class BaseApplication : Application() {
 
-    override fun onCreate() {
-        super.onCreate()
-
-        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
-        FacebookSdk.sdkInitialize(applicationContext)
+    init {
+        appContext = this
     }
 
+    companion object {
+        private lateinit var appContext: BaseApplication
+        fun getAppContext(): BaseApplication = appContext
+    }
 }

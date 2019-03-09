@@ -7,12 +7,12 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import ubb.license.david.foursquareapi.model.Venue
-import ubb.license.david.monumentalv0.persistence.SessionManager
+import ubb.license.david.monumentalv0.Injection
 import ubb.license.david.monumentalv0.persistence.model.Landmark
 
-class ResultViewModel(private val mDataSource: SessionManager) : ViewModel() {
+class ResultViewModel : ViewModel() {
 
+    private val mDataSource = Injection.provideSessionManager()
     private val sessionIdObservable = MutableLiveData<Long>()
     private val landmarksObservable = MutableLiveData<Array<Landmark>>()
     private val errorsObservable = MutableLiveData<String>()
@@ -30,7 +30,7 @@ class ResultViewModel(private val mDataSource: SessionManager) : ViewModel() {
         loadLandmarks(mDataSource.loadLandmarks(location, radius, categories))
 
     fun searchLandmarks(location: String, radius: Int, limit: Int, categories: String) =
-            loadLandmarks(mDataSource.loadLandmarks(location, radius, limit, categories))
+        loadLandmarks(mDataSource.loadLandmarks(location, radius, limit, categories))
 
     fun setupSession(userId: String, city: String, landmarks: Array<Landmark>) {
         val disposable = mDataSource.setupSession(userId, city, landmarks)

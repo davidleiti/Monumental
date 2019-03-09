@@ -18,7 +18,11 @@ class SplashFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         disableUserNavigation()
+    }
 
+
+    override fun onStart() {
+        super.onStart()
         Handler().postDelayed({
             val signedIn = getAuth().currentUser != null
             val navController = Navigation.findNavController(logo_splash)

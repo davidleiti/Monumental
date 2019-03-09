@@ -1,5 +1,6 @@
 package ubb.license.david.monumentalv0.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -93,6 +94,9 @@ class MainActivity : AppCompatActivity(), UiActions, ServiceProvider,
         return true
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
+        nav_host_fragment.childFragmentManager.fragments[0].onActivityResult(requestCode, resultCode, data)
+
     private fun navigateToLogin() {
         val fragmentView = nav_host_fragment.childFragmentManager.fragments[0].view
         val options = NavOptions.Builder()
@@ -100,7 +104,7 @@ class MainActivity : AppCompatActivity(), UiActions, ServiceProvider,
             .setEnterAnim(R.anim.nav_default_enter_anim)
             .setExitAnim(R.anim.nav_default_exit_anim)
             .build()
-
+        print("Am facut licenta")
         Navigation.findNavController(fragmentView!!)
             .navigate(R.id.loginDestination, null, options)
     }
