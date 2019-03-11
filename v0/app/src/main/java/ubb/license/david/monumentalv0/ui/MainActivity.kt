@@ -94,14 +94,15 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         drawer_layout.closeDrawer(GravityCompat.START)
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.option_sign_out -> {
                 mGeofencingClient.removeGeofences(firebaseAuth.currentUser!!.uid)
                 signOut()
                 navigateToLogin()
+                false
             }
+            else -> true
         }
-        return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
