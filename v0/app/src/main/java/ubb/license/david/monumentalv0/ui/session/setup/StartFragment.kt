@@ -93,21 +93,8 @@ class StartFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun wipeRunningSession() {
-        removeGeofences()
         viewModel.wipeSessionData(getUserId())
-    }
-
-    private fun removeGeofences() {
-        context!!.getSharedPreferences(getUserId(), Context.MODE_PRIVATE)?.run {
-            val editor = edit()
-            for (entry in all) {
-                editor.remove(entry.key)
-                fencingClient.removeGeofence(entry.key,
-                    onSuccess = { info(TAG_LOG, "Removed geofence with id ${entry.key}") },
-                    onFailure = { debug(TAG_LOG, "Failed to remove geofence with id ${entry.key}") })
-            }
-            editor.apply()
-        }
+        fencingClient.removeGeofences(getUserId())
     }
 
     private fun requestGpsSettings(requestCode: Int) {

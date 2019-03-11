@@ -7,7 +7,10 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import ubb.license.david.monumentalv0.services.GeofenceTransitionsService
+import ubb.license.david.monumentalv0.ui.session.setup.StartFragment
 import ubb.license.david.monumentalv0.utils.checkPermission
+import ubb.license.david.monumentalv0.utils.debug
+import ubb.license.david.monumentalv0.utils.info
 
 class GeofencingClientWrapper(private val context: Context) {
 
@@ -29,7 +32,20 @@ class GeofencingClientWrapper(private val context: Context) {
         }
     }
 
-    fun removeGeofence(id: String,
+    fun removeGeofences(userId: String) {
+        context.getSharedPreferences(userId, Context.MODE_PRIVATE)?.run {
+            val editor = edit()
+            for (entry in all) {
+                editor.remove(entry.key)
+                removeGeofence(entry.key,
+                    onSuccess = { info(TAG_LOG, "Removed geofence with id ${entry.key}") },
+                    onFailure = { debug(TAG_LOG, "Failed to remove geofence with id ${entry.key}") })
+            }
+            editor.apply()
+        }
+    }
+
+    private fun removeGeofence(id: String,
                        onSuccess: () -> Unit,
                        onFailure: (errorMessage: String?) -> Unit) =
         client.removeGeofences(listOf(id))
@@ -52,6 +68,7 @@ class GeofencingClientWrapper(private val context: Context) {
             .build()
 
     companion object {
+        private const val TAG_LOG = "GeofencingClientLogger"
         private const val DEFAULT_RADIUS = 100F
         private const val DWELLING_DELAY = 20_000
     }

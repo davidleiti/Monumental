@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
         drawer_layout.closeDrawer(GravityCompat.START)
         when (item.itemId) {
             R.id.option_sign_out -> {
+                mGeofencingClient.removeGeofences(firebaseAuth.currentUser!!.uid)
                 signOut()
                 navigateToLogin()
             }
