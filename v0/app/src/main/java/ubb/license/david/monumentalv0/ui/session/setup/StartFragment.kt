@@ -31,8 +31,6 @@ import java.text.SimpleDateFormat
 
 class StartFragment : BaseFragment(), View.OnClickListener {
 
-    private val userId = "dummyUser"
-
     private var runningSession: Session? = null
     private lateinit var viewModel: StartViewModel
     private lateinit var fencingClient: GeofencingClientWrapper
@@ -75,7 +73,7 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     private fun checkRunningSession() {
         showLoading()
-        viewModel.queryRunningSession(userId)
+        viewModel.queryRunningSession(getUserId())
     }
 
     private fun updateUi() {
@@ -96,11 +94,11 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     private fun wipeRunningSession() {
         removeGeofences()
-        viewModel.wipeSessionData(userId)
+        viewModel.wipeSessionData(getUserId())
     }
 
     private fun removeGeofences() {
-        context!!.getSharedPreferences(userId, Context.MODE_PRIVATE)?.run {
+        context!!.getSharedPreferences(getUserId(), Context.MODE_PRIVATE)?.run {
             val editor = edit()
             for (entry in all) {
                 editor.remove(entry.key)

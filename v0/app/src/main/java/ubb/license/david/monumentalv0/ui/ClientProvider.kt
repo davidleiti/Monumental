@@ -7,6 +7,7 @@ import ubb.license.david.monumentalv0.GeofencingClientWrapper
 
 interface ClientProvider {
     fun getAuth(): FirebaseAuth
+    fun getUserId(): String
     fun getGoogleApiClient(): GoogleApiClient
     fun getGoogleSignInClient(): GoogleSignInClient
     fun getGeofencingClient(): GeofencingClientWrapper

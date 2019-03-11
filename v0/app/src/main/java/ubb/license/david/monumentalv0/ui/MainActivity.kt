@@ -57,6 +57,8 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     override fun getAuth(): FirebaseAuth = firebaseAuth
 
+    override fun getUserId(): String = firebaseAuth.currentUser!!.uid
+
     override fun getGoogleSignInClient(): GoogleSignInClient = mGoogleSignInClient
 
     override fun getGeofencingClient(): GeofencingClientWrapper = mGeofencingClient

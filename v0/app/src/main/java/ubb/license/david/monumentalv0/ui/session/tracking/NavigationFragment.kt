@@ -20,7 +20,6 @@ import ubb.license.david.monumentalv0.utils.shortSnack
 
 class NavigationFragment : BaseFragment() {
 
-    private val userId = "dummyUser"
     private lateinit var viewModel: SessionViewModel
     private lateinit var fencingClient: GeofencingClientWrapper
 
@@ -35,7 +34,7 @@ class NavigationFragment : BaseFragment() {
         observeData()
         showLoading()
 
-        viewModel.loadSessionLandmarks("dummyUser")
+        viewModel.loadSessionLandmarks(getUserId())
     }
 
     private fun observeData() {
@@ -51,7 +50,7 @@ class NavigationFragment : BaseFragment() {
     }
 
     private fun initializeFencesIfNeeded(landmarks: List<Landmark>) {
-        val sharedPrefs = context!!.getSharedPreferences(userId, Context.MODE_PRIVATE)
+        val sharedPrefs = context!!.getSharedPreferences(getUserId(), Context.MODE_PRIVATE)
         sharedPrefs?.let {
             for (landmark in landmarks) {
                 if (!sharedPrefs.contains(landmark.id))

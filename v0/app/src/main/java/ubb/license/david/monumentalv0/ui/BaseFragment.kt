@@ -12,6 +12,7 @@ abstract class BaseFragment : Fragment() {
     protected fun showLoading() = (activity as UiActions).showLoading()
     protected fun hideLoading() = (activity as UiActions).hideLoading()
 
+    protected fun getUserId(): String = (activity as ClientProvider).getUserId()
     protected fun getAuth(): FirebaseAuth = (activity as ClientProvider).getAuth()
     protected fun getGoogleApiClient(): GoogleApiClient = (activity as ClientProvider).getGoogleApiClient()
     protected fun getGoogleSignInClient(): GoogleSignInClient = (activity as ClientProvider).getGoogleSignInClient()

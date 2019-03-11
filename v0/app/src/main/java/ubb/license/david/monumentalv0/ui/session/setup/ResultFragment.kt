@@ -97,7 +97,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
 
     private fun setupSession() {
         showLoading()
-        viewModel.setupSession("dummyUser", "dummyCiy", landmarksRetrieved)
+        viewModel.setupSession(getUserId(), "dummyCiy", landmarksRetrieved)
     }
 
     private fun displayResult() {
