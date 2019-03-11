@@ -12,14 +12,11 @@ import ubb.license.david.monumentalv0.persistence.model.Session
 @Dao
 interface SessionDao {
 
-    @Query("SELECT * FROM sessions WHERE userId = :userId ORDER BY timeStarted DESC")
-    fun getUserSessions(userId: String): Single<List<Session>>
-
-    @Query("SELECT * FROM sessions WHERE id = :sessionId")
-    fun getSessionById(sessionId: Long): Maybe<Session>
+    @Query("SELECT * FROM sessions WHERE userId = :userId")
+    fun getUserSession(userId: String): Maybe<Session>
 
     @Insert
-    fun createSession(session: Session): Long
+    fun createSession(session: Session)
 
     @Insert
     fun createSessionAsync(session: Session): Completable
@@ -30,6 +27,6 @@ interface SessionDao {
     @Query("DELETE FROM sessions")
     fun clearSessions()
 
-    @Query("DELETE FROM sessions WHERE id = :sessionId AND timeFinished = null")
-    fun clearUnfinishedSessions(sessionId: Long)
+    @Query("DELETE FROM sessions WHERE userId = :userId")
+    fun clearUserSession(userId: String)
 }

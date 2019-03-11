@@ -20,7 +20,7 @@ import ubb.license.david.monumentalv0.utils.shortToast
 
 class CategoriesFragment : Fragment(), View.OnClickListener {
 
-    private lateinit var mAdapter: CategoriesAdapter
+    private lateinit var listAdapter: CategoriesAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? =
@@ -28,14 +28,14 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mAdapter = CategoriesAdapter(context!!, getPredefinedCategories())
+        listAdapter = CategoriesAdapter(context!!, getPredefinedCategories())
 
         list_categories.apply {
-            adapter = mAdapter
+            adapter = listAdapter
             setOnItemClickListener { _, viewHolder, position, _ ->
-                viewHolder.findViewById<CheckBox>(R.id.cb_category).also {
-                    it.isChecked = it.isChecked.not()
-                    mAdapter.setChecked(it.isChecked, position)
+                viewHolder.findViewById<CheckBox>(R.id.cb_category).apply {
+                    isChecked = isChecked.not()
+                    listAdapter.setChecked(isChecked, position)
                 }
             }
         }
@@ -47,26 +47,26 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.button_next -> {
-                if (mAdapter.itemsChecked() == 0) {
+                if (listAdapter.itemsChecked() == 0) {
                     context?.shortToast(getString(R.string.message_none_selected))
                 } else {
                     advance()
                 }
             }
-            R.id.button_select_all -> setSelection(mAdapter.itemsChecked() < mAdapter.count)
+            R.id.button_select_all -> setSelection(listAdapter.itemsChecked() < listAdapter.count)
         }
     }
 
     private fun setSelection(check: Boolean) {
-        for (catIndex: Int in 0 until mAdapter.count)
-            mAdapter.setChecked(check, catIndex)
+        for (catIndex: Int in 0 until listAdapter.count)
+            listAdapter.setChecked(check, catIndex)
 
-        mAdapter.notifyDataSetChanged()
+        listAdapter.notifyDataSetChanged()
     }
 
     private fun advance() {
         val sb = StringBuilder()
-        for (cat: Category in mAdapter.getItems())
+        for (cat: Category in listAdapter.getItems())
             if (cat.checked)
                 sb.append("${cat.id},")
 
@@ -88,22 +88,18 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
             R.drawable.cat_government_monument_bg_88, FoursquareApi.ID_MONUMENT),
         Category(getString(R.string.cat_public_art),
             R.drawable.cat_sculpture_bg_88, FoursquareApi.ID_PUBLIC_ART),
-        Category(getString(R.string.cat_stadium),
-            R.drawable.cat_stadium_bg_88, FoursquareApi.ID_STADIUM),
-        Category(getString(R.string.cat_bridge),
-            R.drawable.cat_bridge_bg_88, FoursquareApi.ID_BRIDGE),
         Category(getString(R.string.cat_castle),
             R.drawable.cat_castle_bg_88, FoursquareApi.ID_CASTLE),
         Category(
-            getString(R.string.cat_historic_site), R.drawable.cat_historicsite_bg_88,
-            FoursquareApi.ID_HISTORIC_SITE),
+            getString(R.string.cat_historic_site), R.drawable.cat_historicsite_bg_88, FoursquareApi.ID_HISTORIC_SITE),
         Category(getString(R.string.cat_museum),
             R.drawable.cat_museum_bg_88, FoursquareApi.ID_MUSEUMS),
         Category(getString(R.string.cat_opera_house),
-            R.drawable.cat_performingarts_operahouse_bg_88,
-            FoursquareApi.ID_OPERA_HOUSE),
+            R.drawable.cat_performingarts_operahouse_bg_88, FoursquareApi.ID_OPERA_HOUSE),
         Category(getString(R.string.cat_theatre),
-            R.drawable.cat_performingarts_theater_bg_88, FoursquareApi.ID_THEATRE)
+            R.drawable.cat_performingarts_theater_bg_88, FoursquareApi.ID_THEATRE),
+        Category(getString(R.string.cat_stadium),
+            R.drawable.cat_stadium_bg_88, FoursquareApi.ID_STADIUM)
     )
 
     private data class Category(val name: String, val iconResource: Int, val id: String, var checked: Boolean = false)

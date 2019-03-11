@@ -28,24 +28,20 @@ import ubb.license.david.monumentalv0.utils.*
 
 class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, OnSuccessListener<Location> {
 
-    private val radiusFactor = 500
-    private val locationRequestCode = 200
-    private val logTag = "SessionSetup"
+    private var locationCircle: Circle? = null
+    private var lastLocation: LatLng? = null
+    private var permissionsSnack: Snackbar? = null
 
-    private var mLocationCircle: Circle? = null
-    private var mLastLocation: LatLng? = null
-    private var mPermissionSnack: Snackbar? = null
-
-    private lateinit var mMapView: MapView
-    private lateinit var mGoogleMap: GoogleMap
+    private lateinit var mapView: MapView
+    private lateinit var googleMap: GoogleMap
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_details, container, false)
 
-        mMapView = root.findViewById(R.id.mapView)
-        mMapView.onCreate(savedInstanceState)
-        mMapView.getMapAsync(this)
+        mapView = root.findViewById(R.id.mapView)
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
 
         return root
     }
@@ -69,7 +65,7 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
 
             @SuppressLint("SetTextI18n")
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val radius = (progress + 1) * radiusFactor
+                val radius = (progress + 1) * RADIUS_FACTOR
                 label_radius.text = "$radius m"
                 updateMap()
             }
@@ -88,17 +84,17 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
         try {
             MapsInitializer.initialize(context)
         } catch (ex: GooglePlayServicesNotAvailableException) {
-            debug(logTag, "Failed to access google play services, cause: ${ex.message}")
+            debug(TAG_LOG, "Failed to access google play services, cause: ${ex.message}")
         }
 
-        mGoogleMap = map
+        googleMap = map
         setupMapUi()
         enableMyLocation()
     }
 
     private fun enableMyLocation() {
         if (context!!.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            with(mGoogleMap) {
+            with(googleMap) {
                 isMyLocationEnabled = true
                 setOnMyLocationButtonClickListener {
                     requestLocation()
@@ -108,7 +104,7 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
             requestLocation()
         } else {
             button_next.visibility = View.GONE
-            requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, locationRequestCode)
+            requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
         }
     }
 
@@ -117,30 +113,30 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
             LocationServices.getFusedLocationProviderClient(activity!!).lastLocation
                 .addOnSuccessListener(this)
         } else {
-            requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, locationRequestCode)
+            requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
         }
     }
 
     override fun onSuccess(location: Location?) {
         location?.let {
-            mLastLocation = LatLng(location.latitude, location.longitude)
+            lastLocation = LatLng(location.latitude, location.longitude)
             updateMap()
         } ?: run {
-            mLastLocation ?: run { requestLocation() }
+            lastLocation ?: run { requestLocation() }
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
-            locationRequestCode -> {
+            RC_LOCATION_REQUEST -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     enableMyLocation()
                     button_next.fadeIn()
                 } else {
-                    mPermissionSnack = Snackbar.make(mMapView, "GPS permissions are required for localization!",
+                    permissionsSnack = Snackbar.make(mapView, "GPS permissions are required for localization!",
                         Snackbar.LENGTH_INDEFINITE)
                         .setAction(context!!.getString(R.string.grant)) {
-                            requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, locationRequestCode)
+                            requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
                         }
                         .setActionTextColor(getColor(context!!, R.color.accent)).also { it.show() }
                 }
@@ -149,17 +145,17 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
     }
 
     private fun updateMap() {
-        val center = mLastLocation
-        val radius = ((sb_radius.progress + 1) * radiusFactor).toDouble()
+        val center = lastLocation
+        val radius = ((sb_radius.progress + 1) * RADIUS_FACTOR).toDouble()
 
-        mLocationCircle?.remove()
-        mLocationCircle = mGoogleMap.addCircle(CircleOptions()
+        locationCircle?.remove()
+        locationCircle = googleMap.addCircle(CircleOptions()
             .center(center)
             .radius(radius)
             .fillColor(context!!.getColor(R.color.primary_opaque))
             .strokeColor(context!!.getColor(R.color.primary)))
 
-        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(center, zoomValue()))
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(center, zoomValue()))
     }
 
     private fun zoomValue(): Float {
@@ -171,11 +167,11 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
      *  Enables the "My location button and repositions it the bottom right corner of the view
      */
     private fun setupMapUi() {
-        mGoogleMap.uiSettings.isCompassEnabled = false
-        mGoogleMap.uiSettings.isMyLocationButtonEnabled = true
+        googleMap.uiSettings.isCompassEnabled = false
+        googleMap.uiSettings.isMyLocationButtonEnabled = true
 
         // Only way to retrieve the "My location" button, if crashing in the future revisit the provided ID
-        val locationButton = mMapView.findViewById<View>(Integer.parseInt("2"))
+        val locationButton = mapView.findViewById<View>(Integer.parseInt("2"))
         val layoutParams = locationButton.layoutParams as RelativeLayout.LayoutParams
 
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
@@ -202,9 +198,9 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
     }
 
     private fun advance() {
-        mLastLocation?.let { location ->
+        lastLocation?.let { location ->
             val limitArg = if (cb_limit.isChecked) field_limit.text.toString().toInt() else 0
-            val radiusArg = (sb_radius.progress + 1) * radiusFactor
+            val radiusArg = (sb_radius.progress + 1) * RADIUS_FACTOR
 
             val advanceAction = DetailsFragmentDirections.actionAdvance(
                 location).apply {
@@ -214,43 +210,49 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
 
             Navigation.findNavController(activity!!, R.id.nav_host_fragment).navigate(advanceAction)
         } ?: run {
-            mMapView.shortSnack("Please wait until localization finishes.")
+            mapView.shortSnack("Please wait until localization finishes.")
         }
     }
 
     override fun onStart() {
         super.onStart()
-        mMapView.onStart()
+        mapView.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        mMapView.onResume()
+        mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mMapView.onPause()
+        mapView.onPause()
     }
 
     override fun onStop() {
         super.onStop()
-        mMapView.onStop()
-        mPermissionSnack?.dismiss()
+        mapView.onStop()
+        permissionsSnack?.dismiss()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mMapView.onDestroy()
+        mapView.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mMapView.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mMapView.onLowMemory()
+        mapView.onLowMemory()
+    }
+
+    companion object {
+        private const val RADIUS_FACTOR = 500
+        private const val RC_LOCATION_REQUEST = 200
+        private const val TAG_LOG = "SetupLogger"
     }
 }

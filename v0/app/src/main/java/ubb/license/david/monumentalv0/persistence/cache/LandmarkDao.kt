@@ -1,15 +1,18 @@
 package ubb.license.david.monumentalv0.persistence.cache
 
-import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import ubb.license.david.monumentalv0.persistence.model.Landmark
 
 @Dao
 interface LandmarkDao {
 
-    @Query("SELECT * FROM landmarks WHERE sessionId = :sessionId")
-    fun getSessionLandmarks(sessionId: Int): LiveData<List<Landmark>>
+    @Query("SELECT * FROM landmarks WHERE userId = :userId")
+    fun getSessionLandmarks(userId: String): Maybe<List<Landmark>>
 
     @Insert
     fun addLandmarks(landmarks: Array<Landmark>)
@@ -19,4 +22,10 @@ interface LandmarkDao {
 
     @Update
     fun updateLandmark(landmark: Landmark): Completable
+
+    @Query("DELETE FROM landmarks")
+    fun clearLandmarks()
+
+    @Query("DELETE FROM landmarks WHERE userId = :userId")
+    fun clearUserLandmarks(userId: String)
 }

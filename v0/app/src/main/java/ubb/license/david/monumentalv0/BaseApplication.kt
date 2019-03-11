@@ -6,11 +6,11 @@ import com.facebook.FacebookSdk
 class BaseApplication : Application() {
 
     init {
-        appContext = this
+        Instance = this
     }
 
     companion object {
-        private lateinit var appContext: BaseApplication
-        fun getAppContext(): BaseApplication = appContext
+        private lateinit var Instance: BaseApplication
+        fun getAppContext(): BaseApplication = Instance
     }
 }

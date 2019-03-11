@@ -43,9 +43,12 @@
 
     <!--StartFragment-->
     <string name="cd_header">Header Image</string>
-    <string name="message_journey_start">*Insert inspirational quote here*</string>
+    <string name="message_journey_start">A new adventure is waiting just around the corner</string>
+    <string name="message_journey_resume">Looks like you have started a session on %1$s. Do you wish to continue?</string>
     <string name="ready">Ready</string>
     <string name="warning_gps_required">GPS access is required to go further!</string>
+    <string name="resume">Resume</string>
+    <string name="start_new">Start new</string>
 
     <!--DetailsFragment-->
     <string name="label_select_radius">Adjust the search radius</string>
@@ -74,6 +77,10 @@
     <string name="label_ready_journey">Are you ready to embark on your journey?</string>
     <string name="button">Button</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+    <!--GeofenceTransitionsService-->
+    <string name="name_channel_geofence">Geofences</string>
+    <string name="desc_channel_geofence">Sends a notification when near a landmark.</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_error_message">An unexpected error has occurred!</string>
 </resources>

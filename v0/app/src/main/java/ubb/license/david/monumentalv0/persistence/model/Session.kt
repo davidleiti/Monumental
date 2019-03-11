@@ -6,8 +6,7 @@ import java.util.*
 
 @Entity(tableName = "sessions")
 data class Session(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long?,
+    @PrimaryKey
     val userId: String,
     val city: String,
     val timeStarted: Date,

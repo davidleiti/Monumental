@@ -19,31 +19,34 @@
             android:supportsRtl="true"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
+        <service
+                android:name=".services.GeofenceTransitionsService"
+                android:exported="false">
+        </service>
+
         <activity
                 android:name=".ui.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar"
-                android:screenOrientation="portrait"
-                android:configChanges="orientation|keyboardHidden">
-
+                android:configChanges="orientation|keyboardHidden"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <activity
                 android:name="com.facebook.FacebookActivity"
-                android:configChanges=
-                        "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
                 android:label="@string/app_name" />
 
-        <meta-data android:name="com.google.android.gms.version"
-                   android:value="@integer/google_play_services_version" />
-
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-                   android:value="@string/facebook_app_id"/>
-
+        <meta-data
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />
+        <meta-data
+                android:name="com.facebook.sdk.ApplicationId"
+                android:value="@string/facebook_app_id" />
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="@string/google_maps_key" />

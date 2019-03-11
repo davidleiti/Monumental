@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.FirebaseAuth
+import ubb.license.david.monumentalv0.GeofencingClientWrapper
 
 abstract class BaseFragment : Fragment() {
     protected fun enableUserNavigation() = (activity as UiActions).enableUserNavigation()
@@ -11,7 +12,8 @@ abstract class BaseFragment : Fragment() {
     protected fun showLoading() = (activity as UiActions).showLoading()
     protected fun hideLoading() = (activity as UiActions).hideLoading()
 
-    protected fun getAuth(): FirebaseAuth = (activity as ServiceProvider).getAuth()
-    protected fun getGoogleSignInClient(): GoogleSignInClient = (activity as ServiceProvider).getGoogleSignInClient()
-    protected fun getGoogleApiClient(): GoogleApiClient = (activity as ServiceProvider).getGoogleApiClient()
+    protected fun getAuth(): FirebaseAuth = (activity as ClientProvider).getAuth()
+    protected fun getGoogleApiClient(): GoogleApiClient = (activity as ClientProvider).getGoogleApiClient()
+    protected fun getGoogleSignInClient(): GoogleSignInClient = (activity as ClientProvider).getGoogleSignInClient()
+    protected fun getGeofencingClient(): GeofencingClientWrapper = (activity as ClientProvider).getGeofencingClient()
 }

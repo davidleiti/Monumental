@@ -10,7 +10,7 @@ import org.jetbrains.anko.doAsync
 import ubb.license.david.monumentalv0.persistence.model.Landmark
 import ubb.license.david.monumentalv0.persistence.model.Session
 
-@Database(entities = [Landmark::class, Session::class], version = 2, exportSchema = false)
+@Database(entities = [Landmark::class, Session::class], version = 3, exportSchema = false)
 @TypeConverters(RoomConverter::class)
 abstract class SessionDatabase : RoomDatabase() {
 
@@ -18,25 +18,30 @@ abstract class SessionDatabase : RoomDatabase() {
     abstract fun landmarkDao(): LandmarkDao
 
     companion object {
-        const val DATABASE_NAME = "db-session-cache"
+        private const val DATABASE_NAME = "db-session-cache"
 
         @Volatile
-        private var sInstance: SessionDatabase? = null
+        private var Instance: SessionDatabase? = null
 
         fun getInstance(context: Context): SessionDatabase =
-            sInstance ?: synchronized(this) {
-                sInstance ?: buildDatabase(context).also { sInstance = it }
+            Instance ?: synchronized(this) {
+                Instance ?: buildDatabase(context).also { Instance = it }
             }
 
         private fun buildDatabase(context: Context): SessionDatabase =
             Room.databaseBuilder(
                 context.applicationContext,
-                SessionDatabase::class.java, DATABASE_NAME
-            ).addCallback(object : Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    super.onCreate(db)
-                    doAsync { getInstance(context).sessionDao().clearSessions() }
-                }
-            }).build()
+                SessionDatabase::class.java, DATABASE_NAME)
+                .fallbackToDestructiveMigration()
+                .build()
+//                .addCallback(object : RoomDatabase.Callback() {
+//                    override fun onOpen(db: SupportSQLiteDatabase) {
+//                        super.onOpen(db)
+//                        doAsync {
+//                            getInstance(context).sessionDao().clearSessions()
+//                            getInstance(context).landmarkDao().clearLandmarks()
+//                        }
+//                    }
+//                })
     }
 }

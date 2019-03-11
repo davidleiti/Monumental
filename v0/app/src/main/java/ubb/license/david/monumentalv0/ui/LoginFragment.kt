@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.core.transition.addListener
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.Navigation
 import com.facebook.CallbackManager
@@ -27,12 +26,9 @@ import ubb.license.david.monumentalv0.utils.*
 
 class LoginFragment : BaseFragment(), View.OnClickListener {
 
-    private val logTag = "Authorization"
-    private val googleAuthRc = 1234
-
-    private lateinit var mAuth: FirebaseAuth
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var mCallbackManager: CallbackManager
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var signInClient: GoogleSignInClient
+    private lateinit var callbackManager: CallbackManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         sharedElementEnterTransition = ChangeBounds().apply { duration = 300 }
@@ -47,9 +43,9 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         disableUserNavigation()
-        mAuth = getAuth()
-        mAuth.currentUser?.let { finishSignIn() }
-        mGoogleSignInClient = getGoogleSignInClient()
+        firebaseAuth = getAuth()
+        firebaseAuth.currentUser?.let { finishSignIn() }
+        signInClient = getGoogleSignInClient()
         setupFacebookAuth()
     }
 
@@ -96,51 +92,51 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun setupFacebookAuth() {
-        mCallbackManager = CallbackManager.Factory.create()
+        callbackManager = CallbackManager.Factory.create()
 
         button_sign_in_facebook.setReadPermissions("email", "public_profile")
-        button_sign_in_facebook.registerCallback(mCallbackManager, object : FacebookCallback<LoginResult> {
+        button_sign_in_facebook.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(result: LoginResult) {
-                info(logTag, "Facebook access token granted: ${result.accessToken}")
+                info(TAG_LOG, "Facebook access token granted: ${result.accessToken}")
 
                 val credentials = FacebookAuthProvider.getCredential(result.accessToken.token)
                 firebaseAuth(credentials, "Facebook")
             }
 
             override fun onCancel() {
-                warn(logTag, "Facebook sign-in has been cancelled.")
+                debug(TAG_LOG, "Facebook sign-in has been cancelled.")
                 context!!.shortToast(getString(R.string.message_sign_in_cancelled))
             }
 
             override fun onError(error: FacebookException?) {
-                debug(logTag, "Failed to receive Facebook access token, cause: $error")
+                debug(TAG_LOG, "Failed to receive Facebook access token, cause: $error")
                 context!!.longToast(getString(R.string.warning_sign_in_provider))
             }
         })
     }
 
     private fun googleSignIn() {
-        val signInIntent: Intent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, googleAuthRc)
+        val signInIntent: Intent = signInClient.signInIntent
+        startActivityForResult(signInIntent, RC_GOOGLE_AUTH)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == googleAuthRc) {    // Returned from Google authentication activity
+        if (requestCode == RC_GOOGLE_AUTH) {    // Returned from Google authentication activity
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
                 val credentials = GoogleAuthProvider.getCredential(account?.idToken, null)
-                info(logTag, "Google authentication has been successful, retrieved account: $account")
+                info(TAG_LOG, "Google authentication has been successful, retrieved account: $account")
 
                 firebaseAuth(credentials, "Google")
             } catch (e: ApiException) {
-                debug(logTag, "Google authentication has failed, cause: ${e.message}")
+                debug(TAG_LOG, "Google authentication has failed, cause: ${e.message}")
                 context!!.longToast(getString(R.string.warning_sign_in_provider))
             }
         } else {    // Returned from Facebook authentication, propagate result up to the CallbackManager's listener
-            mCallbackManager.onActivityResult(requestCode, resultCode, data)
+            callbackManager.onActivityResult(requestCode, resultCode, data)
         }
     }
 
@@ -151,10 +147,10 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
             getAuth().signInWithEmailAndPassword(field_email.text.toString(), field_password.text.toString())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        info(logTag, "Firebase authentication with email/password has been successful.")
+                        info(TAG_LOG, "Firebase authentication with email/password has been successful.")
                         finishSignIn()
                     } else {
-                        debug(logTag,
+                        debug(TAG_LOG,
                             "Firebase authentication with email/password has failed, issue: ${task.exception?.message}")
                         context!!.longToast(getString(R.string.warning_sign_in_email))
                         hideLoading()
@@ -167,10 +163,10 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
         showLoading()
         getAuth().signInWithCredential(credentials).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                info(logTag, "Firebase authentication via provider $provider was successful...closing activity.")
+                info(TAG_LOG, "Firebase authentication via provider $provider was successful...closing activity.")
                 finishSignIn()
             } else {
-                debug(logTag,
+                debug(TAG_LOG,
                     "Firebase authentication with via provider $provider has failed, issue: ${task.exception?.message}")
                 context!!.longToast(getString(R.string.warning_sign_in_email))
                 hideLoading()
@@ -211,5 +207,10 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
     private fun finishSignIn() {
         hideLoading()
         Navigation.findNavController(button_sign_in).navigate(LoginFragmentDirections.actionAdvance())
+    }
+
+    companion object {
+        private const val TAG_LOG = "Authorization"
+        private const val RC_GOOGLE_AUTH = 1234
     }
 }

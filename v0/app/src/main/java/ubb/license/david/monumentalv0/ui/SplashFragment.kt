@@ -20,7 +20,6 @@ class SplashFragment : BaseFragment() {
         disableUserNavigation()
     }
 
-
     override fun onStart() {
         super.onStart()
         Handler().postDelayed({

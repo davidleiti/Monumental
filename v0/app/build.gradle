@@ -16,7 +16,7 @@ android {
     defaultConfig {
         applicationId "ubb.license.david.monumentalv0"
 
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 28
 
         versionCode 1
@@ -89,8 +89,8 @@ dependencies {
 
     // Testing
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.2-alpha01'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.2-alpha01'
+    androidTestImplementation 'androidx.test:runner:1.1.2-alpha02'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha02'
     androidTestImplementation "android.arch.persistence.room:testing:1.1.1"
 }
 

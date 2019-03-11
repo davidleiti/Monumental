@@ -3,6 +3,7 @@ package ubb.license.david.monumentalv0.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -20,18 +21,22 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress_overlay.*
+import ubb.license.david.monumentalv0.GeofencingClientWrapper
 import ubb.license.david.monumentalv0.R
-import ubb.license.david.monumentalv0.utils.*
+import ubb.license.david.monumentalv0.utils.debug
+import ubb.license.david.monumentalv0.utils.fadeIn
+import ubb.license.david.monumentalv0.utils.fadeOut
+import ubb.license.david.monumentalv0.utils.info
 
-class MainActivity : AppCompatActivity(), UiActions, ServiceProvider,
+class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
                      NavigationView.OnNavigationItemSelectedListener,
                      GoogleApiClient.OnConnectionFailedListener,
                      GoogleApiClient.ConnectionCallbacks {
 
-    private val logTag = "MainLogger"
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val mGoogleApiClient: GoogleApiClient by lazy { initializeGoogleApiClient() }
     private val mGoogleSignInClient: GoogleSignInClient by lazy { initializeGoogleSignInClient() }
-    private val mFirebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val mGeofencingClient: GeofencingClientWrapper by lazy { GeofencingClientWrapper(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,15 +55,17 @@ class MainActivity : AppCompatActivity(), UiActions, ServiceProvider,
         disableUserNavigation()
     }
 
+    override fun getAuth(): FirebaseAuth = firebaseAuth
+
+    override fun getGoogleSignInClient(): GoogleSignInClient = mGoogleSignInClient
+
+    override fun getGeofencingClient(): GeofencingClientWrapper = mGeofencingClient
+
     override fun getGoogleApiClient(): GoogleApiClient {
         if (!mGoogleApiClient.isConnected)
             mGoogleApiClient.connect()
         return mGoogleApiClient
     }
-
-    override fun getGoogleSignInClient(): GoogleSignInClient = mGoogleSignInClient
-
-    override fun getAuth(): FirebaseAuth = mFirebaseAuth
 
     override fun showLoading() = progress_overlay.fadeIn()
 
@@ -78,13 +85,13 @@ class MainActivity : AppCompatActivity(), UiActions, ServiceProvider,
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            super.onBackPressed()
+            if (progress_overlay.visibility == View.GONE)
+                super.onBackPressed()
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         drawer_layout.closeDrawer(GravityCompat.START)
-
         when (item.itemId) {
             R.id.option_sign_out -> {
                 signOut()
@@ -110,15 +117,15 @@ class MainActivity : AppCompatActivity(), UiActions, ServiceProvider,
     }
 
     override fun onConnected(p0: Bundle?) {
-        info(logTag, "GoogleApiClient connection successful!")
+        info(TAG_LOG, "GoogleApiClient connection successful!")
     }
 
     override fun onConnectionSuspended(p0: Int) {
-        debug(logTag, "GoogleApiClient connection suspended!")
+        debug(TAG_LOG, "GoogleApiClient connection suspended!")
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
-        debug(logTag, "Failed to connect to the GoogleApiClient, cause: ${p0.errorMessage}")
+        debug(TAG_LOG, "Failed to connect to the GoogleApiClient, cause: ${p0.errorMessage}")
     }
 
     private fun initializeGoogleApiClient(): GoogleApiClient =
@@ -139,5 +146,9 @@ class MainActivity : AppCompatActivity(), UiActions, ServiceProvider,
         getAuth().signOut()
         mGoogleSignInClient.signOut()
         LoginManager.getInstance().logOut()
+    }
+
+    companion object {
+        private const val TAG_LOG = "MainLogger"
     }
 }

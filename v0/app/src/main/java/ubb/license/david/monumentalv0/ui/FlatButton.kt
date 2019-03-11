@@ -19,30 +19,30 @@ class FlatButton(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
 
     constructor(context: Context) : this(context, null)
 
-    private val mTextView: TextView
+    private val buttonText: TextView
 
     init {
         inflate(context, R.layout.button_flat, this)
 
-        mTextView = findViewById(R.id.text_flat_button)
+        buttonText = findViewById(R.id.text_flat_button)
 
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.FlatButton)
         val invertColors = attributes.getBoolean(R.styleable.FlatButton_invertColors, false)
         val textColor = if (invertColors) getColor(context, R.color.primary) else getColor(context, R.color.white)
 
-        mTextView.text = attributes.getString(R.styleable.FlatButton_text)
-        mTextView.textColor = textColor
+        buttonText.text = attributes.getString(R.styleable.FlatButton_text)
+        buttonText.textColor = textColor
 
         background = if (invertColors) backgroundInverted() else backgroundNormal()
         attributes.recycle()
     }
 
     fun setText(text: String) {
-        mTextView.text = text
+        buttonText.text = text
     }
 
     fun setText(res: Int) {
-        mTextView.text = context.getString(res)
+        buttonText.text = context.getString(res)
     }
 
     private fun backgroundInverted(): Drawable =

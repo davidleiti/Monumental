@@ -11,7 +11,7 @@
             android:label="fragment_home_start"
             tools:layout="@layout/fragment_start" >
         <action
-                android:id="@+id/actionStartSession"
+                android:id="@+id/actionSetupSession"
                 app:destination="@id/detailsDestination"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                 app:popExitAnim="@anim/nav_default_pop_exit_anim"
@@ -21,7 +21,11 @@
                 android:id="@+id/actionResumeSession"
                 app:destination="@id/navigationDestionation"
                 app:popUpTo="@+id/startDestination"
-                app:popUpToInclusive="false" />
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"
+                app:popUpToInclusive="true" />
     </fragment>
     <fragment
             android:id="@+id/detailsDestination"
@@ -88,17 +92,14 @@
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                 app:popExitAnim="@anim/nav_default_pop_exit_anim"
                 app:popUpTo="@+id/startDestination"
-                app:launchSingleTop="true" />
+                app:launchSingleTop="true"
+                app:popUpToInclusive="true" />
     </fragment>
     <fragment
             android:id="@+id/navigationDestionation"
             android:name="ubb.license.david.monumentalv0.ui.session.tracking.NavigationFragment"
             android:label="fragment_navigation"
-            tools:layout="@layout/fragment_navigation" >
-        <argument
-                android:name="sessionId"
-                app:argType="long" />
-    </fragment>
+            tools:layout="@layout/fragment_navigation" />
     <fragment
             android:id="@+id/loginDestination"
             android:name="ubb.license.david.monumentalv0.ui.LoginFragment"
