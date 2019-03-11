@@ -117,7 +117,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     private fun googleSignIn() {
         val signInIntent: Intent = signInClient.signInIntent
-        startActivityForResult(signInIntent, RC_GOOGLE_AUTH)
+        activity!!.startActivityForResult(signInIntent, RC_GOOGLE_AUTH)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
