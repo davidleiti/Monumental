@@ -87,6 +87,9 @@ dependencies {
     // Anko
     implementation "org.jetbrains.anko:anko:0.10.8"
 
+    // Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
     // Testing
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.2-alpha02'

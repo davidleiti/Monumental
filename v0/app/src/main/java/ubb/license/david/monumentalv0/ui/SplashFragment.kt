@@ -24,7 +24,7 @@ class SplashFragment : BaseFragment() {
         super.onStart()
         Handler().postDelayed({
             val signedIn = getAuth().currentUser != null
-            val navController = Navigation.findNavController(logo_splash)
+            val navController = Navigation.findNavController(view!!)
 
             if (signedIn) {
                 navController.navigate(SplashFragmentDirections.toStartDestination())

@@ -52,10 +52,7 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.button_start_new -> {
-                runningSession?.let { wipeRunningSession() }
-                requestGpsSettings(RC_SETUP_AFTER)
-            }
+            R.id.button_start_new -> requestGpsSettings(RC_SETUP_AFTER)
             R.id.button_resume -> requestGpsSettings(RC_RESUME_AFTER)
         }
     }
@@ -74,16 +71,18 @@ class StartFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun updateUi() {
-        TransitionManager.beginDelayedTransition(button_start_new)
-        val timeElapsed = getTimeElapsed(runningSession!!.timeStarted)
-        label_start.text = getString(R.string.message_journey_resume, timeElapsed)
+        TransitionManager.beginDelayedTransition(content_root)
+        val timeElapsed = getTimeElapsedString(runningSession!!.timeStarted)
+        label_start.text = getString(R.string.message_journey_found, timeElapsed)
+        label_continue.visibility = View.VISIBLE
         button_resume.visibility = View.VISIBLE
         button_start_new.setText(R.string.start_new)
     }
 
     private fun resetUi() {
-        TransitionManager.beginDelayedTransition(button_start_new)
+        TransitionManager.beginDelayedTransition(content_root)
         label_start.text = getString(R.string.message_journey_start)
+        label_continue.visibility = View.GONE
         button_resume.visibility = View.GONE
         button_start_new.setText(R.string.start)
     }
@@ -134,24 +133,27 @@ class StartFragment : BaseFragment(), View.OnClickListener {
             resumeSession()
         } else {
             setupSession()
+            runningSession?.let {
+                wipeRunningSession()
+            }
         }
     }
 
     private fun setupSession() =
-        Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+        Navigation.findNavController(view!!)
             .navigate(StartFragmentDirections.actionSetupSession())
 
     private fun resumeSession() =
         Navigation.findNavController(view!!)
             .navigate(StartFragmentDirections.actionResumeSession())
 
-    private fun getTimeElapsed(startDate: Date): String {
+    private fun getTimeElapsedString(start: Date): String {
         val secondsFactor = 1000
         val minutesFactor = secondsFactor * 60
         val hoursFactor = minutesFactor * 60
         val daysFactor = hoursFactor * 24
 
-        var deltaTime = Date().time - startDate.time
+        var deltaTime = Date().time - start.time
         val deltaDays = deltaTime / daysFactor
         if (deltaDays > 0)
             return if (deltaDays > 1) "$deltaDays ${getString(R.string.days_ago)}"

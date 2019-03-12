@@ -209,7 +209,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     private fun finishSignIn() {
         hideLoading()
-        Navigation.findNavController(button_sign_in).navigate(LoginFragmentDirections.actionAdvance())
+        Navigation.findNavController(view!!).navigate(LoginFragmentDirections.actionAdvance())
     }
 
     companion object {

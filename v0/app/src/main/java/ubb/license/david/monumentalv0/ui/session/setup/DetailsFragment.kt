@@ -208,7 +208,7 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
                 radius = radiusArg
             }
 
-            Navigation.findNavController(activity!!, R.id.nav_host_fragment).navigate(advanceAction)
+            Navigation.findNavController(view!!).navigate(advanceAction)
         } ?: run {
             mapView.shortSnack("Please wait until localization finishes.")
         }

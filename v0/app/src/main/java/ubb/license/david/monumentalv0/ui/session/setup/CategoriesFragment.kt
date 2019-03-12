@@ -78,7 +78,7 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
             radius = receivedArgs.radius
         }
 
-        Navigation.findNavController(button_next).navigate(action)
+        Navigation.findNavController(view!!).navigate(action)
     }
 
     private fun getPredefinedCategories(): Array<Category> = arrayOf(

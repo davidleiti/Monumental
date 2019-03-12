@@ -108,10 +108,10 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun beginSession() =
-        Navigation.findNavController(button_next).navigate(ResultFragmentDirections.actionBeginSession())
+        Navigation.findNavController(view!!).navigate(ResultFragmentDirections.actionBeginSession())
 
     private fun navigateStart() =
-        Navigation.findNavController(button_cancel).popBackStack(R.id.startDestination, false)
+        Navigation.findNavController(view!!).popBackStack(R.id.startDestination, false)
 
     companion object {
         private const val TAG_LOG = "SetupLogger"

@@ -19,7 +19,9 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.nav_header_home.view.*
 import kotlinx.android.synthetic.main.progress_overlay.*
 import ubb.license.david.monumentalv0.GeofencingClientWrapper
 import ubb.license.david.monumentalv0.R
@@ -76,11 +78,36 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
     override fun enableUserNavigation() {
         supportActionBar?.show()
         drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        initDrawer()
     }
 
     override fun disableUserNavigation() {
         supportActionBar?.hide()
         drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+
+    private fun initDrawer() {
+        firebaseAuth.currentUser?.run {
+            with (nav_view) {
+                label_header_email.text = email
+                if (displayName != null && displayName != "") {
+                    label_header_name.visibility = View.VISIBLE
+                    label_header_name.text = displayName
+                } else {
+                    label_header_name.visibility = View.GONE
+                }
+
+                photoUrl?.let { url ->
+                    image_header_profile.clipToOutline = true
+                    Picasso.get()
+                        .load(url)
+                        .placeholder(R.drawable.ic_account_circle_white_24dp)
+                        .into(image_header_profile)
+                } ?: run {
+                    image_header_profile.setImageResource(R.drawable.ic_account_circle_white_24dp)
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {
