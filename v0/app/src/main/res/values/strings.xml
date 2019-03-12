@@ -44,11 +44,18 @@
     <!--StartFragment-->
     <string name="cd_header">Header Image</string>
     <string name="message_journey_start">A new adventure is waiting just around the corner</string>
-    <string name="message_journey_resume">Looks like you have started a session on %1$s. Do you wish to continue?</string>
+    <string name="message_journey_resume">Looks like you have started a session %1$s.\n\nDo you wish to continue?</string>
     <string name="ready">Ready</string>
     <string name="warning_gps_required">GPS access is required to go further!</string>
     <string name="resume">Resume</string>
     <string name="start_new">Start new</string>
+    <string name="days_ago">days ago</string>
+    <string name="hours_ago">hours ago</string>
+    <string name="minutes_ago">minutes ago</string>
+    <string name="day_ago">day ago</string>
+    <string name="hour_ago">hour ago</string>
+    <string name="minute_ago">minute ago</string>
+    <string name="just_now">just now</string>
 
     <!--DetailsFragment-->
     <string name="label_select_radius">Adjust the search radius</string>

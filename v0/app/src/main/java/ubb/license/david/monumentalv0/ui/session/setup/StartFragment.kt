@@ -23,7 +23,7 @@ import ubb.license.david.monumentalv0.persistence.model.Session
 import ubb.license.david.monumentalv0.ui.BaseFragment
 import ubb.license.david.monumentalv0.utils.getViewModel
 import ubb.license.david.monumentalv0.utils.shortSnack
-import java.text.SimpleDateFormat
+import java.util.*
 
 
 class StartFragment : BaseFragment(), View.OnClickListener {
@@ -75,9 +75,8 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     private fun updateUi() {
         TransitionManager.beginDelayedTransition(button_start_new)
-        val date = SimpleDateFormat("dd/MM/yyyy", context!!.resources.configuration.locales[0])
-            .format(runningSession?.timeStarted)
-        label_start.text = getString(R.string.message_journey_resume, date)
+        val timeElapsed = getTimeElapsed(runningSession!!.timeStarted)
+        label_start.text = getString(R.string.message_journey_resume, timeElapsed)
         button_resume.visibility = View.VISIBLE
         button_start_new.setText(R.string.start_new)
     }
@@ -145,6 +144,33 @@ class StartFragment : BaseFragment(), View.OnClickListener {
     private fun resumeSession() =
         Navigation.findNavController(view!!)
             .navigate(StartFragmentDirections.actionResumeSession())
+
+    private fun getTimeElapsed(startDate: Date): String {
+        val secondsFactor = 1000
+        val minutesFactor = secondsFactor * 60
+        val hoursFactor = minutesFactor * 60
+        val daysFactor = hoursFactor * 24
+
+        var deltaTime = Date().time - startDate.time
+        val deltaDays = deltaTime / daysFactor
+        if (deltaDays > 0)
+            return if (deltaDays > 1) "$deltaDays ${getString(R.string.days_ago)}"
+            else "1 ${getString(R.string.day_ago)}"
+
+        deltaTime %= daysFactor
+        val deltaHours = deltaTime / hoursFactor
+        if (deltaHours > 0)
+            return if (deltaHours > 1) "$deltaHours ${getString(R.string.hours_ago)}"
+            else "1 ${getString(R.string.hour_ago)}"
+
+        deltaTime %= hoursFactor
+        val deltaMinutes = deltaTime / minutesFactor
+        if (deltaMinutes > 0)
+            return if (deltaMinutes > 1) "$deltaMinutes ${getString(R.string.minutes_ago)}"
+            else "1 ${getString(R.string.minute_ago)}"
+
+        return getString(R.string.just_now)
+    }
 
     companion object {
         private const val TAG_LOG = "SetupLogger"

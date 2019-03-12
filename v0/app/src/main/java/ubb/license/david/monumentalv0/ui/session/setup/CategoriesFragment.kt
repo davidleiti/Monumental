@@ -60,8 +60,6 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
     private fun setSelection(check: Boolean) {
         for (catIndex: Int in 0 until listAdapter.count)
             listAdapter.setChecked(check, catIndex)
-
-        listAdapter.notifyDataSetChanged()
     }
 
     private fun advance() {
@@ -130,6 +128,7 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
         fun setChecked(check: Boolean, position: Int) {
             getItem(position)?.checked = check
             setButtonText()
+            notifyDataSetChanged()
         }
 
         private fun setButtonText() {

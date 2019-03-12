@@ -33,15 +33,17 @@ abstract class SessionDatabase : RoomDatabase() {
                 context.applicationContext,
                 SessionDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
+//                .addCallback(wipeCallback(context))
                 .build()
-//                .addCallback(object : RoomDatabase.Callback() {
-//                    override fun onOpen(db: SupportSQLiteDatabase) {
-//                        super.onOpen(db)
-//                        doAsync {
-//                            getInstance(context).sessionDao().clearSessions()
-//                            getInstance(context).landmarkDao().clearLandmarks()
-//                        }
-//                    }
-//                })
+
+        private fun wipeCallback(context: Context) = object: RoomDatabase.Callback() {
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+                doAsync {
+                    getInstance(context).sessionDao().clearSessions()
+                    getInstance(context).landmarkDao().clearLandmarks()
+                }
+            }
+        }
     }
 }
