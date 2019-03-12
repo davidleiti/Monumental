@@ -44,7 +44,10 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
         super.onActivityCreated(savedInstanceState)
         disableUserNavigation()
         firebaseAuth = getAuth()
-        firebaseAuth.currentUser?.let { finishSignIn() }
+        firebaseAuth.currentUser?.let {
+            finishSignIn()
+            return
+        }
         signInClient = getGoogleSignInClient()
         setupFacebookAuth()
     }
@@ -210,7 +213,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
     }
 
     companion object {
-        private const val TAG_LOG = "Authorization"
+        private const val TAG_LOG = "AuthorizationLogger"
         private const val RC_GOOGLE_AUTH = 1234
     }
 }

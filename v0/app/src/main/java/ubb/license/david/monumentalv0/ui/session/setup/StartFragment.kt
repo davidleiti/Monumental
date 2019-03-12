@@ -3,7 +3,6 @@ package ubb.license.david.monumentalv0.ui.session.setup
 
 import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
@@ -22,9 +21,7 @@ import ubb.license.david.monumentalv0.GeofencingClientWrapper
 import ubb.license.david.monumentalv0.R
 import ubb.license.david.monumentalv0.persistence.model.Session
 import ubb.license.david.monumentalv0.ui.BaseFragment
-import ubb.license.david.monumentalv0.utils.debug
 import ubb.license.david.monumentalv0.utils.getViewModel
-import ubb.license.david.monumentalv0.utils.info
 import ubb.license.david.monumentalv0.utils.shortSnack
 import java.text.SimpleDateFormat
 
@@ -33,7 +30,7 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     private var runningSession: Session? = null
     private lateinit var viewModel: StartViewModel
-    private lateinit var fencingClient: GeofencingClientWrapper
+    private lateinit var geoFencingClient: GeofencingClientWrapper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_start, container, false)
@@ -47,7 +44,7 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        fencingClient = getGeofencingClient()
+        geoFencingClient = getGeofencingClient()
         viewModel = getViewModel()
         observeData()
         checkRunningSession()
@@ -94,7 +91,7 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     private fun wipeRunningSession() {
         viewModel.wipeSessionData(getUserId())
-        fencingClient.removeGeofences(getUserId())
+        geoFencingClient.removeGeofences(getUserId())
     }
 
     private fun requestGpsSettings(requestCode: Int) {

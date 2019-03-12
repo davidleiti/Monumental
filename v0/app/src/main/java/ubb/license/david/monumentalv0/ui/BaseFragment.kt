@@ -14,7 +14,7 @@ abstract class BaseFragment : Fragment() {
 
     protected fun getUserId(): String = (activity as ClientProvider).getUserId()
     protected fun getAuth(): FirebaseAuth = (activity as ClientProvider).getAuth()
-    protected fun getGoogleApiClient(): GoogleApiClient = (activity as ClientProvider).getGoogleApiClient()
-    protected fun getGoogleSignInClient(): GoogleSignInClient = (activity as ClientProvider).getGoogleSignInClient()
+    protected fun getGoogleApiClient(): GoogleApiClient = (activity as ClientProvider).getApiClient()
+    protected fun getGoogleSignInClient(): GoogleSignInClient = (activity as ClientProvider).getSignInClient()
     protected fun getGeofencingClient(): GeofencingClientWrapper = (activity as ClientProvider).getGeofencingClient()
 }

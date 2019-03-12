@@ -34,9 +34,9 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
                      GoogleApiClient.ConnectionCallbacks {
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val mGoogleApiClient: GoogleApiClient by lazy { initializeGoogleApiClient() }
-    private val mGoogleSignInClient: GoogleSignInClient by lazy { initializeGoogleSignInClient() }
-    private val mGeofencingClient: GeofencingClientWrapper by lazy { GeofencingClientWrapper(this) }
+    private val googleApiClient: GoogleApiClient by lazy { initializeGoogleApiClient() }
+    private val googleSignInClient: GoogleSignInClient by lazy { initializeGoogleSignInClient() }
+    private val geofencingClientWrapper: GeofencingClientWrapper by lazy { GeofencingClientWrapper(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,14 +59,14 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     override fun getUserId(): String = firebaseAuth.currentUser!!.uid
 
-    override fun getGoogleSignInClient(): GoogleSignInClient = mGoogleSignInClient
+    override fun getSignInClient(): GoogleSignInClient = googleSignInClient
 
-    override fun getGeofencingClient(): GeofencingClientWrapper = mGeofencingClient
+    override fun getGeofencingClient(): GeofencingClientWrapper = geofencingClientWrapper
 
-    override fun getGoogleApiClient(): GoogleApiClient {
-        if (!mGoogleApiClient.isConnected)
-            mGoogleApiClient.connect()
-        return mGoogleApiClient
+    override fun getApiClient(): GoogleApiClient {
+        if (!googleApiClient.isConnected)
+            googleApiClient.connect()
+        return googleApiClient
     }
 
     override fun showLoading() = progress_overlay.fadeIn()
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
         drawer_layout.closeDrawer(GravityCompat.START)
         return when (item.itemId) {
             R.id.option_sign_out -> {
-                mGeofencingClient.removeGeofences(firebaseAuth.currentUser!!.uid)
+                geofencingClientWrapper.removeGeofences(firebaseAuth.currentUser!!.uid)
                 signOut()
                 navigateToLogin()
                 false
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     private fun signOut() {
         getAuth().signOut()
-        mGoogleSignInClient.signOut()
+        googleSignInClient.signOut()
         LoginManager.getInstance().logOut()
     }
 
