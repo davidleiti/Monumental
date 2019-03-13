@@ -61,6 +61,8 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
         }
     }
 
+    override fun usesNavigationDrawer(): Boolean = true
+
     private fun observeData() {
         viewModel.getVenuesObservable().observe(viewLifecycleOwner, Observer { venues ->
             info(TAG_LOG, "Landmarks successfully retrieved from the api.")

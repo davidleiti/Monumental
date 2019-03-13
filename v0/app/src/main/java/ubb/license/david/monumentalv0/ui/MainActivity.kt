@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
 
         drawer_layout.addDrawerListener(toggle)
         nav_view.setNavigationItemSelectedListener(this)
-        disableUserNavigation()
     }
 
     override fun getAuth(): FirebaseAuth = firebaseAuth
@@ -77,8 +76,10 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     override fun enableUserNavigation() {
         supportActionBar?.show()
+        val shouldInit = drawer_layout.getDrawerLockMode(nav_view) != DrawerLayout.LOCK_MODE_UNLOCKED
         drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-        initDrawer()
+        if (shouldInit)     // Only populate drawer views if the drawer has been previously hidden
+            initDrawer()
     }
 
     override fun disableUserNavigation() {
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     private fun initDrawer() {
         firebaseAuth.currentUser?.run {
-            with (nav_view) {
+            with(nav_view) {
                 label_header_email.text = email
                 if (displayName != null && displayName != "") {
                     label_header_name.visibility = View.VISIBLE
@@ -139,7 +140,7 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
         val fragmentView = nav_host_fragment.childFragmentManager.fragments[0].view
         val options = NavOptions.Builder()
             .setPopUpTo(R.id.startDestination, true)
-            .setEnterAnim(R.anim.nav_default_enter_anim)
+            .setEnterAnim(R.anim.fade_in_bottom)
             .setExitAnim(R.anim.nav_default_exit_anim)
             .build()
         print("Am facut licenta")

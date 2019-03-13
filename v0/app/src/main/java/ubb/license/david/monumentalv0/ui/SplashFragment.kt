@@ -15,10 +15,7 @@ class SplashFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_splash, container, false)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        disableUserNavigation()
-    }
+    override fun usesNavigationDrawer(): Boolean = false
 
     override fun onStart() {
         super.onStart()
@@ -33,6 +30,6 @@ class SplashFragment : BaseFragment() {
                     FragmentNavigator.Extras.Builder().addSharedElement(logo_splash, "transition_logo_splash").build()
                 navController.navigate(SplashFragmentDirections.toLoginDestination(), extras)
             }
-        }, 1500)
+        }, 1000)
     }
 }

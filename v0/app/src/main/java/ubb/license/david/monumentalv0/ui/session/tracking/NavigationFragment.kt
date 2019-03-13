@@ -37,6 +37,8 @@ class NavigationFragment : BaseFragment() {
         viewModel.loadSessionLandmarks(getUserId())
     }
 
+    override fun usesNavigationDrawer(): Boolean = true
+
     private fun observeData() {
         viewModel.getLandmarksObservable().observe(viewLifecycleOwner, Observer { landmarks ->
             initializeFencesIfNeeded(landmarks)

@@ -42,7 +42,6 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        disableUserNavigation()
         firebaseAuth = getAuth()
         firebaseAuth.currentUser?.let {
             finishSignIn()
@@ -51,6 +50,8 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
         signInClient = getGoogleSignInClient()
         setupFacebookAuth()
     }
+
+    override fun usesNavigationDrawer(): Boolean = false
 
     private fun setupUi() {
         button_sign_in.setOnClickListener(this)

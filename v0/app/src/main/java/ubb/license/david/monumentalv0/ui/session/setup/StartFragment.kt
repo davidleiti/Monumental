@@ -39,7 +39,6 @@ class StartFragment : BaseFragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         button_start_new.setOnClickListener(this)
         button_resume.setOnClickListener(this)
-        enableUserNavigation()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -56,6 +55,8 @@ class StartFragment : BaseFragment(), View.OnClickListener {
             R.id.button_resume -> requestGpsSettings(RC_RESUME_AFTER)
         }
     }
+
+    override fun usesNavigationDrawer(): Boolean = true
 
     private fun observeData() {
         viewModel.getRunningSessionObservable().observe(viewLifecycleOwner, Observer {

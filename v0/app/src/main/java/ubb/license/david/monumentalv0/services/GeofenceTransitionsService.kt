@@ -10,6 +10,7 @@ import com.google.android.gms.location.GeofencingEvent
 import ubb.license.david.monumentalv0.R
 import ubb.license.david.monumentalv0.ui.MainActivity
 import ubb.license.david.monumentalv0.utils.debug
+import ubb.license.david.monumentalv0.utils.info
 
 class GeofenceTransitionsService : IntentService("GeofenceTransitionsService") {
 
@@ -29,7 +30,8 @@ class GeofenceTransitionsService : IntentService("GeofenceTransitionsService") {
     }
 
     private fun handleTransitionEvent(event: GeofencingEvent) {
-        if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+        info(TAG_LOG, "GeofencingEvent triggered: $event")
+        if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_DWELL) {
             val triggeringFence = event.triggeringGeofences[0]
             sendNotification(triggeringFence.requestId)
         }
@@ -81,7 +83,7 @@ class GeofenceTransitionsService : IntentService("GeofenceTransitionsService") {
         }
 
     companion object {
-        private const val TAG_LOG = "GeofenceTransitionsService"
+        private const val TAG_LOG = "GeofenceTransitionsLogger"
         const val GEOFENCE_CHANNEL_ID = "GeofenceNotificationsChannel"
 
         private const val ERROR_UNKNOWN = "Unknown error: Geofence service is not available!"
