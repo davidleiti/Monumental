@@ -15,10 +15,10 @@ interface LandmarkDao {
     fun getSessionLandmarks(userId: String): Maybe<List<Landmark>>
 
     @Insert
-    fun addLandmarks(landmarks: Array<Landmark>)
+    fun addLandmarks(landmarks: List<Landmark>)
 
     @Insert
-    fun addLandmarksAsync(landmarks: Array<Landmark>): Completable
+    fun addLandmarksAsync(landmarks: List<Landmark>): Completable
 
     @Update
     fun updateLandmark(landmark: Landmark): Completable

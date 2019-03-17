@@ -14,10 +14,10 @@ class ResultViewModel : BaseViewModel() {
 
     private val dataSource = Injection.provideSessionManager()
     private val sessionCreatedObservable = BehaviorSubject.create<Unit>()
-    private val landmarksObservable = MutableLiveData<Array<Landmark>>()
+    private val landmarksObservable = MutableLiveData<List<Landmark>>()
     private val errorsObservable = MutableLiveData<String>()
 
-    fun getVenuesObservable(): LiveData<Array<Landmark>> = landmarksObservable
+    fun getVenuesObservable(): LiveData<List<Landmark>> = landmarksObservable
 
     fun getSessionCreatedObservable(): BehaviorSubject<Unit> = sessionCreatedObservable
 
@@ -27,9 +27,9 @@ class ResultViewModel : BaseViewModel() {
         loadLandmarks(dataSource.loadLandmarks(location, radius, categories))
 
     fun searchLandmarks(location: String, radius: Int, limit: Int, categories: String) =
-        loadLandmarks(dataSource.loadLandmarks(location, radius, limit, categories))
+        loadLandmarks(dataSource.loadLandmarks(location, radius, categories, limit))
 
-    fun setupSession(userId: String, city: String, landmarks: Array<Landmark>) {
+    fun setupSession(userId: String, city: String, landmarks: List<Landmark>) {
         dataSource.setupSession(userId, city, landmarks)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -40,7 +40,7 @@ class ResultViewModel : BaseViewModel() {
             }).also { addDisposable(it) }
     }
 
-    private fun loadLandmarks(loadObservable: Single<Array<Landmark>>) {
+    private fun loadLandmarks(loadObservable: Single<List<Landmark>>) {
         loadObservable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

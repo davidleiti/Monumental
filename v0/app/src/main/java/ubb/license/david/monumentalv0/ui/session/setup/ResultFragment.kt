@@ -22,7 +22,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
 
     private val disposable = CompositeDisposable()
     private lateinit var viewModel: ResultViewModel
-    private lateinit var landmarksRetrieved: Array<Landmark>
+    private lateinit var landmarksRetrieved: List<Landmark>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

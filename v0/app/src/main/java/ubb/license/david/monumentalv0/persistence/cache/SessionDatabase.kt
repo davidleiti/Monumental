@@ -10,7 +10,7 @@ import org.jetbrains.anko.doAsync
 import ubb.license.david.monumentalv0.persistence.model.Landmark
 import ubb.license.david.monumentalv0.persistence.model.Session
 
-@Database(entities = [Landmark::class, Session::class], version = 3, exportSchema = false)
+@Database(entities = [Landmark::class, Session::class], version = 4, exportSchema = false)
 @TypeConverters(RoomConverter::class)
 abstract class SessionDatabase : RoomDatabase() {
 

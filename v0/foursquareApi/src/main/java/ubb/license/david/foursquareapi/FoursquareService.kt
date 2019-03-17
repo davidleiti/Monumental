@@ -8,11 +8,12 @@ import ubb.license.david.foursquareapi.FoursquareApi.PARAM_CATEGORIES
 import ubb.license.david.foursquareapi.FoursquareApi.PARAM_CLIENT_ID
 import ubb.license.david.foursquareapi.FoursquareApi.PARAM_CLIENT_SECRET
 import ubb.license.david.foursquareapi.FoursquareApi.PARAM_LAT_LONG
-import ubb.license.david.foursquareapi.FoursquareApi.PARAM_LIMIT
 import ubb.license.david.foursquareapi.FoursquareApi.PARAM_RADIUS
+import ubb.license.david.foursquareapi.FoursquareApi.PARAM_SECTION
 import ubb.license.david.foursquareapi.FoursquareApi.PARAM_VERSION
 import ubb.license.david.foursquareapi.FoursquareApi.PATH_VENUE_ID
 import ubb.license.david.foursquareapi.FoursquareApi.URL_DETAILS
+import ubb.license.david.foursquareapi.FoursquareApi.URL_EXPLORE
 import ubb.license.david.foursquareapi.FoursquareApi.URL_PHOTOS
 import ubb.license.david.foursquareapi.FoursquareApi.URL_SEARCH
 import ubb.license.david.foursquareapi.responses.ApiResponse
@@ -20,19 +21,18 @@ import ubb.license.david.foursquareapi.responses.ApiResponse
 internal interface FoursquareService {
 
     @GET(URL_SEARCH)
-    fun fetchAll(
+    fun fetchSearch(
         @Query(PARAM_LAT_LONG) location: String, @Query(PARAM_RADIUS) radius: Int,
         @Query(PARAM_CATEGORIES) categories: String, @Query(PARAM_CLIENT_ID) clientId: String,
         @Query(PARAM_CLIENT_SECRET) clientSecret: String, @Query(PARAM_VERSION) version: String
-    ): Single<ApiResponse.VenuesResponse>
+    ): Single<ApiResponse.SearchVenuesResponse>
 
-    @GET(URL_SEARCH)
-    fun fetchLimited(
+    @GET(URL_EXPLORE)
+    fun fetchExplore(
         @Query(PARAM_LAT_LONG) location: String, @Query(PARAM_RADIUS) radius: Int,
-        @Query(PARAM_LIMIT) limit: Int, @Query(PARAM_CATEGORIES) categories: String,
-        @Query(PARAM_CLIENT_ID) clientId: String, @Query(PARAM_CLIENT_SECRET) clientSecret: String,
-        @Query(PARAM_VERSION) version: String
-    ): Single<ApiResponse.VenuesResponse>
+        @Query(PARAM_SECTION) section: String, @Query(PARAM_CLIENT_ID) clientId: String,
+        @Query(PARAM_CLIENT_SECRET) clientSecret: String, @Query(PARAM_VERSION) version: String
+    ): Single<ApiResponse.ExploreVenuesResponse>
 
     @GET(URL_PHOTOS)
     fun fetchPhotos(

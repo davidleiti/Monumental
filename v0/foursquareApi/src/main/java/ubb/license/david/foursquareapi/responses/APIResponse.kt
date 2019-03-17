@@ -5,9 +5,13 @@ import ubb.license.david.foursquareapi.model.Meta
 
 internal sealed class ApiResponse(val meta: Meta) {
 
-    class VenuesResponse(meta: Meta,
-                         @SerializedName("response")
-                         val body: ResponseBody.VenuesBody) : ApiResponse(meta)
+    class SearchVenuesResponse(meta: Meta,
+                               @SerializedName("response")
+                               val body: ResponseBody.SearchVenuesBody) : ApiResponse(meta)
+
+    class ExploreVenuesResponse(meta: Meta,
+                                @SerializedName("response")
+                                val body: ResponseBody.ExploreVenuesBody) : ApiResponse(meta)
 
     class VenueDetailsResponse(meta: Meta,
                                @SerializedName("response")
@@ -16,5 +20,4 @@ internal sealed class ApiResponse(val meta: Meta) {
     class PhotosResponse(meta: Meta,
                          @SerializedName("response")
                          val body: ResponseBody.PhotosBody) : ApiResponse(meta)
-
 }

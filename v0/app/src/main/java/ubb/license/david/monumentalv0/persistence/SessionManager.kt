@@ -3,7 +3,9 @@ package ubb.license.david.monumentalv0.persistence
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import ubb.license.david.foursquareapi.FoursquareApi
+import ubb.license.david.foursquareapi.model.Venue
 import ubb.license.david.monumentalv0.persistence.cache.SessionDatabase
 import ubb.license.david.monumentalv0.persistence.model.Landmark
 import ubb.license.david.monumentalv0.persistence.model.Session
@@ -13,7 +15,7 @@ import java.util.*
 
 class SessionManager private constructor(private val database: SessionDatabase, private val api: FoursquareApi) {
 
-    fun setupSession(userId: String, hostCity: String, landmarks: Array<Landmark>): Completable =
+    fun setupSession(userId: String, hostCity: String, landmarks: List<Landmark>): Completable =
         Completable.fromCallable {
             landmarks.forEach { landmark -> landmark.userId = userId }
             database.runInTransaction {
@@ -31,13 +33,24 @@ class SessionManager private constructor(private val database: SessionDatabase, 
             debug(TAG_LOG, "Failed to set up session for user $userId, cause: ${it.message}")
         }
 
-    fun loadLandmarks(location: String, radius: Int, categories: String): Single<Array<Landmark>> =
-        api.searchVenues(location, radius, categories)
-            .map { venues -> venues.map { venue -> Landmark.fromVenue(venue) }.toTypedArray() }
+    fun loadLandmarks(location: String, radius: Int, categories: String, limit: Int = 0): Single<List<Landmark>> {
+        val searchRes = api.searchVenues(location, radius, FoursquareApi.ID_MONUMENT)
+            .transformToLandmarkList()
 
-    fun loadLandmarks(location: String, radius: Int, limit: Int, categories: String): Single<Array<Landmark>> =
-        api.searchVenues(location, radius, limit, categories)
-            .map { venues -> venues.map { venue -> Landmark.fromVenue(venue) }.toTypedArray() }
+        val exploreRes = api.exploreVenues(location, radius, FoursquareApi.SECTION_ARTS)
+            .filterExploreResults(categories)
+            .transformToLandmarkList()
+
+        val combinedResult: Single<List<Landmark>> =
+            Single.zip(searchRes, exploreRes, BiFunction { searchResults, exploreResults ->
+                combineResults(searchResults, exploreResults)
+            })
+
+        return if (limit > 0)
+            combinedResult.map { landmarks -> landmarks.take(limit) }
+        else
+            combinedResult
+    }
 
     fun getSession(userId: String): Maybe<Session> =
         database.sessionDao().getUserSession(userId)
@@ -83,6 +96,20 @@ class SessionManager private constructor(private val database: SessionDatabase, 
         }.doOnError {
             debug(TAG_LOG, "Failed to wipe session data of user $userId, cause: ${it.message}")
         }
+
+    private fun combineResults(searchResults: List<Landmark>, exploreResults: List<Landmark>): List<Landmark> {
+        val allVenues = ArrayList<Landmark>().apply {
+            addAll(searchResults)
+            addAll(exploreResults)
+        }
+        return allVenues.distinctBy { venue -> venue.id }
+    }
+
+    private fun Single<List<Venue>>.filterExploreResults(categoriesString: String): Single<List<Venue>> =
+        map { venues -> venues.filter { venue -> categoriesString.contains(venue.categories!![0].id) } }
+
+    private fun Single<List<Venue>>.transformToLandmarkList(): Single<List<Landmark>> =
+        map { venues -> venues.map { venue -> Landmark.fromVenue(venue) } }
 
     companion object {
         @Volatile

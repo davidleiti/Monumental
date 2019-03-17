@@ -91,7 +91,7 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
         Category(
             getString(R.string.cat_historic_site), R.drawable.cat_historicsite_bg_88, FoursquareApi.ID_HISTORIC_SITE),
         Category(getString(R.string.cat_museum),
-            R.drawable.cat_museum_bg_88, FoursquareApi.ID_MUSEUMS),
+            R.drawable.cat_museum_bg_88, FoursquareApi.ID_MUSEUM),
         Category(getString(R.string.cat_opera_house),
             R.drawable.cat_performingarts_operahouse_bg_88, FoursquareApi.ID_OPERA_HOUSE),
         Category(getString(R.string.cat_theatre),
