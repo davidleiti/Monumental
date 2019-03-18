@@ -1,5 +1,6 @@
 package ubb.license.david.monumentalv0.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -124,7 +125,8 @@ class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
         drawer_layout.closeDrawer(GravityCompat.START)
         return when (item.itemId) {
             R.id.option_sign_out -> {
-                geofencingClientWrapper.removeGeofences(firebaseAuth.currentUser!!.uid)
+                geofencingClientWrapper.removeGeofences(
+                    storage = getSharedPreferences(firebaseAuth.currentUser!!.uid, Context.MODE_PRIVATE))
                 signOut()
                 navigateToLogin()
                 false

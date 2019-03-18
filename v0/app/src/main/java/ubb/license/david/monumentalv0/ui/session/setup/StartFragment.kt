@@ -3,6 +3,7 @@ package ubb.license.david.monumentalv0.ui.session.setup
 
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
@@ -90,7 +91,7 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     private fun wipeRunningSession() {
         viewModel.wipeSessionData(getUserId())
-        geoFencingClient.removeGeofences(getUserId())
+        geoFencingClient.removeGeofences(storage = context!!.getSharedPreferences(getUserId(), Context.MODE_PRIVATE))
     }
 
     private fun requestGpsSettings(requestCode: Int) {

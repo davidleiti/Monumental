@@ -105,12 +105,6 @@ class SessionManager private constructor(private val database: SessionDatabase, 
         return allVenues.distinctBy { venue -> venue.id }
     }
 
-    private fun Single<List<Venue>>.filterExploreResults(categoriesString: String): Single<List<Venue>> =
-        map { venues -> venues.filter { venue -> categoriesString.contains(venue.categories!![0].id) } }
-
-    private fun Single<List<Venue>>.transformToLandmarkList(): Single<List<Landmark>> =
-        map { venues -> venues.map { venue -> Landmark.fromVenue(venue) } }
-
     companion object {
         @Volatile
         private var sInstance: SessionManager? = null
@@ -124,3 +118,9 @@ class SessionManager private constructor(private val database: SessionDatabase, 
             }
     }
 }
+
+private fun Single<List<Venue>>.filterExploreResults(categoriesString: String): Single<List<Venue>> =
+    map { venues -> venues.filter { venue -> categoriesString.contains(venue.categories!![0].id) } }
+
+private fun Single<List<Venue>>.transformToLandmarkList(): Single<List<Landmark>> =
+    map { venues -> venues.map { venue -> Landmark.fromVenue(venue) } }

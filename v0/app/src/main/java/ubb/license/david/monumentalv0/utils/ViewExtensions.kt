@@ -6,14 +6,14 @@ import android.view.animation.Animation
 import android.view.animation.Transformation
 import android.widget.LinearLayout
 
-
 fun View.fadeIn() {
     alpha = 0f
     visibility = View.VISIBLE
-    animate().setDuration(500).alpha(1f).setListener(object: Animator.AnimatorListener {
+    animate().setDuration(500).alpha(1f).setListener(object : Animator.AnimatorListener {
         override fun onAnimationEnd(animation: Animator?) {
             visibility = View.VISIBLE
         }
+
         override fun onAnimationRepeat(animation: Animator?) = Unit
         override fun onAnimationStart(animation: Animator?) = Unit
         override fun onAnimationCancel(animation: Animator?) = Unit
@@ -25,6 +25,7 @@ fun View.fadeOut() {
         override fun onAnimationEnd(animation: Animator?) {
             visibility = View.GONE
         }
+
         override fun onAnimationRepeat(animation: Animator?) = Unit
         override fun onAnimationStart(animation: Animator?) = Unit
         override fun onAnimationCancel(animation: Animator?) = Unit

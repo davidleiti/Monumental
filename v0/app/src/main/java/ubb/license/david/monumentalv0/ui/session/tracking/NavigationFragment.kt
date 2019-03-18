@@ -112,16 +112,7 @@ class NavigationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun createGeofence(landmark: Landmark, sharedPrefs: SharedPreferences) {
-        fencingClient.createGeofence(landmark.id, landmark.lat, landmark.lng,
-            onSuccess = {
-                info(TAG_LOG, "Created and registered geofence for $landmark")
-                sharedPrefs.edit {
-                    putBoolean(landmark.id, true)
-                }
-            },
-            onFailure = {
-                debug(TAG_LOG, "Failed to create geofence for $landmark, cause: $it")
-            })
+        fencingClient.createGeofence(landmark.id, landmark.lat, landmark.lng, sharedPrefs)
     }
 
     override fun onStart() {
