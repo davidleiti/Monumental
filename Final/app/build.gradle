@@ -1,0 +1,100 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+// Apply Google Play Services plugin
+apply plugin: 'com.google.gms.google-services'
+
+// Apply Safe Args plugin
+apply plugin: 'androidx.navigation.safeargs'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        applicationId "ubb.thesis.david.monumental"
+
+        minSdkVersion 24
+        targetSdkVersion 28
+
+        versionCode 1
+        versionName "1.0"
+
+        resValue 'string', 'google_maps_key', MapsAPIKey
+        resValue 'string', 'fence_api_key', FenceAPIKey
+        resValue 'string', 'facebook_app_id', FacebookAppID
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':foursquareApi')
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // AndroidX and Material Design
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha03'
+    implementation 'androidx.core:core-ktx:1.1.0-alpha05'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha03'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.annotation:annotation:1.0.2'
+    implementation 'com.google.android.material:material:1.1.0-alpha05'
+
+    // Google play services
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    // DON'T UPGRADE THIS OR THE MAPS BREAK
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+
+    // Firebase
+    implementation 'com.google.firebase:firebase-storage:16.1.0'
+    implementation 'com.google.firebase:firebase-auth:16.2.0'
+    implementation 'com.google.firebase:firebase-firestore:18.2.0'
+    implementation 'com.google.firebase:firebase-ml-vision:19.0.3'
+
+    // Authentication
+    implementation 'com.shobhitpuri.custombuttons:google-signin:1.0.0'
+    implementation 'com.facebook.android:facebook-login:4.40.0'
+
+    // RxJava
+    implementation "io.reactivex.rxjava2:rxjava:2.2.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
+
+    // Room
+    implementation "androidx.room:room-runtime:2.1.0-alpha06"
+    implementation 'androidx.room:room-rxjava2:2.1.0-alpha06'
+    kapt "androidx.room:room-compiler:2.1.0-alpha06"
+
+    // Lifecycle
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    kapt "android.arch.lifecycle:compiler:1.1.1"
+
+    // Navigation
+    implementation 'android.arch.navigation:navigation-fragment:1.0.0'
+    implementation "android.arch.navigation:navigation-ui:1.0.0"
+
+    // Anko
+    implementation "org.jetbrains.anko:anko:0.10.8"
+
+    // Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    // Testing
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.2-alpha02'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha02'
+    androidTestImplementation "android.arch.persistence.room:testing:1.1.1"
+}
+

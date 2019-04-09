@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "4585234938",
+    "firebase_url": "https://monumental-1549877296552.firebaseio.com",
+    "project_id": "monumental-1549877296552",
+    "storage_bucket": "monumental-1549877296552.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4585234938:android:a6434a847b711cf5",
+        "android_client_info": {
+          "package_name": "ubb.thesis.david.monumental"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "4585234938-6dpf3tnfn8v6m2ma21ag30p31jf8n0mu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ubb.thesis.david.monumental",
+            "certificate_hash": "1c80179963be7831b6e5a90a21efd8d35f5d5015"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO1iQLcO9uXSdZJqOIMLmPrnWexOZv5GA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "4585234938-iucbal3ae3jutgsh5da61l2aiqa1bpvt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

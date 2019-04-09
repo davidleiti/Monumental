@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">Monumental</string>
+
+    <!-- Strings related to login -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_in_with_google">Continue with Google</string>
+    <string name="sign_in_with_facebook">Continue with Facebook</string>
+    <string name="message_loading">Loading…</string>
+    <string name="error_password">Password must be at least 6 characters long.</string>
+    <string name="error_email">Not a valid address.</string>
+    <string name="message_sign_in_cancelled">Sign in attempt cancelled.</string>
+    <string name="warning_sign_in_provider">Failed to sign in with third party provider</string>
+    <string name="warning_sign_in_email">There was a problem signing in, please check your credentials and your internet connection!</string>
+    <string name="fb_login_protocol_scheme">fb372591466897067</string>
+
+    <!-- Venue categories -->
+    <string name="cat_monument">Monuments</string>
+    <string name="cat_public_art">Public art</string>
+    <string name="cat_stadium">Stadiums</string>
+    <string name="cat_bridge">Bridges</string>
+    <string name="cat_castle">Castles</string>
+    <string name="cat_historic_site">Historic sites</string>
+    <string name="cat_museum">Museums</string>
+    <string name="cat_opera_house">Opera houses</string>
+    <string name="cat_theatre">Theatres</string>
+
+    <!-- Splash screen activity-->
+    <string name="title_activity_splashscreen">SplashscreenActivity</string>
+    <string name="cd_logo">Application logo</string>
+
+    <!-- Home Activity-->
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!--StartFragment-->
+    <string name="cd_header">Header Image</string>
+    <string name="message_journey_start">A new adventure is waiting just around the corner</string>
+    <string name="message_journey_resume">Do you wish to continue?</string>
+    <string name="message_journey_found">Looks like you have started a session %1$s.</string>
+    <string name="ready">Ready</string>
+    <string name="warning_gps_required">GPS access is required!</string>
+    <string name="resume">Resume</string>
+    <string name="start_new">Start new</string>
+    <string name="days_ago">days ago</string>
+    <string name="hours_ago">hours ago</string>
+    <string name="minutes_ago">minutes ago</string>
+    <string name="day_ago">day ago</string>
+    <string name="hour_ago">hour ago</string>
+    <string name="minute_ago">minute ago</string>
+    <string name="just_now">just now</string>
+
+    <!--DetailsFragment-->
+    <string name="label_select_radius">Adjust the search radius</string>
+    <string name="label_limit_landmarks">Limit the number of landmarks</string>
+    <string name="value_limit_default">10</string>
+    <string name="cd_dec_val">Decrease value</string>
+    <string name="cd_inc_val">Increase value</string>
+    <string name="radius_default">1000 m</string>
+    <string name="next">Next</string>
+    <string name="grant">Grant</string>
+
+    <!--CategoriesFragment-->
+    <string name="label_choose_categories">What are you looking for?</string>
+    <string name="placeholder_category_name">Category name</string>
+    <string name="select_all">Select all</string>
+    <string name="select_none">Select none</string>
+    <string name="button_go">Go</string>
+    <string name="message_none_selected">You must select at least one category!</string>
+
+    <!--ResultFragment-->
+    <string name="cancel">Cancel</string>
+    <string name="adjust_parameters">Retry</string>
+    <string name="start">Start</string>
+    <string name="warning_error_search">An error has occurred while looking for landmarks</string>
+    <string name="venues_found">Found %1$d landmarks near your location.</string>
+    <string name="label_ready_journey">Are you ready to embark on your journey?</string>
+    <string name="button">Button</string>
+
+    <!--GeofenceTransitionsService-->
+    <string name="name_channel_geofence">Geofences</string>
+    <string name="desc_channel_geofence">Sends a notification when near a landmark.</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_error_message">An unexpected error has occurred!</string>
+
+    <string name="geofencing_error_unknown">Unknown error: Geofence service is not available!</string>
+    <string name="geofencing_error_unavailable">The service is not available, high accuracy location services not enabled!</string>
+    <string name="geofencing_error_limit_reached">Geofence limit has been reached!</string>
+    <string name="geofencing_error_pi_limit_reached">PendingIntent limit has been reached!</string>
+    <string name="title_notification">Heads up!</string>
+    <string name="content_notification">Found a landmark near you. Click here to take a photo…</string>
+    <string name="default_web_client_id">4585234938-6dpf3tnfn8v6m2ma21ag30p31jf8n0mu.apps.googleusercontent.com</string>
+</resources>
