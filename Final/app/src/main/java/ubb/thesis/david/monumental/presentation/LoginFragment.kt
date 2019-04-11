@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.fragment_login.*
 import ubb.thesis.david.monumental.R
+import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.monumental.utils.*
 
 class LoginFragment : BaseFragment(), View.OnClickListener {

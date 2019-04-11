@@ -24,14 +24,16 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_home.view.*
 import kotlinx.android.synthetic.main.progress_overlay.*
-import ubb.thesis.david.monumental.data.geofencing.GeofencingClientWrapper
 import ubb.thesis.david.monumental.R
+import ubb.thesis.david.monumental.data.geofencing.GeofencingClientWrapper
+import ubb.thesis.david.monumental.presentation.common.ClientProvider
+import ubb.thesis.david.monumental.presentation.common.UiActions
 import ubb.thesis.david.monumental.utils.debug
 import ubb.thesis.david.monumental.utils.fadeIn
 import ubb.thesis.david.monumental.utils.fadeOut
 import ubb.thesis.david.monumental.utils.info
 
-class MainActivity : AppCompatActivity(), UiActions, ClientProvider,
+class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
     NavigationView.OnNavigationItemSelectedListener,
     GoogleApiClient.OnConnectionFailedListener,
     GoogleApiClient.ConnectionCallbacks {

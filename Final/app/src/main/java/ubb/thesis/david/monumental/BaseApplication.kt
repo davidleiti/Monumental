@@ -26,7 +26,8 @@ class BaseApplication : Application() {
             val name = getString(R.string.name_channel_geofence)
             val descriptionText = getString(R.string.desc_channel_geofence)
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(GEOFENCE_CHANNEL_ID, name, importance).apply {
+            val channel = NotificationChannel(
+                    GEOFENCE_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
 
@@ -36,7 +37,8 @@ class BaseApplication : Application() {
     }
 
     companion object {
-        fun getAppContext(): BaseApplication = Instance
+        fun getAppContext(): BaseApplication =
+            Instance
         const val GEOFENCE_CHANNEL_ID = "GeofenceNotificationsChannel"
 
         private lateinit var Instance: BaseApplication

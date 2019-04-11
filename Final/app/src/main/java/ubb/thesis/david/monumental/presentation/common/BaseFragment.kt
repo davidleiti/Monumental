@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation
+package ubb.thesis.david.monumental.presentation.common
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

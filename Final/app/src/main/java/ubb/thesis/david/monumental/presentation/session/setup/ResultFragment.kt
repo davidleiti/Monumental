@@ -10,9 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_results.*
+import ubb.thesis.david.monumental.Injection
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.domain.entities.Landmark
-import ubb.thesis.david.monumental.presentation.BaseFragment
+import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.monumental.utils.debug
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.info
@@ -26,7 +27,9 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = getViewModel()
+        viewModel = getViewModel {
+            ResultViewModel(Injection.provideLandmarkApi(), Injection.provideSessionManager())
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -91,10 +94,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
         val categories = args.categories
         val location = "${args.location.latitude},${args.location.longitude}"
 
-        if (limit > 0)
-            viewModel.searchLandmarks(location, radius, limit, categories)
-        else
-            viewModel.searchLandmarks(location, radius, categories)
+        viewModel.searchLandmarks(location, radius, limit, categories)
     }
 
     private fun setupSession() {

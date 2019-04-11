@@ -6,7 +6,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ubb.thesis.david.monumental.Injection
 import ubb.thesis.david.monumental.domain.entities.Session
-import ubb.thesis.david.monumental.presentation.BaseViewModel
+import ubb.thesis.david.monumental.presentation.common.BaseViewModel
 
 class StartViewModel : BaseViewModel() {
 

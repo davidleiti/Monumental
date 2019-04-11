@@ -9,6 +9,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigator
 import kotlinx.android.synthetic.main.fragment_splash.*
 import ubb.thesis.david.monumental.R
+import ubb.thesis.david.monumental.presentation.common.BaseFragment
 
 
 class SplashFragment : BaseFragment() {

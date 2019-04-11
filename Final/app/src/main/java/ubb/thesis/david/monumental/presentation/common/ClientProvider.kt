@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation
+package ubb.thesis.david.monumental.presentation.common
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.GoogleApiClient

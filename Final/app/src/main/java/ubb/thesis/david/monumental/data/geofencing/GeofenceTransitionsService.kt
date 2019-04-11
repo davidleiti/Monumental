@@ -12,7 +12,7 @@ import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 import ubb.thesis.david.monumental.BaseApplication.Companion.GEOFENCE_CHANNEL_ID
 import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.presentation.MainActivity
+import ubb.thesis.david.monumental.presentation.HostActivity
 import ubb.thesis.david.monumental.utils.debug
 import ubb.thesis.david.monumental.utils.info
 
@@ -36,7 +36,7 @@ class GeofenceTransitionsService : JobIntentService() {
 
     private fun sendNotification() {
         val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
-        val actionIntent = Intent(this, MainActivity::class.java).apply {
+        val actionIntent = Intent(this, HostActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         val pendingIntent = PendingIntent.getActivity(this, 0, actionIntent, 0)

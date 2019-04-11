@@ -15,7 +15,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import ubb.thesis.david.monumental.data.geofencing.GeofencingClientWrapper
 import ubb.thesis.david.monumental.domain.entities.Landmark
-import ubb.thesis.david.monumental.presentation.BaseFragment
+import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.monumental.utils.debug
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortSnack

@@ -19,7 +19,7 @@
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
         <activity
-                android:name=".presentation.MainActivity"
+                android:name=".presentation.HostActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:configChanges="orientation|keyboardHidden"
                 android:screenOrientation="portrait">
@@ -61,7 +61,7 @@
                 android:name="com.google.android.geo.API_KEY"
                 android:value="@string/google_maps_key"/>
 
-        <!-- Official (temporary) workaround for a google play services bug involving maps rendering -->
+        <!-- Official (temporary) workaround for a google play services bug causing maps rendering issues -->
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
     </application>

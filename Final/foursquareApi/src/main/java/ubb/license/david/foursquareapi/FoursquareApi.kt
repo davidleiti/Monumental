@@ -50,7 +50,6 @@ object FoursquareApi {
     const val ID_MUSEUM = "4bf58dd8d48988d181941735"
     const val ID_OPERA_HOUSE = "4bf58dd8d48988d136941735"
     const val ID_THEATRE = "4bf58dd8d48988d137941735"
-    const val ID_ART_GALLERY = "4bf58dd8d48988d1e2931735"
     const val SECTION_ARTS = "arts"
 
     internal const val PATH_VENUE_ID = "venueId"

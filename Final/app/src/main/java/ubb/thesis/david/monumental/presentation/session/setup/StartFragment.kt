@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_start.*
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.data.geofencing.GeofencingClientWrapper
 import ubb.thesis.david.monumental.domain.entities.Session
-import ubb.thesis.david.monumental.presentation.BaseFragment
+import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortSnack
 import java.util.*

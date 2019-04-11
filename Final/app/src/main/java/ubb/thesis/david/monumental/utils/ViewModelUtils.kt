@@ -3,8 +3,8 @@ package ubb.thesis.david.monumental.utils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
-import ubb.thesis.david.monumental.presentation.BaseViewModel
-import ubb.thesis.david.monumental.presentation.ViewModelFactory
+import ubb.thesis.david.monumental.presentation.common.BaseViewModel
+import ubb.thesis.david.monumental.presentation.common.ViewModelFactory
 
 inline fun <reified T : BaseViewModel> Fragment.getViewModel(noinline creator: (() -> T)? = null): T =
     if (creator == null)

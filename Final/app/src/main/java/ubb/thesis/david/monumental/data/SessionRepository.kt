@@ -3,19 +3,18 @@ package ubb.thesis.david.monumental.data
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import ubb.license.david.foursquareapi.FoursquareApi
 import ubb.license.david.foursquareapi.model.Venue
 import ubb.thesis.david.monumental.data.cache.SessionDatabase
-import ubb.thesis.david.monumental.domain.SessionRepository
+import ubb.thesis.david.monumental.domain.LandmarkApi
+import ubb.thesis.david.monumental.domain.SessionManager
 import ubb.thesis.david.monumental.domain.entities.Landmark
 import ubb.thesis.david.monumental.domain.entities.Session
 import ubb.thesis.david.monumental.utils.debug
 import ubb.thesis.david.monumental.utils.info
 import java.util.*
 
-class SessionManager private constructor(private val database: SessionDatabase, private val api: FoursquareApi) :
-    SessionRepository {
+class SessionRepository private constructor(private val database: SessionDatabase) :
+    SessionManager {
 
     override fun setupSession(userId: String, landmarks: List<Landmark>): Completable =
         Completable.fromCallable {
@@ -34,34 +33,6 @@ class SessionManager private constructor(private val database: SessionDatabase, 
         }.doOnError {
             debug(TAG_LOG, "Failed to set up session for user $userId, cause: ${it.message}")
         }
-
-    override fun searchLandmarks(
-        location: String,
-        radius: Int,
-        categories: String,
-        limit: Int
-    ): Single<List<Landmark>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    fun loadLandmarks(location: String, radius: Int, categories: String, limit: Int = 0): Single<List<Landmark>> {
-        val searchRes = api.searchVenues(location, radius, FoursquareApi.ID_MONUMENT)
-            .transformToLandmarkList()
-
-        val exploreRes = api.exploreVenues(location, radius, FoursquareApi.SECTION_ARTS)
-            .filterExploreResults(categories)
-            .transformToLandmarkList()
-
-        val combinedResult: Single<List<Landmark>> =
-            Single.zip(searchRes, exploreRes, BiFunction { searchResults, exploreResults ->
-                combineResults(searchResults, exploreResults)
-            })
-
-        return if (limit > 0)
-            combinedResult.map { landmarks -> landmarks.take(limit) }
-        else
-            combinedResult
-    }
 
     override fun getSession(userId: String): Maybe<Session> =
         database.sessionDao().getUserSession(userId)
@@ -83,6 +54,7 @@ class SessionManager private constructor(private val database: SessionDatabase, 
 
     override fun updateLandmark(landmark: Landmark): Completable =
         database.landmarkDao().updateLandmark(landmark)
+
     override fun wipeSession(userId: String): Completable =
         Completable.fromCallable {
             database.runInTransaction {
@@ -95,15 +67,7 @@ class SessionManager private constructor(private val database: SessionDatabase, 
             debug(TAG_LOG, "Failed to wipe session data of user $userId, cause: ${it.message}")
         }
 
-    private fun combineResults(searchResults: List<Landmark>, exploreResults: List<Landmark>): List<Landmark> {
-        val allVenues = ArrayList<Landmark>().apply {
-            addAll(searchResults)
-            addAll(exploreResults)
-        }
-        return allVenues.distinctBy { venue -> venue.id }
-    }
-
-    fun wipeDatabase(): Completable =
+    private fun wipeDatabase(): Completable =
         Completable.fromCallable {
             database.runInTransaction {
                 database.sessionDao().clearSessions()
@@ -122,10 +86,10 @@ class SessionManager private constructor(private val database: SessionDatabase, 
 
         private const val TAG_LOG = "SessionManagerLogger"
 
-        fun getInstance(database: SessionDatabase, api: FoursquareApi) =
+        fun getInstance(database: SessionDatabase) =
             sInstance ?: synchronized(this) {
                 sInstance
-                    ?: SessionManager(database, api)
+                    ?: SessionRepository(database)
             }
     }
 }
