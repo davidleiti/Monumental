@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_results.*
-import ubb.thesis.david.monumental.Injection
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.domain.entities.Landmark
 import ubb.thesis.david.monumental.presentation.common.BaseFragment
@@ -27,9 +26,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = getViewModel {
-            ResultViewModel(Injection.provideLandmarkApi(), Injection.provideSessionManager())
-        }
+        viewModel = getViewModel()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

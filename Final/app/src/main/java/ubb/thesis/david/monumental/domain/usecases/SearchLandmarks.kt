@@ -5,12 +5,12 @@ import ubb.thesis.david.monumental.domain.LandmarkApi
 import ubb.thesis.david.monumental.domain.common.Transformer
 import ubb.thesis.david.monumental.domain.entities.Landmark
 
-class SearchLandmarks(private val params: SearchParams,
+class SearchLandmarks(private val params: RequestValues,
                       private val api: LandmarkApi,
                       transformer: Transformer<List<Landmark>>) :
-    UseCase<List<Landmark>>(transformer) {
+    ObservableUseCase<List<Landmark>>(transformer) {
 
-    data class SearchParams(val location: String, val radius: Int, val categories: String, val limit: Int = 0)
+    data class RequestValues(val location: String, val radius: Int, val categories: String, val limit: Int = 0)
 
     override fun createSource(): Observable<List<Landmark>> {
         val source = api.searchVenues(params.location, params.radius, params.location)
