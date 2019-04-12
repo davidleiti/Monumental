@@ -5,32 +5,36 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ubb.thesis.david.monumental.Injection
+import ubb.thesis.david.monumental.domain.BeaconManager
 import ubb.thesis.david.monumental.domain.entities.Session
+import ubb.thesis.david.monumental.domain.usecases.WipeSession
+import ubb.thesis.david.monumental.presentation.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.presentation.common.BaseViewModel
 
-class StartViewModel : BaseViewModel() {
+class StartViewModel(private val beaconManager: BeaconManager) : BaseViewModel() {
 
-    private val dataSource = Injection.provideSessionManager()
+    private val sessionManager = Injection.provideSessionManager()
     private val runningSessionObservable: MutableLiveData<Session?> = MutableLiveData()
 
     fun getRunningSessionObservable(): LiveData<Session?> = runningSessionObservable
 
     fun queryRunningSession(userId: String) {
-        dataSource.getSession(userId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ session ->
-                runningSessionObservable.value = session
-            }, {
-                runningSessionObservable.value = null
-            }, {
-                runningSessionObservable.value = null
-            }).also { addDisposable(it) }
+        sessionManager.getSession(userId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ session ->
+                               runningSessionObservable.value = session
+                           }, {
+                               runningSessionObservable.value = null
+                           }, {
+                               runningSessionObservable.value = null
+                           }).also { addDisposable(it) }
     }
 
     fun wipeSessionData(userId: String) {
-        dataSource.wipeSession(userId)
-            .subscribeOn(Schedulers.io())
-            .subscribe().also { addDisposable(it) }
+        WipeSession(userId, sessionManager, beaconManager, AsyncTransformerFactory.create())
+                .execute()
+                .subscribe()
+                .also { addDisposable(it) }
     }
 }

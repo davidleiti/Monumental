@@ -79,7 +79,6 @@ class SessionRepository private constructor(private val database: SessionDatabas
             debug(TAG_LOG, "Failed to wipe session cache, cause: ${it.message}")
         }
 
-
     companion object {
         @Volatile
         private var sInstance: SessionManager? = null

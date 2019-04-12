@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.domain.usecases
+package ubb.thesis.david.monumental.domain.usecases.base
 
 import io.reactivex.Observable
 import ubb.thesis.david.monumental.domain.common.Transformer

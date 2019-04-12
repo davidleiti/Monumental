@@ -26,7 +26,9 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = getViewModel()
+        viewModel = getViewModel {
+            ResultViewModel(getGeofencingClient())
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

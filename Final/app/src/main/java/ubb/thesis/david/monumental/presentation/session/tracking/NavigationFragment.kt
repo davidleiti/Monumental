@@ -13,13 +13,14 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import ubb.thesis.david.monumental.data.geofencing.GeofencingClientWrapper
+import ubb.thesis.david.monumental.R
+import ubb.thesis.david.monumental.data.GeofencingClientAdapter
+import ubb.thesis.david.monumental.domain.BeaconManager
 import ubb.thesis.david.monumental.domain.entities.Landmark
 import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.monumental.utils.debug
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortSnack
-import ubb.thesis.david.monumental.R
 
 class NavigationFragment : BaseFragment(), OnMapReadyCallback {
 
@@ -27,7 +28,7 @@ class NavigationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private lateinit var viewModel: SessionViewModel
-    private lateinit var fencingClient: GeofencingClientWrapper
+    private lateinit var fencingClient: BeaconManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -49,12 +50,22 @@ class NavigationFragment : BaseFragment(), OnMapReadyCallback {
         viewModel.loadSessionLandmarks(getUserId())
     }
 
+    private fun reinitializeBeaconsIfNeeded() {
+        val sharedPrefs = context!!.getSharedPreferences(getUserId(), Context.MODE_PRIVATE)
+        sharedPrefs?.let {
+            for (landmark in landmarks!!) {
+                if (!sharedPrefs.contains(landmark.id))
+                    fencingClient.setupBeacon(landmark.id, landmark.lat, landmark.lng, getUserId())
+            }
+        }
+    }
+
     override fun usesNavigationDrawer(): Boolean = true
 
     private fun observeData() {
         viewModel.getLandmarksObservable().observe(viewLifecycleOwner, Observer { landmarks ->
-            initializeFencesIfNeeded(landmarks)
             this@NavigationFragment.landmarks = landmarks
+            reinitializeBeaconsIfNeeded()
             setupMarkers()
             hideLoading()
         })
@@ -69,7 +80,7 @@ class NavigationFragment : BaseFragment(), OnMapReadyCallback {
         try {
             MapsInitializer.initialize(context)
         } catch (ex: GooglePlayServicesNotAvailableException) {
-            debug("WahtevesLogger", "Failed to access google play services, cause: ${ex.message}")
+            debug(TAG_LOG, "Failed to access google play services, cause: ${ex.message}")
         }
         googleMap = map
         landmarks?.run { setupMarkers() }
@@ -95,20 +106,6 @@ class NavigationFragment : BaseFragment(), OnMapReadyCallback {
         }
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 16F))
-    }
-
-    private fun initializeFencesIfNeeded(landmarks: List<Landmark>) {
-        val sharedPrefs = context!!.getSharedPreferences(getUserId(), Context.MODE_PRIVATE)
-        sharedPrefs?.let {
-            for (landmark in landmarks) {
-                if (!sharedPrefs.contains(landmark.id))
-                    createGeofence(landmark, sharedPrefs)
-            }
-        }
-    }
-
-    private fun createGeofence(landmark: Landmark, sharedPrefs: SharedPreferences) {
-        fencingClient.createGeofence(landmark.id, landmark.lat, landmark.lng, sharedPrefs)
     }
 
     override fun onStart() {

@@ -4,6 +4,7 @@ import io.reactivex.Observable
 import ubb.thesis.david.monumental.domain.LandmarkApi
 import ubb.thesis.david.monumental.domain.common.Transformer
 import ubb.thesis.david.monumental.domain.entities.Landmark
+import ubb.thesis.david.monumental.domain.usecases.base.ObservableUseCase
 
 class SearchLandmarks(private val params: RequestValues,
                       private val api: LandmarkApi,

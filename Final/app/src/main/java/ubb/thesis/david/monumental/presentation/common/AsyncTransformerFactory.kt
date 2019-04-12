@@ -11,12 +11,12 @@ abstract class AsyncTransformerFactory {
 
     companion object {
 
-        fun createTransformer(): CompletableTransformer =
+        fun create(): CompletableTransformer =
             CompletableTransformer { completable ->
                 completable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             }
 
-        inline fun <reified T : Any> createTransformer(): Transformer<T> =
+        inline fun <reified T : Any> create(): Transformer<T> =
             object : Transformer<T>() {
                 override fun apply(upstream: Observable<T>): ObservableSource<T> =
                     upstream.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())

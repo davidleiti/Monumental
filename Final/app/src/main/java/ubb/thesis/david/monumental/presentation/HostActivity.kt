@@ -1,6 +1,5 @@
 package ubb.thesis.david.monumental.presentation
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -25,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_home.view.*
 import kotlinx.android.synthetic.main.progress_overlay.*
 import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.data.geofencing.GeofencingClientWrapper
+import ubb.thesis.david.monumental.data.GeofencingClientAdapter
 import ubb.thesis.david.monumental.presentation.common.ClientProvider
 import ubb.thesis.david.monumental.presentation.common.UiActions
 import ubb.thesis.david.monumental.utils.debug
@@ -41,8 +40,8 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val googleApiClient: GoogleApiClient by lazy { initializeGoogleApiClient() }
     private val googleSignInClient: GoogleSignInClient by lazy { initializeGoogleSignInClient() }
-    private val geofencingClientWrapper: GeofencingClientWrapper by lazy {
-        GeofencingClientWrapper(
+    private val geofencingClientAdapter: GeofencingClientAdapter by lazy {
+        GeofencingClientAdapter(
                 this
         )
     }
@@ -70,7 +69,7 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     override fun getSignInClient(): GoogleSignInClient = googleSignInClient
 
-    override fun getGeofencingClient(): GeofencingClientWrapper = geofencingClientWrapper
+    override fun getGeofencingClient(): GeofencingClientAdapter = geofencingClientAdapter
 
     override fun getApiClient(): GoogleApiClient {
         if (!googleApiClient.isConnected)
@@ -132,8 +131,7 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         drawer_layout.closeDrawer(GravityCompat.START)
         return when (item.itemId) {
             R.id.option_sign_out -> {
-                geofencingClientWrapper.removeGeofences(
-                        storage = getSharedPreferences(firebaseAuth.currentUser!!.uid, Context.MODE_PRIVATE))
+                geofencingClientAdapter.removeBeacons(collectionId = firebaseAuth.currentUser!!.uid)
                 signOut()
                 navigateToLogin()
                 false

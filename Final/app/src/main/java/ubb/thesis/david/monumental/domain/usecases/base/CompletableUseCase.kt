@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.domain.usecases
+package ubb.thesis.david.monumental.domain.usecases.base
 
 import io.reactivex.Completable
 import io.reactivex.CompletableTransformer

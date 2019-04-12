@@ -3,7 +3,6 @@ package ubb.thesis.david.monumental.presentation.session.setup
 
 import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
@@ -19,7 +18,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import kotlinx.android.synthetic.main.fragment_start.*
 import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.data.geofencing.GeofencingClientWrapper
+import ubb.thesis.david.monumental.data.GeofencingClientAdapter
 import ubb.thesis.david.monumental.domain.entities.Session
 import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.monumental.utils.getViewModel
@@ -31,7 +30,6 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     private var runningSession: Session? = null
     private lateinit var viewModel: StartViewModel
-    private lateinit var geoFencingClient: GeofencingClientWrapper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_start, container, false)
@@ -44,8 +42,8 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        geoFencingClient = getGeofencingClient()
-        viewModel = getViewModel()
+
+        viewModel = getViewModel { StartViewModel(getGeofencingClient()) }
         observeData()
         checkRunningSession()
     }
@@ -87,11 +85,6 @@ class StartFragment : BaseFragment(), View.OnClickListener {
         label_continue.visibility = View.GONE
         button_resume.visibility = View.GONE
         button_start_new.setText(R.string.start)
-    }
-
-    private fun wipeRunningSession() {
-        viewModel.wipeSessionData(getUserId())
-        geoFencingClient.removeGeofences(storage = context!!.getSharedPreferences(getUserId(), Context.MODE_PRIVATE))
     }
 
     private fun requestGpsSettings(requestCode: Int) {
@@ -136,7 +129,7 @@ class StartFragment : BaseFragment(), View.OnClickListener {
         } else {
             setupSession()
             runningSession?.let {
-                wipeRunningSession()
+                viewModel.wipeSessionData(getUserId())
             }
         }
     }
