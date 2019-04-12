@@ -2,11 +2,10 @@ package ubb.thesis.david.monumental.presentation.session.setup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import ubb.thesis.david.monumental.Injection
 import ubb.thesis.david.monumental.domain.BeaconManager
 import ubb.thesis.david.monumental.domain.entities.Session
+import ubb.thesis.david.monumental.domain.usecases.GetSession
 import ubb.thesis.david.monumental.domain.usecases.WipeSession
 import ubb.thesis.david.monumental.presentation.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.presentation.common.BaseViewModel
@@ -19,16 +18,12 @@ class StartViewModel(private val beaconManager: BeaconManager) : BaseViewModel()
     fun getRunningSessionObservable(): LiveData<Session?> = runningSessionObservable
 
     fun queryRunningSession(userId: String) {
-        sessionManager.getSession(userId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ session ->
-                               runningSessionObservable.value = session
-                           }, {
-                               runningSessionObservable.value = null
-                           }, {
-                               runningSessionObservable.value = null
-                           }).also { addDisposable(it) }
+        GetSession(userId, sessionManager, AsyncTransformerFactory.create<Session>())
+                .execute()
+                .subscribe({ session -> runningSessionObservable.value = session },
+                           { runningSessionObservable.value = null },
+                           { runningSessionObservable.value = null })
+                .also { addDisposable(it) }
     }
 
     fun wipeSessionData(userId: String) {
