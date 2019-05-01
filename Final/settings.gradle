@@ -1,1 +1,1 @@
-include ':app', ':foursquareApi'
+include ':presentation', ':foursquareApi', ':domain', ':data'
