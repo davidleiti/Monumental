@@ -52,7 +52,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-    <ubb.thesis.david.monumental.presentation.FlatButton
+    <ubb.thesis.david.monumental.presentation.common.FlatButton
             android:id="@+id/button_retry"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
             app:layout_constraintBottom_toTopOf="@+id/button_next"
             app:layout_constraintStart_toEndOf="@+id/button_cancel" />
 
-    <ubb.thesis.david.monumental.presentation.FlatButton
+    <ubb.thesis.david.monumental.presentation.common.FlatButton
             android:id="@+id/button_cancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/button_retry"
             app:layout_constraintEnd_toStartOf="@+id/button_retry" />
 
-    <ubb.thesis.david.monumental.presentation.FlatButton
+    <ubb.thesis.david.monumental.presentation.common.FlatButton
             android:id="@+id/button_next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

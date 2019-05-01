@@ -36,7 +36,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-    <ubb.thesis.david.monumental.presentation.FlatButton
+    <ubb.thesis.david.monumental.presentation.common.FlatButton
             android:id="@+id/button_select_all"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-    <ubb.thesis.david.monumental.presentation.FlatButton
+    <ubb.thesis.david.monumental.presentation.common.FlatButton
             android:id="@+id/button_next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

@@ -7,15 +7,15 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.jetbrains.anko.doAsync
-import ubb.thesis.david.monumental.domain.entities.Landmark
-import ubb.thesis.david.monumental.domain.entities.Session
+import ubb.thesis.david.monumental.data.entities.BeaconData
+import ubb.thesis.david.monumental.data.entities.SessionData
 
-@Database(entities = [Landmark::class, Session::class], version = 4, exportSchema = false)
+@Database(entities = [BeaconData::class, SessionData::class], version = 5, exportSchema = false)
 @TypeConverters(RoomConverter::class)
 abstract class SessionDatabase : RoomDatabase() {
 
     abstract fun sessionDao(): SessionDao
-    abstract fun landmarkDao(): LandmarkDao
+    abstract fun beaconDao(): BeaconDao
 
     companion object {
         private const val DATABASE_NAME = "db-session-cache"
@@ -32,16 +32,16 @@ abstract class SessionDatabase : RoomDatabase() {
             Room.databaseBuilder(
                     context.applicationContext,
                     SessionDatabase::class.java, DATABASE_NAME)
-                .fallbackToDestructiveMigration()
-//                .addCallback(wipeCallback(context))
-                .build()
+                    .fallbackToDestructiveMigration()
+                    //                .addCallback(wipeCallback(context))
+                    .build()
 
-        private fun wipeCallback(context: Context) = object: RoomDatabase.Callback() {
+        private fun wipeCallback(context: Context) = object : RoomDatabase.Callback() {
             override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
                 doAsync {
                     getInstance(context).sessionDao().clearSessions()
-                    getInstance(context).landmarkDao().clearLandmarks()
+                    getInstance(context).beaconDao().clearBeacons()
                 }
             }
         }

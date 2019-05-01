@@ -2,10 +2,9 @@ package ubb.thesis.david.monumental.data
 
 import io.reactivex.Completable
 import io.reactivex.Maybe
-import io.reactivex.Single
-import ubb.license.david.foursquareapi.model.Venue
 import ubb.thesis.david.monumental.data.cache.SessionDatabase
-import ubb.thesis.david.monumental.domain.LandmarkApi
+import ubb.thesis.david.monumental.data.entities.BeaconData
+import ubb.thesis.david.monumental.data.entities.SessionData
 import ubb.thesis.david.monumental.domain.SessionManager
 import ubb.thesis.david.monumental.domain.entities.Landmark
 import ubb.thesis.david.monumental.domain.entities.Session
@@ -18,15 +17,15 @@ class SessionRepository private constructor(private val database: SessionDatabas
 
     override fun setupSession(userId: String, landmarks: List<Landmark>): Completable =
         Completable.fromCallable {
-            landmarks.forEach { landmark -> landmark.userId = userId }
+            val beacons = landmarks.map { BeaconData.fromEntity(it, userId) }
             database.runInTransaction {
-                val session = Session(
-                    userId = userId,
-                    city = "dummyCity",
-                    timeStarted = Date()
+                val session = SessionData(
+                        userId = userId,
+                        city = "dummyCity",
+                        timeStarted = Date()
                 )
                 database.sessionDao().createSession(session)
-                database.landmarkDao().addLandmarks(landmarks)
+                database.beaconDao().addBeacons(beacons)
             }
         }.doOnComplete {
             info(TAG_LOG, "Session for user $userId setup successfully.")
@@ -36,30 +35,31 @@ class SessionRepository private constructor(private val database: SessionDatabas
 
     override fun getSession(userId: String): Maybe<Session> =
         database.sessionDao().getUserSession(userId)
-            .doOnSuccess {
-                info(TAG_LOG, "Session $it retrieved successfully.")
-            }
-            .doOnError {
-                debug(TAG_LOG, "Failed to retrieve session data of user $userId, cause: ${it.message}")
-            }
+                .doOnSuccess {
+                    info(TAG_LOG, "Session $it retrieved successfully.")
+                }
+                .doOnError {
+                    debug(TAG_LOG, "Failed to retrieve session data of user $userId, cause: ${it.message}")
+                }.map { SessionData.toEntity(it) }
 
     override fun getSessionLandmarks(userId: String): Maybe<List<Landmark>> =
-        database.landmarkDao().getSessionLandmarks(userId)
-            .doOnSuccess {
-                info(TAG_LOG, "Landmarks of user $userId retrieved successfully.")
-            }
-            .doOnError {
-                debug(TAG_LOG, "Failed to retrieve landmarks from user $userId's session")
-            }
+        database.beaconDao().getSessionBeacons(userId)
+                .doOnSuccess {
+                    info(TAG_LOG, "Landmarks of user $userId retrieved successfully.")
+                }
+                .doOnError {
+                    debug(TAG_LOG, "Failed to retrieve landmarks from user $userId's session")
+                }.map { beacons -> beacons.map { BeaconData.toEntity(it) } }
 
-    override fun updateLandmark(landmark: Landmark): Completable =
-        database.landmarkDao().updateLandmark(landmark)
+
+    override fun updateLandmark(userId: String, landmark: Landmark): Completable =
+        database.beaconDao().updateBeacon(BeaconData.fromEntity(landmark, userId))
 
     override fun wipeSession(userId: String): Completable =
         Completable.fromCallable {
             database.runInTransaction {
                 database.sessionDao().clearUserSession(userId)
-                database.landmarkDao().clearUserLandmarks(userId)
+                database.beaconDao().clearSessionBeacons(userId)
             }
         }.doOnComplete {
             info(TAG_LOG, "Wiped session data of user $userId")
@@ -71,7 +71,7 @@ class SessionRepository private constructor(private val database: SessionDatabas
         Completable.fromCallable {
             database.runInTransaction {
                 database.sessionDao().clearSessions()
-                database.landmarkDao().clearLandmarks()
+                database.beaconDao().clearBeacons()
             }
         }.doOnComplete {
             info(TAG_LOG, "Wiped the session cache database entirely.")
@@ -92,9 +92,3 @@ class SessionRepository private constructor(private val database: SessionDatabas
             }
     }
 }
-
-private fun Single<List<Venue>>.filterExploreResults(categoriesString: String): Single<List<Venue>> =
-    map { venues -> venues.filter { venue -> categoriesString.contains(venue.categories!![0].id) } }
-
-private fun Single<List<Venue>>.transformToLandmarkList(): Single<List<Landmark>> =
-    map { venues -> venues.map { venue -> Landmark.fromVenue(venue) } }

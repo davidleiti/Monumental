@@ -139,7 +139,7 @@
 
         </LinearLayout>
 
-        <ubb.thesis.david.monumental.presentation.FlatButton
+        <ubb.thesis.david.monumental.presentation.common.FlatButton
                 android:id="@+id/button_next"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

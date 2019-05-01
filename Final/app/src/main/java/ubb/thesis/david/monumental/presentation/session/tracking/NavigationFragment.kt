@@ -28,7 +28,6 @@ class NavigationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private lateinit var viewModel: SessionViewModel
-    private lateinit var fencingClient: BeaconManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,7 +41,7 @@ class NavigationFragment : BaseFragment(), OnMapReadyCallback {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        fencingClient = getGeofencingClient()
+
         viewModel = getViewModel()
         observeData()
         showLoading()
@@ -55,7 +54,7 @@ class NavigationFragment : BaseFragment(), OnMapReadyCallback {
         sharedPrefs?.let {
             for (landmark in landmarks!!) {
                 if (!sharedPrefs.contains(landmark.id))
-                    fencingClient.setupBeacon(landmark.id, landmark.lat, landmark.lng, getUserId())
+                    getGeofencingClient().setupBeacon(landmark.id, landmark.lat, landmark.lng, getUserId())
             }
         }
     }
