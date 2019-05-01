@@ -21,7 +21,8 @@ class StartViewModel(private val beaconManager: BeaconManager) : BaseViewModel()
         GetSession(userId, sessionManager, AsyncTransformerFactory.create<Session>())
                 .execute()
                 .subscribe({ session -> runningSessionObservable.value = session },
-                           { runningSessionObservable.value = null })
+                           { runningSessionObservable.value = null },
+                           { runningSessionObservable.value = runningSessionObservable.value })
                 .also { addDisposable(it) }
     }
 
