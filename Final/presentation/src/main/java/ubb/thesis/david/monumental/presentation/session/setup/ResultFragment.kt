@@ -10,19 +10,19 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_results.*
-import ubb.thesis.david.monumental.R
-import ubb.thesis.david.domain.entities.Landmark
-import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.data.utils.debug
-import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.data.utils.info
+import ubb.thesis.david.domain.entities.Landmark
+import ubb.thesis.david.monumental.R
+import ubb.thesis.david.monumental.presentation.common.BaseFragment
+import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortToast
 
 class ResultFragment : BaseFragment(), View.OnClickListener {
 
     private val disposable = CompositeDisposable()
     private lateinit var viewModel: ResultViewModel
-    private lateinit var landmarksRetrieved: List<ubb.thesis.david.domain.entities.Landmark>
+    private lateinit var landmarksRetrieved: List<Landmark>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

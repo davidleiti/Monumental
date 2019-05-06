@@ -16,8 +16,8 @@ abstract class AsyncTransformerFactory {
                 completable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             }
 
-        inline fun <reified T : Any> create(): ubb.thesis.david.domain.common.Transformer<T> =
-            object : ubb.thesis.david.domain.common.Transformer<T>() {
+        inline fun <reified T : Any> create(): Transformer<T> =
+            object : Transformer<T>() {
                 override fun apply(upstream: Observable<T>): ObservableSource<T> =
                     upstream.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             }

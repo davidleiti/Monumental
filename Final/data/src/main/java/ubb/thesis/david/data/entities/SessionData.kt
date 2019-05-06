@@ -15,21 +15,17 @@ data class SessionData(
 ) {
     companion object {
 
-        fun fromEntity(entity: ubb.thesis.david.domain.entities.Session): SessionData =
-            SessionData(
-                    userId = entity.userId,
-                    city = entity.city,
-                    timeStarted = entity.timeStarted,
-                    timeFinished = entity.timeFinished
-            )
+        fun fromEntity(entity: Session): SessionData =
+            SessionData(userId = entity.userId,
+                        city = entity.city,
+                        timeStarted = entity.timeStarted,
+                        timeFinished = entity.timeFinished)
 
-        fun toEntity(data: SessionData): ubb.thesis.david.domain.entities.Session =
-            ubb.thesis.david.domain.entities.Session(
-                    userId = data.userId,
+        fun toEntity(data: SessionData): Session =
+            Session(userId = data.userId,
                     city = data.city,
                     timeStarted = data.timeStarted,
-                    timeFinished = data.timeFinished
-            )
+                    timeFinished = data.timeFinished)
 
     }
 }

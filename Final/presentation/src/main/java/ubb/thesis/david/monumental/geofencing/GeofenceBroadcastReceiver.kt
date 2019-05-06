@@ -7,11 +7,7 @@ import ubb.thesis.david.data.utils.info
 
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        info("GeofenceBroadcastReceiverLogger",
-                                         "onReceive() called, forwarding to service...")
-        GeofenceTransitionsService.enqueueWork(
-                context!!,
-                intent!!
-        )
+        info("GeofenceBroadcastReceiverLogger", "onReceive() called, forwarding to service...")
+        GeofenceTransitionsService.enqueueWork(context!!, intent!!)
     }
 }

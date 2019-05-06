@@ -17,8 +17,8 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import kotlinx.android.synthetic.main.fragment_start.*
-import ubb.thesis.david.monumental.R
 import ubb.thesis.david.domain.entities.Session
+import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortSnack
@@ -27,7 +27,7 @@ import java.util.*
 
 class StartFragment : BaseFragment(), View.OnClickListener {
 
-    private var runningSession: ubb.thesis.david.domain.entities.Session? = null
+    private var runningSession: Session? = null
     private lateinit var viewModel: StartViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -94,24 +94,24 @@ class StartFragment : BaseFragment(), View.OnClickListener {
         }
 
         val locationSettingsRequest = LocationSettingsRequest.Builder()
-            .addLocationRequest(enableLocationRequest)
-            .setAlwaysShow(true)
-            .build()
+                .addLocationRequest(enableLocationRequest)
+                .setAlwaysShow(true)
+                .build()
 
         LocationServices.getSettingsClient(context!!)
-            .checkLocationSettings(locationSettingsRequest)
-            .apply {
-                addOnSuccessListener { onLocationEnabled(requestCode) }
-                addOnFailureListener(activity as Activity) { error ->
-                    if (error is ResolvableApiException) {
-                        try {
-                            error.startResolutionForResult(activity!!, requestCode)
-                        } catch (sendException: IntentSender.SendIntentException) {
-                            // Ignore this error as suggested in the documentation
+                .checkLocationSettings(locationSettingsRequest)
+                .apply {
+                    addOnSuccessListener { onLocationEnabled(requestCode) }
+                    addOnFailureListener(activity as Activity) { error ->
+                        if (error is ResolvableApiException) {
+                            try {
+                                error.startResolutionForResult(activity!!, requestCode)
+                            } catch (sendException: IntentSender.SendIntentException) {
+                                // Ignore this error as suggested in the documentation
+                            }
                         }
                     }
                 }
-            }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -135,11 +135,11 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     private fun setupSession() =
         Navigation.findNavController(view!!)
-            .navigate(StartFragmentDirections.actionSetupSession())
+                .navigate(StartFragmentDirections.actionSetupSession())
 
     private fun resumeSession() =
         Navigation.findNavController(view!!)
-            .navigate(StartFragmentDirections.actionResumeSession())
+                .navigate(StartFragmentDirections.actionResumeSession())
 
     private fun getTimeElapsedString(start: Date): String {
         val secondsFactor = 1000

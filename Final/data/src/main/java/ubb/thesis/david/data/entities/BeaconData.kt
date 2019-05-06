@@ -14,23 +14,21 @@ data class BeaconData(val id: String,
                       var userId: String = "",
                       var foundAt: Date? = null) {
     companion object {
-        fun fromEntity(entity: ubb.thesis.david.domain.entities.Landmark, userId: String): BeaconData =
-            BeaconData(
-                    id = entity.id,
-                    lat = entity.lat,
-                    lng = entity.lng,
-                    label = entity.label,
-                    userId = userId,
-                    foundAt = null
+        fun fromEntity(entity: Landmark, userId: String): BeaconData =
+            BeaconData(id = entity.id,
+                       lat = entity.lat,
+                       lng = entity.lng,
+                       label = entity.label,
+                       userId = userId,
+                       foundAt = null
             )
 
-        fun toEntity(beaconData: BeaconData): ubb.thesis.david.domain.entities.Landmark =
-            ubb.thesis.david.domain.entities.Landmark(
-                    id = beaconData.id,
-                    lat = beaconData.lat,
-                    lng = beaconData.lng,
-                    label = beaconData.label,
-                    photoPath = null
+        fun toEntity(beaconData: BeaconData): Landmark =
+            Landmark(id = beaconData.id,
+                     lat = beaconData.lat,
+                     lng = beaconData.lng,
+                     label = beaconData.label,
+                     photoPath = null
             )
     }
 }

@@ -108,9 +108,9 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
                 photoUrl?.let { url ->
                     image_header_profile.clipToOutline = true
                     Picasso.get()
-                        .load(url)
-                        .placeholder(R.drawable.ic_account_circle_white_24dp)
-                        .into(image_header_profile)
+                            .load(url)
+                            .placeholder(R.drawable.ic_account_circle_white_24dp)
+                            .into(image_header_profile)
                 } ?: run {
                     image_header_profile.setImageResource(R.drawable.ic_account_circle_white_24dp)
                 }
@@ -146,13 +146,13 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
     private fun navigateToLogin() {
         val fragmentView = nav_host_fragment.childFragmentManager.fragments[0].view
         val options = NavOptions.Builder()
-            .setPopUpTo(R.id.startDestination, true)
-            .setEnterAnim(R.anim.fade_in_bottom)
-            .setExitAnim(R.anim.nav_default_exit_anim)
-            .build()
+                .setPopUpTo(R.id.startDestination, true)
+                .setEnterAnim(R.anim.fade_in_bottom)
+                .setExitAnim(R.anim.nav_default_exit_anim)
+                .build()
         print("Am facut licenta")
         Navigation.findNavController(fragmentView!!)
-            .navigate(R.id.loginDestination, null, options)
+                .navigate(R.id.loginDestination, null, options)
     }
 
     override fun onConnected(p0: Bundle?) {
@@ -165,22 +165,22 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     override fun onConnectionFailed(p0: ConnectionResult) {
         debug(TAG_LOG,
-                                          "Failed to connect to the GoogleApiClient, cause: ${p0.errorMessage}")
+              "Failed to connect to the GoogleApiClient, cause: ${p0.errorMessage}")
     }
 
     private fun initializeGoogleApiClient(): GoogleApiClient =
         GoogleApiClient.Builder(this)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .addApi(LocationServices.API)
-            .build()
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build()
 
     private fun initializeGoogleSignInClient() =
         GoogleSignIn.getClient(this,
                                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                   .requestIdToken(getString(R.string.default_web_client_id))
-                                   .requestEmail()
-                                   .build())
+                                       .requestIdToken(getString(R.string.default_web_client_id))
+                                       .requestEmail()
+                                       .build())
 
     private fun signOut() {
         getAuth().signOut()

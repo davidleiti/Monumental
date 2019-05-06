@@ -2,6 +2,7 @@ package ubb.thesis.david.data
 
 import io.reactivex.Completable
 import io.reactivex.Maybe
+import ubb.thesis.david.data.cache.SessionDatabase
 import ubb.thesis.david.data.entities.BeaconData
 import ubb.thesis.david.data.entities.SessionData
 import ubb.thesis.david.data.utils.debug
@@ -11,7 +12,7 @@ import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.entities.Session
 import java.util.*
 
-class SessionRepository private constructor(private val database: ubb.thesis.david.data.cache.SessionDatabase) :
+class SessionRepository private constructor(private val database: SessionDatabase) :
     SessionManager {
 
     override fun setupSession(userId: String, landmarks: List<Landmark>): Completable =
@@ -84,7 +85,7 @@ class SessionRepository private constructor(private val database: ubb.thesis.dav
 
         private const val TAG_LOG = "SessionManagerLogger"
 
-        fun getInstance(database: ubb.thesis.david.data.cache.SessionDatabase) =
+        fun getInstance(database: SessionDatabase) =
             sInstance ?: synchronized(this) {
                 sInstance
                     ?: SessionRepository(database)

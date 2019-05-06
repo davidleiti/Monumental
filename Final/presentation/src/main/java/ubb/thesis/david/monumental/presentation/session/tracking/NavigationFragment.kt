@@ -22,7 +22,7 @@ import ubb.thesis.david.monumental.utils.shortSnack
 
 class NavigationFragment : BaseFragment(), OnMapReadyCallback {
 
-    private var landmarks: List<ubb.thesis.david.domain.entities.Landmark>? = null
+    private var landmarks: List<Landmark>? = null
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private lateinit var viewModel: SessionViewModel
