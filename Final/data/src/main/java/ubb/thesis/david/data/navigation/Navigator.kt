@@ -1,4 +1,4 @@
-package ubb.thesis.david.navigationdemo
+package ubb.thesis.david.data.navigation
 
 import android.content.Context
 import android.hardware.Sensor

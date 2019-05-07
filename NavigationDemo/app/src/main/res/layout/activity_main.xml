@@ -35,20 +35,4 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/arrow_orientation" />
 
-    <Button
-            android:id="@+id/seek_target"
-            style="@android:style/Widget.Material.Button.Toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:text="@string/seek_target"
-            android:enabled="false"
-            app:layout_constraintTop_toBottomOf="@+id/arrow_orientation"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
