@@ -13,7 +13,6 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import ubb.thesis.david.monumental.R
-import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.data.utils.debug
@@ -52,7 +51,7 @@ class NavigationFragment : BaseFragment(), OnMapReadyCallback {
         sharedPrefs?.let {
             for (landmark in landmarks!!) {
                 if (!sharedPrefs.contains(landmark.id))
-                    getGeofencingClient().setupBeacon(landmark.id, landmark.lat, landmark.lng, getUserId())
+                    getBeaconManager().setupBeacon(landmark.id, landmark.lat, landmark.lng, getUserId())
             }
         }
     }

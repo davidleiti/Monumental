@@ -42,7 +42,7 @@ class StartFragment : BaseFragment(), View.OnClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = getViewModel { StartViewModel(getGeofencingClient()) }
+        viewModel = getViewModel { StartViewModel(getBeaconManager()) }
         observeData()
         checkRunningSession()
     }

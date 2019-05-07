@@ -3,15 +3,15 @@ package ubb.thesis.david.monumental.presentation.session.setup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.subjects.BehaviorSubject
+import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.CreateSession
 import ubb.thesis.david.domain.usecases.SearchLandmarks
-import ubb.thesis.david.monumental.GeofencingClientAdapter
 import ubb.thesis.david.monumental.Injection
 import ubb.thesis.david.monumental.presentation.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.presentation.common.BaseViewModel
 
-class ResultViewModel(private val geofencingClient: GeofencingClientAdapter) : BaseViewModel() {
+class ResultViewModel(private val beaconManager: BeaconManager) : BaseViewModel() {
 
     private val landmarkApi = Injection.provideLandmarkApi()
     private val sessionManager = Injection.provideSessionManager()
@@ -38,7 +38,7 @@ class ResultViewModel(private val geofencingClient: GeofencingClientAdapter) : B
 
     fun setupSession(userId: String, landmarks: List<Landmark>) {
         val params = CreateSession.RequestValues(userId, landmarks)
-        CreateSession(params, sessionManager, geofencingClient,
+        CreateSession(params, sessionManager, beaconManager,
                       AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ sessionCreatedObservable.onNext(Unit) },

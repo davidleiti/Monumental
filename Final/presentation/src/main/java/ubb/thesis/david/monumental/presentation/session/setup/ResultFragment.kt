@@ -27,7 +27,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = getViewModel {
-            ResultViewModel(getGeofencingClient())
+            ResultViewModel(getBeaconManager())
         }
     }
 

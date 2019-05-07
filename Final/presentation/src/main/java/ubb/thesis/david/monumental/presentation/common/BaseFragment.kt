@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.FirebaseAuth
+import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.monumental.GeofencingClientAdapter
 
 abstract class BaseFragment : Fragment() {
@@ -25,5 +26,5 @@ abstract class BaseFragment : Fragment() {
     protected fun getAuth(): FirebaseAuth = (activity as ClientProvider).getAuth()
     protected fun getGoogleApiClient(): GoogleApiClient = (activity as ClientProvider).getApiClient()
     protected fun getGoogleSignInClient(): GoogleSignInClient = (activity as ClientProvider).getSignInClient()
-    protected fun getGeofencingClient(): GeofencingClientAdapter = (activity as ClientProvider).getGeofencingClient()
+    protected fun getBeaconManager(): BeaconManager = (activity as ClientProvider).getGeofencingClient()
 }
