@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.location.Location
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -38,35 +39,37 @@ abstract class LocationTrackerFragment : BaseFragment() {
         updateCallback = null
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            RC_LOCATION_PERMISSION -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    requestEnableLocation()
-                } else {
-                    requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                                       RC_LOCATION_PERMISSION)
-                }
-            }
-            RC_ENABLE_LOCATION -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    onLocationPrepared()
-                } else {
-                    requestEnableLocation()
-                }
-            }
-            else -> {
-                super.onActivityResult(requestCode, resultCode, data)
-            }
-        }
-    }
-
     private fun prepareLocation() {
         if (context!!.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             requestEnableLocation()
         } else {
             requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
                                RC_LOCATION_PERMISSION)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == RC_LOCATION_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                requestEnableLocation()
+            } else {
+                requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                                   RC_LOCATION_PERMISSION)
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == RC_ENABLE_LOCATION) {
+            if (resultCode == Activity.RESULT_OK) {
+                onLocationPrepared()
+            } else {
+                requestEnableLocation()
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 

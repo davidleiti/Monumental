@@ -1,10 +1,6 @@
 package ubb.thesis.david.monumental.presentation.session.setup
 
 
-import android.app.Activity
-import android.app.Activity.RESULT_OK
-import android.content.Intent
-import android.content.IntentSender
 import android.os.Bundle
 import android.transition.TransitionManager
 import android.view.LayoutInflater
@@ -12,16 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
 import kotlinx.android.synthetic.main.fragment_start.*
 import ubb.thesis.david.domain.entities.Session
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.presentation.common.BaseFragment
 import ubb.thesis.david.monumental.utils.getViewModel
-import ubb.thesis.david.monumental.utils.shortSnack
 import java.util.*
 
 
@@ -49,8 +40,15 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.button_start_new -> requestGpsSettings(RC_SETUP_AFTER)
-            R.id.button_resume -> requestGpsSettings(RC_RESUME_AFTER)
+            R.id.button_start_new -> {
+                setupSession()
+                runningSession?.let {
+                    viewModel.wipeSessionData(getUserId())
+                }
+            }
+            R.id.button_resume -> {
+                resumeSession()
+            }
         }
     }
 
@@ -84,53 +82,6 @@ class StartFragment : BaseFragment(), View.OnClickListener {
         label_continue.visibility = View.GONE
         button_resume.visibility = View.GONE
         button_start_new.setText(R.string.start)
-    }
-
-    private fun requestGpsSettings(requestCode: Int) {
-        val enableLocationRequest: LocationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval = 30 * 1000
-            fastestInterval = 5 * 1000
-        }
-
-        val locationSettingsRequest = LocationSettingsRequest.Builder()
-                .addLocationRequest(enableLocationRequest)
-                .setAlwaysShow(true)
-                .build()
-
-        LocationServices.getSettingsClient(context!!)
-                .checkLocationSettings(locationSettingsRequest)
-                .apply {
-                    addOnSuccessListener { onLocationEnabled(requestCode) }
-                    addOnFailureListener(activity as Activity) { error ->
-                        if (error is ResolvableApiException) {
-                            try {
-                                error.startResolutionForResult(activity!!, requestCode)
-                            } catch (sendException: IntentSender.SendIntentException) {
-                                // Ignore this error as suggested in the documentation
-                            }
-                        }
-                    }
-                }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK) {
-            onLocationEnabled(requestCode)
-        } else {
-            view!!.shortSnack(getString(R.string.warning_gps_required))
-        }
-    }
-
-    private fun onLocationEnabled(requestCode: Int) {
-        if (requestCode == RC_RESUME_AFTER) {
-            resumeSession()
-        } else {
-            setupSession()
-            runningSession?.let {
-                viewModel.wipeSessionData(getUserId())
-            }
-        }
     }
 
     private fun setupSession() =
@@ -170,7 +121,5 @@ class StartFragment : BaseFragment(), View.OnClickListener {
 
     companion object {
         private const val TAG_LOG = "SetupLogger"
-        private const val RC_RESUME_AFTER = 10
-        private const val RC_SETUP_AFTER = 20
     }
 }

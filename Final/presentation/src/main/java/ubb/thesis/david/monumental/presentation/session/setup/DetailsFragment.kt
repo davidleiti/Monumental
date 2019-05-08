@@ -11,31 +11,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.SeekBar
-import androidx.core.content.ContextCompat.getColor
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_details.*
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.monumental.R
+import ubb.thesis.david.monumental.presentation.common.LocationTrackerFragment
 import ubb.thesis.david.monumental.utils.*
 
-class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, OnSuccessListener<Location> {
+class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapReadyCallback,
+    OnSuccessListener<Location> {
 
     private var locationCircle: Circle? = null
+
     private var lastLocation: LatLng? = null
-    private var permissionsSnack: Snackbar? = null
-
     private lateinit var mapView: MapView
-    private lateinit var googleMap: GoogleMap
 
+    private lateinit var googleMap: GoogleMap
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_details, container, false)
@@ -73,6 +71,15 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
         })
     }
 
+    override fun usesNavigationDrawer(): Boolean = true
+
+    override fun createLocationRequest(): LocationRequest =
+        LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_LOW_POWER
+            interval = 15 * 1000
+            fastestInterval = 15 * 1000
+        }
+
     override fun onClick(v: View) {
         when (v.id) {
             R.id.button_decrease -> decreaseLimit()
@@ -90,30 +97,21 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
 
         googleMap = map
         setupMapUi()
-        enableMyLocation()
+        initLocation()
     }
 
-    private fun enableMyLocation() {
+    private fun initLocation() {
         if (context!!.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             with(googleMap) {
                 isMyLocationEnabled = true
                 setOnMyLocationButtonClickListener {
-                    requestLocation()
+                    requestLastLocation(this@DetailsFragment)
                     false
                 }
             }
-            requestLocation()
+            requestLastLocation(this@DetailsFragment)
         } else {
             button_next.visibility = View.GONE
-            requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
-        }
-    }
-
-    private fun requestLocation() {
-        if (context!!.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            LocationServices.getFusedLocationProviderClient(activity!!).lastLocation
-                .addOnSuccessListener(this)
-        } else {
             requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
         }
     }
@@ -123,25 +121,20 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
             lastLocation = LatLng(location.latitude, location.longitude)
             updateMap()
         } ?: run {
-            lastLocation ?: run { requestLocation() }
+            lastLocation ?: run { requestLastLocation(this) }
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (requestCode) {
-            RC_LOCATION_REQUEST -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    enableMyLocation()
-                    button_next.fadeIn()
-                } else {
-                    permissionsSnack = Snackbar.make(mapView, "GPS permissions are required for localization!",
-                                                     Snackbar.LENGTH_INDEFINITE)
-                        .setAction(context!!.getString(R.string.grant)) {
-                            requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
-                        }
-                        .setActionTextColor(getColor(context!!, R.color.accent)).also { it.show() }
-                }
+        if (requestCode == RC_LOCATION_REQUEST) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initLocation()
+                button_next.fadeIn()
+            } else {
+                requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
             }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
 
@@ -151,10 +144,10 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
 
         locationCircle?.remove()
         locationCircle = googleMap.addCircle(CircleOptions()
-                                                 .center(center)
-                                                 .radius(radius)
-                                                 .fillColor(context!!.getColor(R.color.primary_opaque))
-                                                 .strokeColor(context!!.getColor(R.color.primary)))
+                                                     .center(center)
+                                                     .radius(radius)
+                                                     .fillColor(context!!.getColor(R.color.primary_opaque))
+                                                     .strokeColor(context!!.getColor(R.color.primary)))
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(center, zoomValue()))
     }
@@ -233,7 +226,6 @@ class DetailsFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, On
     override fun onStop() {
         super.onStop()
         mapView.onStop()
-        permissionsSnack?.dismiss()
     }
 
     override fun onDestroy() {
