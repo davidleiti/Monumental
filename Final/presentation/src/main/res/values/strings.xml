@@ -99,4 +99,5 @@
     <string name="title_notification">Heads up!</string>
     <string name="content_notification">Found a landmark near you. Click here to take a photo…</string>
     <string name="default_web_client_id">4585234938-6dpf3tnfn8v6m2ma21ag30p31jf8n0mu.apps.googleusercontent.com</string>
+    <string name="nav_arrow">Navigation Arrow</string>
 </resources>
