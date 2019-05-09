@@ -35,9 +35,11 @@ abstract class LocationTrackerFragment : BaseFragment() {
     }
 
     protected fun disableLocationUpdates() {
-        updateCallback ?: LocationServices.getFusedLocationProviderClient(activity!!)
-                .removeLocationUpdates(updateCallback)
-        updateCallback = null
+        updateCallback?.let {
+            LocationServices.getFusedLocationProviderClient(activity!!)
+                    .removeLocationUpdates(updateCallback)
+            updateCallback = null
+        }
     }
 
     private fun prepareLocation() {
