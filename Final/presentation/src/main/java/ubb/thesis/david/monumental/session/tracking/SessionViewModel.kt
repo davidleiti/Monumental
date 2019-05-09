@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation.session.tracking
+package ubb.thesis.david.monumental.session.tracking
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,8 +6,8 @@ import ubb.thesis.david.domain.SessionManager
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.GetSessionLandmarks
 import ubb.thesis.david.monumental.Injection
-import ubb.thesis.david.monumental.presentation.common.AsyncTransformerFactory
-import ubb.thesis.david.monumental.presentation.common.BaseViewModel
+import ubb.thesis.david.monumental.common.AsyncTransformerFactory
+import ubb.thesis.david.monumental.common.BaseViewModel
 
 class SessionViewModel : BaseViewModel() {
 

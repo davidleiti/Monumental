@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation.common
+package ubb.thesis.david.monumental.common
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,7 +6,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.FirebaseAuth
 import ubb.thesis.david.domain.BeaconManager
-import ubb.thesis.david.monumental.GeofencingClientAdapter
 
 abstract class BaseFragment : Fragment() {
 

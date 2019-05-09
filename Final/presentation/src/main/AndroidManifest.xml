@@ -19,7 +19,7 @@
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
         <activity
-                android:name=".presentation.HostActivity"
+                android:name=".HostActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:configChanges="orientation|keyboardHidden"
                 android:screenOrientation="portrait">

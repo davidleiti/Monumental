@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation.session.setup
+package ubb.thesis.david.monumental.session.setup
 
 
 import android.os.Bundle
@@ -14,7 +14,7 @@ import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.presentation.common.BaseFragment
+import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortToast
 
@@ -31,8 +31,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_results, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

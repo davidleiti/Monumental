@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation.session.setup
+package ubb.thesis.david.monumental.session.setup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,8 +8,8 @@ import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.CreateSession
 import ubb.thesis.david.domain.usecases.SearchLandmarks
 import ubb.thesis.david.monumental.Injection
-import ubb.thesis.david.monumental.presentation.common.AsyncTransformerFactory
-import ubb.thesis.david.monumental.presentation.common.BaseViewModel
+import ubb.thesis.david.monumental.common.AsyncTransformerFactory
+import ubb.thesis.david.monumental.common.BaseViewModel
 
 class ResultViewModel(private val beaconManager: BeaconManager) : BaseViewModel() {
 
@@ -28,8 +28,7 @@ class ResultViewModel(private val beaconManager: BeaconManager) : BaseViewModel(
 
     fun searchLandmarks(location: String, radius: Int, limit: Int, categories: String) {
         val params = SearchLandmarks.RequestValues(location, radius, categories, limit)
-        SearchLandmarks(params, landmarkApi,
-                        AsyncTransformerFactory.create<List<Landmark>>())
+        SearchLandmarks(params, landmarkApi, AsyncTransformerFactory.create<List<Landmark>>())
                 .execute()
                 .subscribe({ landmarksObservable.value = it },
                            { errorsObservable.value = it.message })
@@ -38,8 +37,7 @@ class ResultViewModel(private val beaconManager: BeaconManager) : BaseViewModel(
 
     fun setupSession(userId: String, landmarks: List<Landmark>) {
         val params = CreateSession.RequestValues(userId, landmarks)
-        CreateSession(params, sessionManager, beaconManager,
-                      AsyncTransformerFactory.create())
+        CreateSession(params, sessionManager, beaconManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ sessionCreatedObservable.onNext(Unit) },
                            { errorsObservable.value = it.message })

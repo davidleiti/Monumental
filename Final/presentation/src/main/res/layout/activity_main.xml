@@ -12,7 +12,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".presentation.HostActivity">
+            tools:context=".HostActivity">
 
         <FrameLayout
                 android:id="@+id/content_root"

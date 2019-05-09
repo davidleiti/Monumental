@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation.common
+package ubb.thesis.david.monumental.common
 
 interface UiActions {
     fun disableUserNavigation()

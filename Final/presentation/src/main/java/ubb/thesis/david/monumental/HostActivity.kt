@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation
+package ubb.thesis.david.monumental
 
 import android.content.Intent
 import android.os.Bundle
@@ -23,14 +23,12 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_home.view.*
 import kotlinx.android.synthetic.main.progress_overlay.*
-import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.GeofencingClientAdapter
-import ubb.thesis.david.monumental.presentation.common.ClientProvider
-import ubb.thesis.david.monumental.presentation.common.UiActions
 import ubb.thesis.david.data.utils.debug
+import ubb.thesis.david.data.utils.info
+import ubb.thesis.david.monumental.common.ClientProvider
+import ubb.thesis.david.monumental.common.UiActions
 import ubb.thesis.david.monumental.utils.fadeIn
 import ubb.thesis.david.monumental.utils.fadeOut
-import ubb.thesis.david.data.utils.info
 
 class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
     NavigationView.OnNavigationItemSelectedListener,
@@ -41,9 +39,7 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
     private val googleApiClient: GoogleApiClient by lazy { initializeGoogleApiClient() }
     private val googleSignInClient: GoogleSignInClient by lazy { initializeGoogleSignInClient() }
     private val geofencingClientAdapter: GeofencingClientAdapter by lazy {
-        GeofencingClientAdapter(
-                this
-        )
+        GeofencingClientAdapter(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,22 +147,17 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
                 .setExitAnim(R.anim.nav_default_exit_anim)
                 .build()
         print("Am facut licenta")
-        Navigation.findNavController(fragmentView!!)
-                .navigate(R.id.loginDestination, null, options)
+        Navigation.findNavController(fragmentView!!).navigate(R.id.loginDestination, null, options)
     }
 
-    override fun onConnected(p0: Bundle?) {
+    override fun onConnected(p0: Bundle?) =
         info(TAG_LOG, "GoogleApiClient connection successful!")
-    }
 
-    override fun onConnectionSuspended(p0: Int) {
+    override fun onConnectionSuspended(p0: Int) =
         debug(TAG_LOG, "GoogleApiClient connection suspended!")
-    }
 
-    override fun onConnectionFailed(p0: ConnectionResult) {
-        debug(TAG_LOG,
-              "Failed to connect to the GoogleApiClient, cause: ${p0.errorMessage}")
-    }
+    override fun onConnectionFailed(p0: ConnectionResult) =
+        debug(TAG_LOG, "Failed to connect to the GoogleApiClient, cause: ${p0.errorMessage}")
 
     private fun initializeGoogleApiClient(): GoogleApiClient =
         GoogleApiClient.Builder(this)

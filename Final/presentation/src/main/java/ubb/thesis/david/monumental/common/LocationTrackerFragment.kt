@@ -1,5 +1,6 @@
-package ubb.thesis.david.monumental.presentation.common
+package ubb.thesis.david.monumental.common
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -40,11 +41,10 @@ abstract class LocationTrackerFragment : BaseFragment() {
     }
 
     private fun prepareLocation() {
-        if (context!!.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (context!!.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             requestEnableLocation()
         } else {
-            requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                               RC_LOCATION_PERMISSION)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), RC_LOCATION_PERMISSION)
         }
     }
 
@@ -53,8 +53,7 @@ abstract class LocationTrackerFragment : BaseFragment() {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 requestEnableLocation()
             } else {
-                requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                                   RC_LOCATION_PERMISSION)
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), RC_LOCATION_PERMISSION)
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)

@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation.session.setup
+package ubb.thesis.david.monumental.session.setup
 
 
 import android.os.Bundle
@@ -11,7 +11,7 @@ import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_start.*
 import ubb.thesis.david.domain.entities.Session
 import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.presentation.common.BaseFragment
+import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.utils.getViewModel
 import java.util.*
 
@@ -85,12 +85,10 @@ class StartFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun setupSession() =
-        Navigation.findNavController(view!!)
-                .navigate(StartFragmentDirections.actionSetupSession())
+        Navigation.findNavController(view!!).navigate(StartFragmentDirections.actionSetupSession())
 
     private fun resumeSession() =
-        Navigation.findNavController(view!!)
-                .navigate(StartFragmentDirections.actionResumeSession())
+        Navigation.findNavController(view!!).navigate(StartFragmentDirections.actionResumeSession())
 
     private fun getTimeElapsedString(start: Date): String {
         val secondsFactor = 1000

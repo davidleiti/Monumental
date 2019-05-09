@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation.session.setup
+package ubb.thesis.david.monumental.session.setup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,8 +7,8 @@ import ubb.thesis.david.domain.entities.Session
 import ubb.thesis.david.domain.usecases.GetSession
 import ubb.thesis.david.domain.usecases.WipeSession
 import ubb.thesis.david.monumental.Injection
-import ubb.thesis.david.monumental.presentation.common.AsyncTransformerFactory
-import ubb.thesis.david.monumental.presentation.common.BaseViewModel
+import ubb.thesis.david.monumental.common.AsyncTransformerFactory
+import ubb.thesis.david.monumental.common.BaseViewModel
 
 class StartViewModel(private val beaconManager: BeaconManager) : BaseViewModel() {
 
@@ -18,8 +18,7 @@ class StartViewModel(private val beaconManager: BeaconManager) : BaseViewModel()
     fun getRunningSessionObservable(): LiveData<Session?> = runningSessionObservable
 
     fun queryRunningSession(userId: String) {
-        GetSession(userId, sessionManager,
-                   AsyncTransformerFactory.create<Session>())
+        GetSession(userId, sessionManager, AsyncTransformerFactory.create<Session>())
                 .execute()
                 .subscribe({ session -> runningSessionObservable.value = session },
                            { runningSessionObservable.value = null },
@@ -28,8 +27,7 @@ class StartViewModel(private val beaconManager: BeaconManager) : BaseViewModel()
     }
 
     fun wipeSessionData(userId: String) {
-        WipeSession(userId, sessionManager, beaconManager,
-                    AsyncTransformerFactory.create())
+        WipeSession(userId, sessionManager, beaconManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe()
                 .also { addDisposable(it) }

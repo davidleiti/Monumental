@@ -1,6 +1,7 @@
-package ubb.thesis.david.monumental.presentation.session.setup
+package ubb.thesis.david.monumental.session.setup
 
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
@@ -12,30 +13,30 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.SeekBar
 import androidx.navigation.Navigation
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.maps.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.fragment_details.*
-import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.presentation.common.LocationTrackerFragment
+import ubb.thesis.david.monumental.common.LocationTrackerFragment
 import ubb.thesis.david.monumental.utils.*
 
 class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapReadyCallback,
     OnSuccessListener<Location> {
 
     private var locationCircle: Circle? = null
-
     private var lastLocation: LatLng? = null
-    private lateinit var mapView: MapView
 
+    private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_details, container, false)
 
         mapView = root.findViewById(R.id.mapView)
@@ -89,19 +90,13 @@ class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapRe
     }
 
     override fun onMapReady(map: GoogleMap) {
-        try {
-            MapsInitializer.initialize(context)
-        } catch (ex: GooglePlayServicesNotAvailableException) {
-            debug(TAG_LOG, "Failed to access google play services, cause: ${ex.message}")
-        }
-
         googleMap = map
         setupMapUi()
         initLocation()
     }
 
     private fun initLocation() {
-        if (context!!.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (context!!.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             with(googleMap) {
                 isMyLocationEnabled = true
                 setOnMyLocationButtonClickListener {
@@ -109,10 +104,10 @@ class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapRe
                     false
                 }
             }
-            requestLastLocation(this@DetailsFragment)
+            requestLastLocation(this)
         } else {
             button_next.visibility = View.GONE
-            requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
+            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
         }
     }
 
@@ -131,7 +126,7 @@ class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapRe
                 initLocation()
                 button_next.fadeIn()
             } else {
-                requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
+                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, RC_LOCATION_REQUEST)
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -158,7 +153,7 @@ class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapRe
     }
 
     /**
-     *  Enables the "My location button and repositions it the bottom right corner of the view
+     *  Enables the "My location" button and repositions it in the bottom right corner of the view
      */
     private fun setupMapUi() {
         googleMap.uiSettings.isCompassEnabled = false

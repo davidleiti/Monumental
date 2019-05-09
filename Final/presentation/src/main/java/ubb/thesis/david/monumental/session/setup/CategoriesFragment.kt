@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation.session.setup
+package ubb.thesis.david.monumental.session.setup
 
 
 import android.content.Context
@@ -22,8 +22,7 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
 
     private lateinit var listAdapter: CategoriesAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_categories, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,36 +68,44 @@ class CategoriesFragment : Fragment(), View.OnClickListener {
                 sb.append("${cat.id},")
 
         val categoriesArg = sb.substring(0, sb.length - 1)
-        val receivedArgs = CategoriesFragmentArgs.fromBundle(arguments!!)
+        val receivedArgs =
+            CategoriesFragmentArgs.fromBundle(arguments!!)
 
-        val action = CategoriesFragmentDirections.actionAdvance(
-                receivedArgs.location).apply {
-            categories = categoriesArg
-            limit = receivedArgs.limit
-            radius = receivedArgs.radius
-        }
+        val action =
+            CategoriesFragmentDirections.actionAdvance(receivedArgs.location).apply {
+                categories = categoriesArg
+                limit = receivedArgs.limit
+                radius = receivedArgs.radius
+            }
 
         Navigation.findNavController(view!!).navigate(action)
     }
 
     private fun getPredefinedCategories(): Array<Category> = arrayOf(
             Category(getString(R.string.cat_monument),
-                     R.drawable.cat_government_monument_bg_88, FoursquareApi.ID_MONUMENT),
+                     R.drawable.cat_government_monument_bg_88,
+                     FoursquareApi.ID_MONUMENT),
             Category(getString(R.string.cat_public_art),
-                     R.drawable.cat_sculpture_bg_88, FoursquareApi.ID_PUBLIC_ART),
+                     R.drawable.cat_sculpture_bg_88,
+                     FoursquareApi.ID_PUBLIC_ART),
             Category(getString(R.string.cat_castle),
-                     R.drawable.cat_castle_bg_88, FoursquareApi.ID_CASTLE),
+                     R.drawable.cat_castle_bg_88,
+                     FoursquareApi.ID_CASTLE),
             Category(
                     getString(R.string.cat_historic_site), R.drawable.cat_historicsite_bg_88,
                     FoursquareApi.ID_HISTORIC_SITE),
             Category(getString(R.string.cat_museum),
-                     R.drawable.cat_museum_bg_88, FoursquareApi.ID_MUSEUM),
+                     R.drawable.cat_museum_bg_88,
+                     FoursquareApi.ID_MUSEUM),
             Category(getString(R.string.cat_opera_house),
-                     R.drawable.cat_performingarts_operahouse_bg_88, FoursquareApi.ID_OPERA_HOUSE),
+                     R.drawable.cat_performingarts_operahouse_bg_88,
+                     FoursquareApi.ID_OPERA_HOUSE),
             Category(getString(R.string.cat_theatre),
-                     R.drawable.cat_performingarts_theater_bg_88, FoursquareApi.ID_THEATRE),
+                     R.drawable.cat_performingarts_theater_bg_88,
+                     FoursquareApi.ID_THEATRE),
             Category(getString(R.string.cat_stadium),
-                     R.drawable.cat_stadium_bg_88, FoursquareApi.ID_STADIUM)
+                     R.drawable.cat_stadium_bg_88,
+                     FoursquareApi.ID_STADIUM)
     )
 
     private data class Category(val name: String, val iconResource: Int, val id: String, var checked: Boolean = false)

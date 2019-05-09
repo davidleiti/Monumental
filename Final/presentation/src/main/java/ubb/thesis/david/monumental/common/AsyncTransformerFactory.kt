@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation.common
+package ubb.thesis.david.monumental.common
 
 import io.reactivex.CompletableTransformer
 import io.reactivex.Observable
@@ -7,10 +7,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ubb.thesis.david.domain.common.Transformer
 
-abstract class AsyncTransformerFactory {
-
+sealed class AsyncTransformerFactory {
     companion object {
-
         fun create(): CompletableTransformer =
             CompletableTransformer { completable ->
                 completable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
@@ -21,7 +19,5 @@ abstract class AsyncTransformerFactory {
                 override fun apply(upstream: Observable<T>): ObservableSource<T> =
                     upstream.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             }
-
     }
-
 }

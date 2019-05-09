@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.presentation
+package ubb.thesis.david.monumental
 
 import android.content.Intent
 import android.os.Bundle
@@ -23,9 +23,11 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.fragment_login.*
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
-import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.presentation.common.BaseFragment
-import ubb.thesis.david.monumental.utils.*
+import ubb.thesis.david.monumental.common.BaseFragment
+import ubb.thesis.david.monumental.utils.clearFocus
+import ubb.thesis.david.monumental.utils.hideSoftKeyboard
+import ubb.thesis.david.monumental.utils.longToast
+import ubb.thesis.david.monumental.utils.shortToast
 
 class LoginFragment : BaseFragment(), View.OnClickListener {
 
@@ -40,7 +42,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupUi()
+        initUi()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -56,7 +58,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     override fun usesNavigationDrawer(): Boolean = false
 
-    private fun setupUi() {
+    private fun initUi() {
         button_sign_in.setOnClickListener(this)
         button_sign_in_google.setOnClickListener(this)
         button_facebook_custom.setOnClickListener(this)
@@ -128,22 +130,21 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == RC_GOOGLE_AUTH) {    // Returned from Google authentication activity
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
                 val credentials = GoogleAuthProvider.getCredential(account?.idToken, null)
                 info(TAG_LOG,
-                                                 "Google authentication has been successful, retrieved account: $account")
+                     "Google authentication has been successful, retrieved account: $account")
 
                 firebaseAuth(credentials, "Google")
             } catch (e: ApiException) {
-                debug(TAG_LOG, "Google authentication has failed, cause: ${e.message}")
+                debug(TAG_LOG, "Google authentication has failed, cause: $e")
                 context!!.longToast(getString(R.string.warning_sign_in_provider))
             }
         } else {    // Returned from Facebook authentication, propagate result up to the CallbackManager's listener
+            super.onActivityResult(requestCode, resultCode, data)
             callbackManager.onActivityResult(requestCode, resultCode, data)
         }
     }
@@ -153,18 +154,17 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
             activity!!.hideSoftKeyboard()
             showLoading()
             getAuth().signInWithEmailAndPassword(field_email.text.toString(), field_password.text.toString())
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        info(TAG_LOG,
-                                                         "Firebase authentication with email/password has been successful.")
-                        finishSignIn()
-                    } else {
-                        debug(TAG_LOG,
-                                                          "Firebase authentication with email/password has failed, issue: ${task.exception?.message}")
-                        context!!.longToast(getString(R.string.warning_sign_in_email))
-                        hideLoading()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            info(TAG_LOG, "Firebase authentication with email/password has been successful.")
+                            finishSignIn()
+                        } else {
+                            debug(TAG_LOG, "Firebase authentication with email/password has failed," +
+                                    "issue: ${task.exception?.message}")
+                            context!!.longToast(getString(R.string.warning_sign_in_email))
+                            hideLoading()
+                        }
                     }
-                }
         }
     }
 
@@ -173,11 +173,11 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
         getAuth().signInWithCredential(credentials).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 info(TAG_LOG,
-                                                 "Firebase authentication via provider $provider was successful...closing activity.")
+                     "Firebase authentication via provider $provider was successful...closing activity.")
                 finishSignIn()
             } else {
                 debug(TAG_LOG,
-                                                  "Firebase authentication with via provider $provider has failed, issue: ${task.exception?.message}")
+                      "Firebase authentication with via provider $provider has failed, issue: ${task.exception?.message}")
                 context!!.longToast(getString(R.string.warning_sign_in_email))
                 hideLoading()
             }

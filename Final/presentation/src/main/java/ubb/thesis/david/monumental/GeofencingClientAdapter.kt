@@ -1,5 +1,6 @@
 package ubb.thesis.david.monumental
 
+import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -25,18 +26,13 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
         val storage = context.getSharedPreferences(collectionId, Context.MODE_PRIVATE)
 
         buildGeofence(id, lat, lng)?.let { geofence ->
-            if (context.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (context.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 client.addGeofences(buildGeofencingRequest(geofence), transitionTriggerIntent)
                         .addOnSuccessListener {
                             info(TAG_LOG, "Created and registered geofence $id")
-                            storage.edit {
-                                putBoolean(id, true)
-                            }
+                            storage.edit { putBoolean(id, true) }
                         }
-                        .addOnFailureListener {
-                            debug(
-                                    TAG_LOG, "Failed to create geofence $id, cause: $it")
-                        }
+                        .addOnFailureListener { debug(TAG_LOG, "Failed to create geofence $id, cause: $it") }
             }
         }
     }
@@ -47,15 +43,8 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
             for (entry in storage.all) {
                 remove(entry.key)
                 removeGeofence(entry.key,
-                               onSuccess = {
-                                   info(
-                                           TAG_LOG, "Removed geofence ${entry.key}")
-                               },
-                               onFailure = {
-                                   debug(
-                                           TAG_LOG, "Failed to remove geofence ${entry.key}")
-                               }
-                )
+                               onSuccess = { info(TAG_LOG, "Removed geofence ${entry.key}") },
+                               onFailure = { debug(TAG_LOG, "Failed to remove geofence ${entry.key}") })
             }
             apply()
         }
@@ -76,9 +65,7 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
         Geofence.Builder()
                 .setRequestId(id)
                 .setLoiteringDelay(10)
-                .setCircularRegion(lat, lng,
-                                   DEFAULT_RADIUS
-                )
+                .setCircularRegion(lat, lng, DEFAULT_RADIUS)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_DWELL)
                 .build()

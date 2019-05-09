@@ -5,7 +5,7 @@
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
                                                    android:orientation="vertical"
-                                                   tools:context=".presentation.session.setup.CategoriesFragment">
+                                                   tools:context=".session.setup.CategoriesFragment">
 
     <TextView
             android:id="@+id/textView5"
@@ -36,7 +36,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-    <ubb.thesis.david.monumental.presentation.common.FlatButton
+    <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_select_all"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-    <ubb.thesis.david.monumental.presentation.common.FlatButton
+    <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

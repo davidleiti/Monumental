@@ -1,7 +1,6 @@
-package ubb.thesis.david.monumental.presentation.session.tracking
+package ubb.thesis.david.monumental.session.tracking
 
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Bundle
@@ -14,14 +13,13 @@ import androidx.lifecycle.Observer
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.fragment_navigation.*
 import ubb.thesis.david.data.navigation.FusedNavigator
 import ubb.thesis.david.data.navigation.Navigator
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.presentation.common.LocationTrackerFragment
+import ubb.thesis.david.monumental.common.LocationTrackerFragment
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortSnack
 
@@ -37,8 +35,7 @@ class NavigationFragment : LocationTrackerFragment() {
 
     override fun usesNavigationDrawer(): Boolean = true
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_navigation, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

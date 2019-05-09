@@ -6,7 +6,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical"
               android:weightSum="2"
-              tools:context=".presentation.session.setup.DetailsFragment">
+              tools:context=".session.setup.DetailsFragment">
 
     <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"
@@ -139,7 +139,7 @@
 
         </LinearLayout>
 
-        <ubb.thesis.david.monumental.presentation.common.FlatButton
+        <ubb.thesis.david.monumental.common.FlatButton
                 android:id="@+id/button_next"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

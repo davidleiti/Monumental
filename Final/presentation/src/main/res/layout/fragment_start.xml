@@ -5,7 +5,7 @@
                                                    android:id="@+id/content_root"
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
-                                                   tools:context=".presentation.session.setup.StartFragment">
+                                                   tools:context=".session.setup.StartFragment">
 
     <ImageView
             android:id="@+id/header_start"
@@ -58,7 +58,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/button_resume" />
 
-    <ubb.thesis.david.monumental.presentation.common.FlatButton
+    <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_start_new"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-    <ubb.thesis.david.monumental.presentation.common.FlatButton
+    <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_resume"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

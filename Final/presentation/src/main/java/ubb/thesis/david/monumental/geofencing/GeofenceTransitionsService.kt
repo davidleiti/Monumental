@@ -13,8 +13,8 @@ import com.google.android.gms.location.GeofencingEvent
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.monumental.BaseApplication.Companion.GEOFENCE_CHANNEL_ID
+import ubb.thesis.david.monumental.HostActivity
 import ubb.thesis.david.monumental.R
-import ubb.thesis.david.monumental.presentation.HostActivity
 
 class GeofenceTransitionsService : JobIntentService() {
 
@@ -66,7 +66,6 @@ class GeofenceTransitionsService : JobIntentService() {
         private const val TAG_LOG = "GeofenceTransitionsServiceLogger"
 
         fun enqueueWork(context: Context, intent: Intent) =
-            enqueueWork(context, GeofenceTransitionsService::class.java,
-                        JOB_ID, intent)
+            enqueueWork(context, GeofenceTransitionsService::class.java, JOB_ID, intent)
     }
 }
