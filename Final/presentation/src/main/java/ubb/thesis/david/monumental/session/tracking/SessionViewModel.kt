@@ -6,13 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import ubb.thesis.david.domain.SessionManager
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.GetSessionLandmarks
-import ubb.thesis.david.monumental.Injection
+import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
 
 class SessionViewModel : BaseViewModel() {
 
-    private val sessionManager: SessionManager = Injection.provideSessionManager()
+    private val sessionManager: SessionManager = Configuration.provideSessionManager()
     private val errorsObservable: MutableLiveData<String> = MutableLiveData()
     private val landmarksObservable: MutableLiveData<List<Landmark>> = MutableLiveData()
     private val nearestLandmark: MutableLiveData<Landmark> = MutableLiveData()

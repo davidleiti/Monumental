@@ -1,10 +1,11 @@
 package ubb.thesis.david.monumental.common
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-open class BaseViewModel: ViewModel() {
+open class BaseAndroidViewModel(application: Application) : AndroidViewModel(application) {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -14,4 +15,5 @@ open class BaseViewModel: ViewModel() {
         compositeDisposable.clear()
         super.onCleared()
     }
+
 }

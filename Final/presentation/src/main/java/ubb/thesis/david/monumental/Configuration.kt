@@ -8,7 +8,7 @@ import ubb.thesis.david.data.cache.SessionDatabase
 import ubb.thesis.david.domain.LandmarkApi
 import ubb.thesis.david.domain.SessionManager
 
-object Injection {
+object Configuration {
 
     fun provideLandmarkApi(): LandmarkApi = FoursquareApiAdapter(FoursquareApi)
 

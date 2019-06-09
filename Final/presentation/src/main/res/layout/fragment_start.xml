@@ -1,81 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:id="@+id/content_root"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent"
-                                                   tools:context=".session.setup.StartFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-            android:id="@+id/header_start"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:paddingTop="48dp"
-            android:src="@drawable/background_transparent_gradient"
-            android:contentDescription="@string/cd_header"
-            android:background="@drawable/image_header"
-            android:transitionName="transition_header"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/label_start" />
+    <data>
 
-    <TextView
-            android:id="@+id/label_start"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="16dp"
-            android:text="@string/message_journey_start"
-            android:textSize="32sp"
-            android:lines="3"
-            android:textColor="@color/secondary_text"
-            android:textAlignment="center"
-            android:textAppearance="@style/Widget.MaterialComponents.Button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <import type="android.view.View" />
 
-    <TextView
-            android:id="@+id/label_continue"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="24dp"
-            android:layout_marginStart="16dp"
-            android:text="@string/message_journey_resume"
-            android:textSize="32sp"
-            android:textColor="@color/secondary_text"
-            android:textAlignment="center"
-            android:textAppearance="@style/Widget.MaterialComponents.Button"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/button_resume" />
+        <variable
+                name="viewModel"
+                type="ubb.thesis.david.monumental.session.setup.StartViewModel" />
 
-    <ubb.thesis.david.monumental.common.FlatButton
-            android:id="@+id/button_start_new"
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/content_root"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:text="@string/start"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_height="match_parent"
+            tools:context=".session.setup.StartFragment">
 
-    <ubb.thesis.david.monumental.common.FlatButton
-            android:id="@+id/button_resume"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:invertColors="true"
-            app:text="@string/resume"
-            app:layout_constraintBottom_toTopOf="@+id/button_start_new"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        <ImageView
+                android:id="@+id/header_start"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:paddingTop="48dp"
+                android:src="@drawable/background_transparent_gradient"
+                android:contentDescription="@string/cd_header"
+                android:background="@drawable/image_header"
+                android:transitionName="transition_header"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/label_start" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+                android:id="@+id/label_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:textSize="32sp"
+                android:text="@{viewModel.sessionMessage}"
+                android:lines="3"
+                android:textColor="@color/secondary_text"
+                android:textAlignment="center"
+                android:textAppearance="@style/Widget.MaterialComponents.Button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+                android:id="@+id/label_continue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="24dp"
+                android:layout_marginStart="16dp"
+                android:textSize="32sp"
+                android:text="@string/message_journey_resume"
+                android:textColor="@color/secondary_text"
+                android:textAlignment="center"
+                android:textAppearance="@style/Widget.MaterialComponents.Button"
+                android:visibility="@{viewModel.sessionAvailable ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/button_resume" />
+
+        <ubb.thesis.david.monumental.common.FlatButton
+                android:id="@+id/button_resume"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:text="@string/resume"
+                app:invertColors="true"
+                android:visibility="@{viewModel.sessionAvailable ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toTopOf="@+id/button_start_new"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <ubb.thesis.david.monumental.common.FlatButton
+                android:id="@+id/button_start_new"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:text="@{viewModel.sessionAvailable ? @string/start_new : @string/start}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

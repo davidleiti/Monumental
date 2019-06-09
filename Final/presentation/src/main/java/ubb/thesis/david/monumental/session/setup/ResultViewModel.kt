@@ -7,14 +7,14 @@ import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.CreateSession
 import ubb.thesis.david.domain.usecases.SearchLandmarks
-import ubb.thesis.david.monumental.Injection
+import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
 
 class ResultViewModel(private val beaconManager: BeaconManager) : BaseViewModel() {
 
-    private val landmarkApi = Injection.provideLandmarkApi()
-    private val sessionManager = Injection.provideSessionManager()
+    private val landmarkApi = Configuration.provideLandmarkApi()
+    private val sessionManager = Configuration.provideSessionManager()
 
     private val sessionCreatedObservable = BehaviorSubject.create<Unit>()
     private val landmarksObservable = MutableLiveData<List<Landmark>>()

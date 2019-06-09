@@ -7,8 +7,11 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import ubb.thesis.david.monumental.BaseApplication
+
+fun <T : Any> MutableLiveData<T>.default(value: T) = apply { setValue(value) }
 
 val Context.appContext: BaseApplication
     get() = applicationContext as BaseApplication
