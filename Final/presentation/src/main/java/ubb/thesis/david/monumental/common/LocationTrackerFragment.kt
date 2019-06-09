@@ -36,8 +36,7 @@ abstract class LocationTrackerFragment : BaseFragment() {
 
     protected fun disableLocationUpdates() {
         updateCallback?.let {
-            LocationServices.getFusedLocationProviderClient(activity!!)
-                    .removeLocationUpdates(updateCallback)
+            locationProviderClient.removeLocationUpdates(updateCallback)
             updateCallback = null
         }
     }
@@ -62,18 +61,6 @@ abstract class LocationTrackerFragment : BaseFragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RC_ENABLE_LOCATION) {
-            if (resultCode == Activity.RESULT_OK) {
-                onLocationPrepared()
-            } else {
-                requestEnableLocation()
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
     private fun requestEnableLocation() {
         val locationSettingsRequest = LocationSettingsRequest.Builder()
                 .addLocationRequest(updateRequest)
@@ -94,6 +81,18 @@ abstract class LocationTrackerFragment : BaseFragment() {
                         }
                     }
                 }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == RC_ENABLE_LOCATION) {
+            if (resultCode == Activity.RESULT_OK) {
+                onLocationPrepared()
+            } else {
+                requestEnableLocation()
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
     @SuppressLint("MissingPermission")

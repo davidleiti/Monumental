@@ -48,6 +48,13 @@ class NavigationFragment : LocationTrackerFragment() {
         viewModel.loadSessionLandmarks(getUserId())
     }
 
+    override fun onStart() {
+        super.onStart()
+        navigator?.let {
+            requestLocationUpdates(locationUpdateCallback)
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         disableLocationUpdates()
@@ -93,16 +100,16 @@ class NavigationFragment : LocationTrackerFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun observeData() {
-        viewModel.getLandmarksObservable().observe(viewLifecycleOwner, Observer { landmarks ->
+        viewModel.sessionLandmarks.observe(viewLifecycleOwner, Observer { landmarks ->
             reinitializeBeaconsIfNeeded(landmarks)
             requestLocationUpdates(locationUpdateCallback)
             hideLoading()
         })
-        viewModel.getNearestLandmarkObservable().observe(viewLifecycleOwner, Observer { landmark ->
+        viewModel.nearestLandmark.observe(viewLifecycleOwner, Observer { landmark ->
             navigator?.target = landmark.transformToLocation()
             label_target.text = "Target: ${landmark.label}"
         })
-        viewModel.getErrorsObservable().observe(viewLifecycleOwner, Observer { error ->
+        viewModel.errorMessages.observe(viewLifecycleOwner, Observer { error ->
             debug(TAG_LOG, "The following error has occurred: $error")
             view?.shortSnack("An error has occurred!")
             hideLoading()

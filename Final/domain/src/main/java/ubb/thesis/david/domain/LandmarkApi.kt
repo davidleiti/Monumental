@@ -7,7 +7,7 @@ import ubb.thesis.david.domain.entities.Landmark
 
 interface LandmarkApi {
 
-    fun searchVenues(location: String, radius: Int, categories: String): Single<List<Landmark>>
+    fun searchVenues(lat: Double, long: Double, radius: Int, categories: String): Single<List<Landmark>>
 
     // TODO replace with entities mapped from the api result objects
     fun getVenueDetails(id: String): Single<Venue>

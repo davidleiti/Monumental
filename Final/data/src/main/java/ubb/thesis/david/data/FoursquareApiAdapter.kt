@@ -11,13 +11,14 @@ import java.util.*
 
 class FoursquareApiAdapter(private val api: FoursquareApi) : LandmarkApi {
 
-    override fun searchVenues(location: String,
+    override fun searchVenues(lat: Double,
+                              long: Double,
                               radius: Int,
                               categories: String): Single<List<Landmark>> {
-        val searchRes = api.searchVenues(location, radius, FoursquareApi.ID_MONUMENT)
+        val searchRes = api.searchVenues("$lat,$long", radius, FoursquareApi.ID_MONUMENT)
                 .transformToLandmarkList()
 
-        val exploreRes = api.exploreVenues(location, radius, FoursquareApi.SECTION_ARTS)
+        val exploreRes = api.exploreVenues("$lat,$long", radius, FoursquareApi.SECTION_ARTS)
                 .filterExploreResults(categories)
                 .transformToLandmarkList()
 

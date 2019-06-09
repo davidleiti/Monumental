@@ -26,8 +26,8 @@ class ResultViewModel(private val beaconManager: BeaconManager) : BaseViewModel(
 
     fun getErrorsObservable(): LiveData<String> = errorsObservable
 
-    fun searchLandmarks(location: String, radius: Int, limit: Int, categories: String) {
-        val params = SearchLandmarks.RequestValues(location, radius, categories, limit)
+    fun searchLandmarks(lat: Double, long: Double, radius: Int, limit: Int, categories: String) {
+        val params = SearchLandmarks.RequestValues(lat, long, radius, categories, limit)
         SearchLandmarks(params, landmarkApi, AsyncTransformerFactory.create<List<Landmark>>())
                 .execute()
                 .subscribe({ landmarksObservable.value = it },

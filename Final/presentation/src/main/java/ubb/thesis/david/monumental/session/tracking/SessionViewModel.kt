@@ -13,33 +13,31 @@ import ubb.thesis.david.monumental.common.BaseViewModel
 class SessionViewModel : BaseViewModel() {
 
     private val sessionManager: SessionManager = Configuration.provideSessionManager()
-    private val errorsObservable: MutableLiveData<String> = MutableLiveData()
-    private val landmarksObservable: MutableLiveData<List<Landmark>> = MutableLiveData()
-    private val nearestLandmark: MutableLiveData<Landmark> = MutableLiveData()
+    private val _errorMessage: MutableLiveData<String> = MutableLiveData()
+    private val _sessionLandmarks: MutableLiveData<List<Landmark>> = MutableLiveData()
+    private val _nearestLandmark: MutableLiveData<Landmark> = MutableLiveData()
 
-    fun getLandmarksObservable(): LiveData<List<Landmark>> = landmarksObservable
-
-    fun getErrorsObservable(): LiveData<String> = errorsObservable
-
-    fun getNearestLandmarkObservable(): LiveData<Landmark> = nearestLandmark
+    val sessionLandmarks: LiveData<List<Landmark>> = _sessionLandmarks
+    val errorMessages: LiveData<String> = _errorMessage
+    val nearestLandmark: LiveData<Landmark> = _nearestLandmark
 
     fun loadSessionLandmarks(sessionId: String) {
         GetSessionLandmarks(sessionId, sessionManager, AsyncTransformerFactory.create<List<Landmark>>())
                 .execute()
-                .subscribe({ landmarksObservable.value = it },
-                           { errorsObservable.postValue(it.message) })
+                .subscribe({ _sessionLandmarks.value = it },
+                           { _errorMessage.postValue(it.message) })
                 .also { addDisposable(it) }
     }
 
     fun queryNearestLandmark(location: Location) {
-        val landmarks = landmarksObservable.value
+        val landmarks = _sessionLandmarks.value
         landmarks?.let {
             val sortedByDistance = landmarks.sortedWith(Comparator { l1, l2 ->
                 val dist1 = l1.transformToLocation().distanceTo(location).toInt()
                 val dist2 = l2.transformToLocation().distanceTo(location).toInt()
                 dist1 - dist2
             })
-            nearestLandmark.value = sortedByDistance[0]
+            _nearestLandmark.value = sortedByDistance[0]
         }
     }
 }

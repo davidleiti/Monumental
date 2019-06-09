@@ -90,9 +90,10 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
         val limit = args.limit
         val radius = args.radius
         val categories = args.categories
-        val location = "${args.location.latitude},${args.location.longitude}"
+        val lat = args.location.latitude
+        val long = args.location.longitude
 
-        viewModel.searchLandmarks(location, radius, limit, categories)
+        viewModel.searchLandmarks(lat, long, radius, limit, categories)
     }
 
     private fun setupSession() {
