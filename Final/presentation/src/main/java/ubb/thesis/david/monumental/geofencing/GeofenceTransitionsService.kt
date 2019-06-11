@@ -2,9 +2,11 @@ package ubb.thesis.david.monumental.geofencing
 
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import androidx.core.app.JobIntentService
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.Geofence
@@ -12,8 +14,10 @@ import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
-import ubb.thesis.david.monumental.BaseApplication.Companion.GEOFENCE_CHANNEL_ID
+import ubb.thesis.david.monumental.BaseApplication
 import ubb.thesis.david.monumental.HostActivity
+import ubb.thesis.david.monumental.HostActivity.Companion.DESTINATION_NAVIGATION
+import ubb.thesis.david.monumental.HostActivity.Companion.KEY_LAUNCH_AT_DESTINATION
 import ubb.thesis.david.monumental.R
 
 class GeofenceTransitionsService : JobIntentService() {
@@ -37,14 +41,14 @@ class GeofenceTransitionsService : JobIntentService() {
     }
 
     private fun sendNotification(fenceId: String) {
-        val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val actionIntent = Intent(this, HostActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(HostActivity.KEY_LAUNCH_AT_DESTINATION, fenceId)
+            flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(KEY_LAUNCH_AT_DESTINATION, DESTINATION_NAVIGATION)
         }
-        val pendingIntent = PendingIntent.getActivity(this, 0, actionIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(this, 0, actionIntent, FLAG_UPDATE_CURRENT)
 
-        NotificationCompat.Builder(this, GEOFENCE_CHANNEL_ID)
+        NotificationCompat.Builder(this, BaseApplication.GEOFENCE_CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon_logo_128)
                 .setContentTitle(getString(R.string.title_notification))
                 .setContentText(getString(R.string.content_notification))
@@ -58,7 +62,7 @@ class GeofenceTransitionsService : JobIntentService() {
     }
 
     private fun removeNotification(fenceId: String?) {
-        val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(fenceId.hashCode())
     }
 

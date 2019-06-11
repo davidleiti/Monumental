@@ -55,8 +55,8 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     override fun onStart() {
         super.onStart()
-        shouldDisplaySplash = false
         handleIntent(intent)
+        shouldDisplaySplash = false
     }
 
     override fun onNewIntent(intent: Intent?) {
