@@ -20,13 +20,24 @@
             app:layout_constraintBottom_toTopOf="@+id/navigation_arrow"
             app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+            android:id="@+id/label_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/navigation_arrow"
+            app:layout_constraintTop_toBottomOf="@+id/label_target"
+            app:layout_constraintEnd_toEndOf="@+id/label_target"
+            app:layout_constraintStart_toStartOf="@+id/label_target" />
+
     <ImageView
             android:id="@+id/navigation_arrow"
             android:layout_width="256dp"
             android:layout_height="256dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/navigation_arrow"
+            android:src="@drawable/navigation_arrow_gray"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

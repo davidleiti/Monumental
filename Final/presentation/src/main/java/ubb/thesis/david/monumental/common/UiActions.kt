@@ -4,6 +4,6 @@ interface UiActions {
     fun disableUserNavigation()
     fun enableUserNavigation()
 
-    fun showLoading()
-    fun hideLoading()
+    fun displayProgress()
+    fun hideProgress()
 }

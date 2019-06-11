@@ -18,8 +18,8 @@ abstract class BaseFragment : Fragment() {
     }
 
     protected abstract fun usesNavigationDrawer(): Boolean
-    protected fun showLoading() = (activity as UiActions).showLoading()
-    protected fun hideLoading() = (activity as UiActions).hideLoading()
+    protected fun displayProgress() = (activity as UiActions).displayProgress()
+    protected fun hideProgress() = (activity as UiActions).hideProgress()
 
     protected fun getUserId(): String = (activity as ClientProvider).getUserId()
     protected fun getAuth(): FirebaseAuth = (activity as ClientProvider).getAuth()

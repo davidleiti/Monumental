@@ -1,13 +1,21 @@
 package ubb.thesis.david.monumental.session.setup
 
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.NotificationCompat
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.NavDeepLinkBuilder
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_start.*
 import ubb.thesis.david.monumental.BaseApplication
+import ubb.thesis.david.monumental.HostActivity
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.databinding.FragmentStartBinding
@@ -37,6 +45,35 @@ class StartFragment : BaseFragment() {
             navigateToSetup()
             viewModel.wipeExistingSession()
         }
+        notification_button.setOnClickListener {
+            sendNotification("some id")
+        }
+    }
+
+    private fun sendNotification(fenceId: String) {
+        val notificationManager = context!!.getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
+        val actionIntent = Intent(context, HostActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(HostActivity.KEY_LAUNCH_FOUND_ID, fenceId)
+        }
+        val pendingIntent = PendingIntent.getActivity(context, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent2 = NavDeepLinkBuilder(context!!)
+                .setGraph(R.navigation.nav_recognition)
+                .setDestination(R.id.snapshotDestination)
+                .setArguments(bundleOf("targetId" to fenceId))
+                .createPendingIntent()
+
+        NotificationCompat.Builder(context!!, BaseApplication.GEOFENCE_CHANNEL_ID)
+                .setSmallIcon(R.drawable.icon_logo_128)
+                .setContentTitle(getString(R.string.title_notification))
+                .setContentText(getString(R.string.content_notification))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent2)
+                .setAutoCancel(true)
+                .build()
+                .also { notification ->
+                    notificationManager.notify(fenceId.hashCode(), notification)
+                }
     }
 
     override fun usesNavigationDrawer(): Boolean = true

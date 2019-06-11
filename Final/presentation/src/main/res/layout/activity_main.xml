@@ -25,7 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    app:navGraph="@navigation/nav_home"
+                    app:navGraph="@navigation/nav_setup"
                     app:defaultNavHost="true" />
 
             <include layout="@layout/progress_overlay" />

@@ -67,11 +67,11 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
                 .setLoiteringDelay(10)
                 .setCircularRegion(lat, lng, DEFAULT_RADIUS)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_DWELL)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build()
 
     companion object {
         private const val TAG_LOG = "GeofencingClientLogger"
-        private const val DEFAULT_RADIUS = 300F
+        private const val DEFAULT_RADIUS = 70F
     }
 }

@@ -9,6 +9,7 @@ import ubb.thesis.david.domain.usecases.GetSessionLandmarks
 import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
+import ubb.thesis.david.monumental.utils.default
 
 class SessionViewModel : BaseViewModel() {
 
@@ -16,10 +17,12 @@ class SessionViewModel : BaseViewModel() {
     private val _errorMessage: MutableLiveData<String> = MutableLiveData()
     private val _sessionLandmarks: MutableLiveData<List<Landmark>> = MutableLiveData()
     private val _nearestLandmark: MutableLiveData<Landmark> = MutableLiveData()
+    private val _distanceToTarget = MutableLiveData<Float>().default(0.0F)
 
     val sessionLandmarks: LiveData<List<Landmark>> = _sessionLandmarks
     val errorMessages: LiveData<String> = _errorMessage
     val nearestLandmark: LiveData<Landmark> = _nearestLandmark
+    val distanceToTarget: LiveData<Float> = _distanceToTarget
 
     fun loadSessionLandmarks(sessionId: String) {
         GetSessionLandmarks(sessionId, sessionManager, AsyncTransformerFactory.create<List<Landmark>>())
@@ -38,6 +41,7 @@ class SessionViewModel : BaseViewModel() {
                 dist1 - dist2
             })
             _nearestLandmark.value = sortedByDistance[0]
+            _distanceToTarget.value = sortedByDistance[0].transformToLocation().distanceTo(location)
         }
     }
 }

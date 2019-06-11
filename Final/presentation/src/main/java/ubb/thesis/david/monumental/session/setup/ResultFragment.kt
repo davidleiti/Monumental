@@ -24,22 +24,22 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     private lateinit var viewModel: ResultViewModel
     private lateinit var landmarksRetrieved: List<Landmark>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_results, container, false)
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         viewModel = getViewModel {
             ResultViewModel(getBeaconManager())
         }
+        observeData()
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_results, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         button_cancel.setOnClickListener(this)
         button_retry.setOnClickListener(this)
         button_next.setOnClickListener(this)
-        observeData()
     }
 
     override fun onStart() {
@@ -50,7 +50,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
 
     override fun onStop() {
         super.onStop()
-        hideLoading()
+        hideProgress()
         disposable.dispose()
     }
 
@@ -69,22 +69,22 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
             info(TAG_LOG, "Landmarks successfully retrieved from the api.")
             venues.forEach { info(TAG_LOG, it.toString()) }
             landmarksRetrieved = venues
-            hideLoading()
+            hideProgress()
             displayResult()
         })
         viewModel.getErrorsObservable().observe(viewLifecycleOwner, Observer { errorMessage ->
             debug(TAG_LOG, "An error has occurred, cause: $errorMessage")
-            hideLoading()
+            hideProgress()
             context!!.shortToast(getString(R.string.default_error_message))
         })
         viewModel.getSessionCreatedObservable().subscribe {
-            hideLoading()
+            hideProgress()
             beginSession()
         }.also { disposable.add(it) }
     }
 
     private fun loadVenues() {
-        showLoading()
+        displayProgress()
 
         val args = ResultFragmentArgs.fromBundle(arguments!!)
         val limit = args.limit
@@ -97,7 +97,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun setupSession() {
-        showLoading()
+        displayProgress()
         viewModel.setupSession(getUserId(), landmarksRetrieved)
     }
 

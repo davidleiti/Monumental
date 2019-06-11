@@ -3,7 +3,6 @@ package ubb.thesis.david.monumental.session.tracking
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -44,7 +43,7 @@ class NavigationFragment : LocationTrackerFragment() {
 
         viewModel = getViewModel()
         observeData()
-        showLoading()
+        displayProgress()
         viewModel.loadSessionLandmarks(getUserId())
     }
 
@@ -103,16 +102,19 @@ class NavigationFragment : LocationTrackerFragment() {
         viewModel.sessionLandmarks.observe(viewLifecycleOwner, Observer { landmarks ->
             reinitializeBeaconsIfNeeded(landmarks)
             requestLocationUpdates(locationUpdateCallback)
-            hideLoading()
+            hideProgress()
         })
         viewModel.nearestLandmark.observe(viewLifecycleOwner, Observer { landmark ->
             navigator?.target = landmark.transformToLocation()
             label_target.text = "Target: ${landmark.label}"
         })
+        viewModel.distanceToTarget.observe(viewLifecycleOwner, Observer { distance ->
+            label_distance.text = "Distance: $distance"
+        })
         viewModel.errorMessages.observe(viewLifecycleOwner, Observer { error ->
             debug(TAG_LOG, "The following error has occurred: $error")
             view?.shortSnack("An error has occurred!")
-            hideLoading()
+            hideProgress()
         })
     }
 

@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavOptions
@@ -42,12 +43,38 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         GeofencingClientAdapter(this)
     }
 
+    var navigateFromSplashWithId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupAppBar()
         title = ""
     }
+//
+//    override fun onNewIntent(intent: Intent?) {
+//        super.onNewIntent(intent)
+//        info(TAG_LOG, "onNewIntent()")
+//        handleIntent(intent) {
+//            navigateToSnapshot(it)
+//        }
+//    }
+////
+//    override fun onStart() {
+//        super.onStart()
+//        info(TAG_LOG, "onStart()")
+//        handleIntent(intent) {
+//            navigateFromSplashWithId = it
+//        }
+//    }
+
+//    private fun handleIntent(intent: Intent?, action: (String) -> Unit) {
+//        intent?.let {
+//            if (intent.hasExtra(KEY_LAUNCH_FOUND_ID)) {
+//                action(intent.getStringExtra(KEY_LAUNCH_FOUND_ID))
+//            }
+//        }
+//    }
 
     private fun setupAppBar() {
         setSupportActionBar(toolbar)
@@ -73,9 +100,9 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         return googleApiClient
     }
 
-    override fun showLoading() = progress_overlay.fadeIn()
+    override fun displayProgress() = progress_overlay.fadeIn()
 
-    override fun hideLoading() = progress_overlay.fadeOut()
+    override fun hideProgress() = progress_overlay.fadeOut()
 
     override fun enableUserNavigation() {
         supportActionBar?.show()
@@ -140,14 +167,13 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         nav_host_fragment.childFragmentManager.fragments[0].onActivityResult(requestCode, resultCode, data)
 
     private fun navigateToLogin() {
-        val fragmentView = nav_host_fragment.childFragmentManager.fragments[0].view
         val options = NavOptions.Builder()
                 .setPopUpTo(R.id.startDestination, true)
                 .setEnterAnim(R.anim.fade_in_bottom)
                 .setExitAnim(R.anim.nav_default_exit_anim)
                 .build()
         print("Am facut licenta")
-        Navigation.findNavController(fragmentView!!).navigate(R.id.loginDestination, null, options)
+        Navigation.findNavController(this, R.id.nav_home).navigate(R.id.loginDestination, null, options)
     }
 
     override fun onConnected(p0: Bundle?) =
@@ -181,5 +207,7 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
 
     companion object {
         private const val TAG_LOG = "MainLogger"
+
+        const val KEY_LAUNCH_FOUND_ID = ""
     }
 }

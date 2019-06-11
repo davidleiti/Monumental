@@ -152,7 +152,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
     private fun emailSignIn() {
         if (validateFields()) {
             activity!!.hideSoftKeyboard()
-            showLoading()
+            displayProgress()
             getAuth().signInWithEmailAndPassword(field_email.text.toString(), field_password.text.toString())
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
@@ -162,14 +162,14 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
                             debug(TAG_LOG, "Firebase authentication with email/password has failed," +
                                     "issue: ${task.exception?.message}")
                             context!!.longToast(getString(R.string.warning_sign_in_email))
-                            hideLoading()
+                            hideProgress()
                         }
                     }
         }
     }
 
     private fun firebaseAuth(credentials: AuthCredential, provider: String) {
-        showLoading()
+        displayProgress()
         getAuth().signInWithCredential(credentials).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 info(TAG_LOG,
@@ -179,7 +179,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
                 debug(TAG_LOG,
                       "Firebase authentication with via provider $provider has failed, issue: ${task.exception?.message}")
                 context!!.longToast(getString(R.string.warning_sign_in_email))
-                hideLoading()
+                hideProgress()
             }
         }
     }
@@ -215,7 +215,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun finishSignIn() {
-        hideLoading()
+        hideProgress()
         Navigation.findNavController(view!!).navigate(LoginFragmentDirections.actionAdvance())
     }
 

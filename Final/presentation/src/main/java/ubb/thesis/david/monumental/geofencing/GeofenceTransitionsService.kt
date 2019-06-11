@@ -29,15 +29,18 @@ class GeofenceTransitionsService : JobIntentService() {
 
     private fun handleTransitionEvent(event: GeofencingEvent) {
         info(TAG_LOG, "GeofencingEvent triggered: $event")
-        if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-            sendNotification()
+        val fenceId = event.triggeringGeofences[0].requestId
+        when (event.geofenceTransition) {
+            Geofence.GEOFENCE_TRANSITION_ENTER -> sendNotification(fenceId)
+            Geofence.GEOFENCE_TRANSITION_EXIT -> removeNotification(fenceId)
         }
     }
 
-    private fun sendNotification() {
+    private fun sendNotification(fenceId: String) {
         val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
         val actionIntent = Intent(this, HostActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(HostActivity.KEY_LAUNCH_FOUND_ID, fenceId)
         }
         val pendingIntent = PendingIntent.getActivity(this, 0, actionIntent, 0)
 
@@ -50,8 +53,13 @@ class GeofenceTransitionsService : JobIntentService() {
                 .setAutoCancel(true)
                 .build()
                 .also { notification ->
-                    notificationManager.notify(1234, notification)
+                    notificationManager.notify(fenceId.hashCode(), notification)
                 }
+    }
+
+    private fun removeNotification(fenceId: String?) {
+        val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(fenceId.hashCode())
     }
 
     private fun geofenceErrorString(errorCode: Int) = when (errorCode) {
