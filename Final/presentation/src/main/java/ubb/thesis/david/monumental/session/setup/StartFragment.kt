@@ -58,7 +58,7 @@ class StartFragment : BaseFragment() {
         }
         val pendingIntent = PendingIntent.getActivity(context, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val pendingIntent2 = NavDeepLinkBuilder(context!!)
-                .setGraph(R.navigation.nav_recognition)
+                .setGraph(R.navigation.nav_session)
                 .setDestination(R.id.snapshotDestination)
                 .setArguments(bundleOf("targetId" to fenceId))
                 .createPendingIntent()

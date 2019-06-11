@@ -19,12 +19,12 @@
                 app:exitAnim="@anim/nav_default_exit_anim" />
         <action
                 android:id="@+id/actionResumeSession"
-                app:destination="@id/navigationDestination"
-                app:popUpTo="@+id/startDestination"
+                app:destination="@+id/nav_session"
                 app:enterAnim="@anim/fade_in_bottom"
+                app:popExitAnim="@anim/fade_out_bottom"
                 app:exitAnim="@anim/nav_default_exit_anim"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-                app:popExitAnim="@anim/fade_out_bottom"
+                app:popUpTo="@+id/startDestination"
                 app:popUpToInclusive="true" />
     </fragment>
     <fragment
@@ -86,20 +86,15 @@
                 app:argType="com.google.android.gms.maps.model.LatLng" />
         <action
                 android:id="@+id/actionBeginSession"
-                app:destination="@id/navigationDestination"
+                app:destination="@id/nav_session"
                 app:enterAnim="@anim/fade_in_bottom"
                 app:exitAnim="@anim/nav_default_exit_anim"
-                app:popUpTo="@+id/startDestination"
-                app:launchSingleTop="true"
-                app:popUpToInclusive="true"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+                app:popExitAnim="@anim/fade_out_bottom"
+                app:popUpTo="@+id/startDestination"
+                app:popUpToInclusive="true"
+                app:launchSingleTop="true" />
     </fragment>
-    <fragment
-            android:id="@+id/navigationDestination"
-            android:name="ubb.thesis.david.monumental.session.tracking.NavigationFragment"
-            android:label="fragment_navigation"
-            tools:layout="@layout/fragment_navigation" />
     <fragment
             android:id="@+id/loginDestination"
             android:name="ubb.thesis.david.monumental.LoginFragment"
@@ -137,5 +132,6 @@
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                 app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
+    <include app:graph="@navigation/nav_session" />
 
 </navigation>
