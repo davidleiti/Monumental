@@ -40,7 +40,7 @@ class GeofenceTransitionsService : JobIntentService() {
         val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
         val actionIntent = Intent(this, HostActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(HostActivity.KEY_LAUNCH_FOUND_ID, fenceId)
+            putExtra(HostActivity.KEY_LAUNCH_AT_DESTINATION, fenceId)
         }
         val pendingIntent = PendingIntent.getActivity(this, 0, actionIntent, 0)
 

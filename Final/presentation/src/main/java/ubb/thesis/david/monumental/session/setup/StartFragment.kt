@@ -9,13 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.NotificationCompat
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.NavDeepLinkBuilder
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_start.*
 import ubb.thesis.david.monumental.BaseApplication
 import ubb.thesis.david.monumental.HostActivity
+import ubb.thesis.david.monumental.HostActivity.Companion.DESTINATION_NAVIGATION
+import ubb.thesis.david.monumental.HostActivity.Companion.KEY_LAUNCH_AT_DESTINATION
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.databinding.FragmentStartBinding
@@ -36,11 +36,18 @@ class StartFragment : BaseFragment() {
         return binding.root
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if ((activity!! as HostActivity).shouldDisplaySplash) {
+            Navigation.findNavController(view!!).navigate(StartFragmentDirections.actionDisplaySplash())
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         checkRunningSession()
 
-        button_resume.setOnClickListener{ navigateToSession() }
+        button_resume.setOnClickListener { navigateToSession() }
         button_start_new.setOnClickListener {
             navigateToSetup()
             viewModel.wipeExistingSession()
@@ -54,21 +61,16 @@ class StartFragment : BaseFragment() {
         val notificationManager = context!!.getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
         val actionIntent = Intent(context, HostActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(HostActivity.KEY_LAUNCH_FOUND_ID, fenceId)
+            putExtra(KEY_LAUNCH_AT_DESTINATION, DESTINATION_NAVIGATION)
         }
         val pendingIntent = PendingIntent.getActivity(context, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val pendingIntent2 = NavDeepLinkBuilder(context!!)
-                .setGraph(R.navigation.nav_session)
-                .setDestination(R.id.snapshotDestination)
-                .setArguments(bundleOf("targetId" to fenceId))
-                .createPendingIntent()
 
         NotificationCompat.Builder(context!!, BaseApplication.GEOFENCE_CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon_logo_128)
                 .setContentTitle(getString(R.string.title_notification))
                 .setContentText(getString(R.string.content_notification))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent2)
+                .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build()
                 .also { notification ->
