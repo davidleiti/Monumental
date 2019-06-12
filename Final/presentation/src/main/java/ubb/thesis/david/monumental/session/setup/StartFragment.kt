@@ -49,6 +49,8 @@ class StartFragment : BaseFragment() {
 
     override fun usesNavigationDrawer(): Boolean = true
 
+    override fun title(): String? = "Home"
+
     private fun checkRunningSession() = viewModel.queryRunningSession(getUserId())
 
     private fun navigateToSetup() =

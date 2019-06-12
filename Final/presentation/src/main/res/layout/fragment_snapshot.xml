@@ -11,18 +11,17 @@
             android:id="@+id/photo_preview"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginStart="32dp"
             android:src="@drawable/landmark_placeholder"
             android:background="@drawable/border_default"
-            android:padding="24dp"
             android:contentDescription="@string/cd_photo_preview"
+            app:layout_constraintDimensionRatio="H,9:16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/button_accept_photo" />
+            app:layout_constraintBottom_toTopOf="@+id/button_take_photo"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_accept_photo"

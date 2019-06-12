@@ -58,6 +58,8 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     override fun usesNavigationDrawer(): Boolean = false
 
+    override fun title(): String? = null
+
     private fun initUi() {
         button_sign_in.setOnClickListener(this)
         button_sign_in_google.setOnClickListener(this)

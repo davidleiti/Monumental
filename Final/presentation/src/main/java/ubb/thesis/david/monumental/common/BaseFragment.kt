@@ -15,9 +15,11 @@ abstract class BaseFragment : Fragment() {
             (activity as UiActions).enableUserNavigation()
         else
             (activity as UiActions).disableUserNavigation()
+        (activity as UiActions).setTitle(title())
     }
 
     protected abstract fun usesNavigationDrawer(): Boolean
+    protected abstract fun title(): String?
     protected fun displayProgress() = (activity as UiActions).displayProgress()
     protected fun hideProgress() = (activity as UiActions).hideProgress()
 

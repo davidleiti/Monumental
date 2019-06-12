@@ -21,6 +21,8 @@ class SplashFragment : BaseFragment() {
 
     override fun usesNavigationDrawer(): Boolean = false
 
+    override fun title(): String? = null
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 

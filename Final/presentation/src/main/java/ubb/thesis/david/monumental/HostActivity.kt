@@ -115,6 +115,10 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 
+    override fun setTitle(text: String?) {
+        text?.let { toolbar_title.text = it } ?: run { toolbar_title.text = "" }
+    }
+
     private fun initDrawer() {
         firebaseAuth.currentUser?.run {
             with(nav_view) {
@@ -161,8 +165,13 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
-        nav_host_fragment.childFragmentManager.fragments[0].onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val activeFragments = nav_host_fragment.childFragmentManager.fragments
+        if (activeFragments.size > 0)
+            activeFragments[0].onActivityResult(requestCode, resultCode, data)
+        else
+            super.onActivityResult(requestCode, resultCode, data)
+    }
 
     private fun navigateToSession() {
         val fragmentView = nav_host_fragment.childFragmentManager.fragments[0].view

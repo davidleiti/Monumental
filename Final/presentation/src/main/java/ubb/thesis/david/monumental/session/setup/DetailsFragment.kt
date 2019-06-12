@@ -74,6 +74,8 @@ class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapRe
 
     override fun usesNavigationDrawer(): Boolean = true
 
+    override fun title(): String? = null
+
     override fun createLocationRequest(): LocationRequest =
         LocationRequest.create().apply {
             priority = LocationRequest.PRIORITY_LOW_POWER

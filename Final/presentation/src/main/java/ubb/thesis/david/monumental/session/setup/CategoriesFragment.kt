@@ -10,17 +10,21 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_categories.*
 import org.jetbrains.anko.layoutInflater
 import ubb.license.david.foursquareapi.FoursquareApi
 import ubb.thesis.david.monumental.R
+import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.utils.shortToast
 
-class CategoriesFragment : Fragment(), View.OnClickListener {
+class CategoriesFragment : BaseFragment(), View.OnClickListener {
 
     private lateinit var listAdapter: CategoriesAdapter
+
+    override fun usesNavigationDrawer(): Boolean = true
+
+    override fun title(): String? = "Categories"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_categories, container, false)

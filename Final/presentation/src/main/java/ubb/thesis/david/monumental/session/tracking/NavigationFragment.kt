@@ -36,6 +36,8 @@ class NavigationFragment : LocationTrackerFragment() {
 
     override fun usesNavigationDrawer(): Boolean = true
 
+    override fun title(): String? = "Navigation"
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_navigation, container, false)
 
@@ -48,7 +50,8 @@ class NavigationFragment : LocationTrackerFragment() {
         viewModel.loadSessionLandmarks(getUserId())
 
         button_take_photo.setOnClickListener {
-            Navigation.findNavController(it).navigate(NavigationFragmentDirections.actionNavigateSnapshot(viewModel.nearestLandmark.value!!.id))
+            Navigation.findNavController(it)
+                    .navigate(NavigationFragmentDirections.actionNavigateSnapshot(viewModel.nearestLandmark.value!!.id))
         }
     }
 

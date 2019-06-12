@@ -32,11 +32,24 @@
 
         </FrameLayout>
 
+
         <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 style="@style/TransparentActionBar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
+                android:layout_height="?attr/actionBarSize"
+                android:gravity="center_horizontal">
+
+            <TextView
+                    android:id="@+id/toolbar_title"
+                    android:textStyle="bold"
+                    android:textSize="24sp"
+                    android:textColor="@color/secondary_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+        </androidx.appcompat.widget.Toolbar>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -44,8 +57,8 @@
             android:id="@+id/nav_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
             android:layout_gravity="start"
+            android:fitsSystemWindows="true"
             android:visibility="visible"
             app:headerLayout="@layout/nav_header_home"
             app:menu="@menu/activity_home_drawer" />
