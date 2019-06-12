@@ -20,6 +20,7 @@ class FlatButton(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
     constructor(context: Context) : this(context, null)
 
     private val buttonText: TextView
+    private var inverted: Boolean
 
     init {
         inflate(context, R.layout.button_flat, this)
@@ -30,11 +31,18 @@ class FlatButton(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         val invertColors = attributes.getBoolean(R.styleable.FlatButton_invertColors, false)
         val textColor = if (invertColors) getColor(context, R.color.primary) else getColor(context, R.color.white)
 
+        inverted = invertColors
         buttonText.text = attributes.getString(R.styleable.FlatButton_text)
         buttonText.textColor = textColor
 
         background = if (invertColors) backgroundInverted() else backgroundNormal()
         attributes.recycle()
+    }
+
+    fun invertColors() {
+        inverted = !inverted
+        background = if (inverted) backgroundInverted() else backgroundNormal()
+        buttonText.textColor = if (inverted) getColor(context, R.color.primary) else getColor(context, R.color.white)
     }
 
     fun setText(text: String) {

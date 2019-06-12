@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -45,6 +46,10 @@ class NavigationFragment : LocationTrackerFragment() {
         observeData()
         displayProgress()
         viewModel.loadSessionLandmarks(getUserId())
+
+        button_take_photo.setOnClickListener {
+            Navigation.findNavController(it).navigate(NavigationFragmentDirections.actionNavigateSnapshot(viewModel.nearestLandmark.value!!.id))
+        }
     }
 
     override fun onStart() {
@@ -106,6 +111,7 @@ class NavigationFragment : LocationTrackerFragment() {
         })
         viewModel.nearestLandmark.observe(viewLifecycleOwner, Observer { landmark ->
             navigator?.target = landmark.transformToLocation()
+            button_take_photo.visibility = View.VISIBLE
             label_target.text = "Target: ${landmark.label}"
         })
         viewModel.distanceToTarget.observe(viewLifecycleOwner, Observer { distance ->

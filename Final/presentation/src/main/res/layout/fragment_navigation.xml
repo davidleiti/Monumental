@@ -38,11 +38,21 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:src="@drawable/navigation_arrow_gray"
+            android:contentDescription="@string/nav_arrow"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    <ubb.thesis.david.monumental.common.FlatButton
+            android:id="@+id/button_take_photo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:text="@string/label_take_photo"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="@string/nav_arrow" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
