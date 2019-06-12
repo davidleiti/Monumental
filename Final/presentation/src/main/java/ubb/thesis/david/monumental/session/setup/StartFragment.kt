@@ -34,17 +34,17 @@ class StartFragment : BaseFragment() {
         if ((activity!! as HostActivity).shouldDisplaySplash) {
             Navigation.findNavController(view!!).navigate(StartFragmentDirections.actionDisplaySplash())
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        checkRunningSession()
 
         button_resume.setOnClickListener { navigateToSession() }
         button_start_new.setOnClickListener {
             navigateToSetup()
             viewModel.wipeExistingSession()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        checkRunningSession()
     }
 
     override fun usesNavigationDrawer(): Boolean = true
