@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental
+package ubb.thesis.david.monumental.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -23,6 +23,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.fragment_login.*
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
+import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.utils.clearFocus
 import ubb.thesis.david.monumental.utils.hideSoftKeyboard
@@ -128,7 +129,8 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     private fun googleSignIn() {
         val signInIntent: Intent = signInClient.signInIntent
-        activity!!.startActivityForResult(signInIntent, RC_GOOGLE_AUTH)
+        activity!!.startActivityForResult(signInIntent,
+                                          RC_GOOGLE_AUTH)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -218,7 +220,8 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     private fun finishSignIn() {
         hideProgress()
-        Navigation.findNavController(view!!).navigate(LoginFragmentDirections.actionAdvance())
+        Navigation.findNavController(view!!).navigate(
+                LoginFragmentDirections.actionAdvance())
     }
 
     companion object {

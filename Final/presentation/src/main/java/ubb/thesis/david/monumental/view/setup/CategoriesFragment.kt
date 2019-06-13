@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.session.setup
+package ubb.thesis.david.monumental.view.setup
 
 
 import android.content.Context

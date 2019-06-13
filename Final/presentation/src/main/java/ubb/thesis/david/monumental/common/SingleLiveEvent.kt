@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental
+package ubb.thesis.david.monumental.common
 
 import android.util.Log
 import androidx.annotation.MainThread

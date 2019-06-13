@@ -9,12 +9,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
-import ubb.thesis.david.monumental.BaseApplication
+import ubb.thesis.david.monumental.MainApplication
 
 fun <T : Any> MutableLiveData<T>.default(value: T) = apply { setValue(value) }
 
-val Context.appContext: BaseApplication
-    get() = applicationContext as BaseApplication
+val Context.appContext: MainApplication
+    get() = applicationContext as MainApplication
 
 fun Fragment.requestPermission(permission: String, code: Int) =
     requestPermissions(arrayOf(permission), code)

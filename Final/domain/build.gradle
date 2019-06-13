@@ -36,9 +36,6 @@ compileTestKotlin {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // TODO move this dependency to the data layer once proper entities have been set up
-    api project(':foursquareApi')
-
     //noinspection DifferentStdlibGradleVersion
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 

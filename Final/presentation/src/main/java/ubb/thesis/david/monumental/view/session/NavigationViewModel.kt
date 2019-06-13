@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.session.tracking
+package ubb.thesis.david.monumental.view.session
 
 import android.location.Location
 import androidx.lifecycle.LiveData

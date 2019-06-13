@@ -7,7 +7,7 @@
 
     <fragment
             android:id="@+id/startDestination"
-            android:name="ubb.thesis.david.monumental.session.setup.StartFragment"
+            android:name="ubb.thesis.david.monumental.view.setup.StartFragment"
             android:label="fragment_home_start"
             tools:layout="@layout/fragment_start" >
         <action
@@ -35,7 +35,7 @@
     </fragment>
     <fragment
             android:id="@+id/detailsDestination"
-            android:name="ubb.thesis.david.monumental.session.setup.DetailsFragment"
+            android:name="ubb.thesis.david.monumental.view.setup.DetailsFragment"
             android:label="fragment_radius"
             tools:layout="@layout/fragment_details" >
         <action
@@ -48,7 +48,7 @@
     </fragment>
     <fragment
             android:id="@+id/categoriesFragment"
-            android:name="ubb.thesis.david.monumental.session.setup.CategoriesFragment"
+            android:name="ubb.thesis.david.monumental.view.setup.CategoriesFragment"
             android:label="fragment_categories"
             tools:layout="@layout/fragment_categories" >
         <argument
@@ -72,7 +72,7 @@
     </fragment>
     <fragment
             android:id="@+id/landmarkResultsFragment"
-            android:name="ubb.thesis.david.monumental.session.setup.ResultFragment"
+            android:name="ubb.thesis.david.monumental.view.setup.ResultFragment"
             android:label="fragment_landmark_results"
             tools:layout="@layout/fragment_results" >
         <argument
@@ -103,7 +103,7 @@
     </fragment>
     <fragment
             android:id="@+id/loginDestination"
-            android:name="ubb.thesis.david.monumental.LoginFragment"
+            android:name="ubb.thesis.david.monumental.view.LoginFragment"
             android:label="LoginFragment"
             tools:layout="@layout/fragment_login" >
         <action
@@ -118,7 +118,7 @@
     </fragment>
     <fragment
             android:id="@+id/splashFragment"
-            android:name="ubb.thesis.david.monumental.SplashFragment"
+            android:name="ubb.thesis.david.monumental.view.SplashFragment"
             android:label="fragment_splash"
             tools:layout="@layout/fragment_splash" >
         <action

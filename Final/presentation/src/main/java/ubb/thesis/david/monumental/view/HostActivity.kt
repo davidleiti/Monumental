@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental
+package ubb.thesis.david.monumental.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -25,8 +25,9 @@ import kotlinx.android.synthetic.main.nav_header_home.view.*
 import kotlinx.android.synthetic.main.progress_overlay.*
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
+import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
+import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.ClientProvider
-import ubb.thesis.david.monumental.common.UiActions
 import ubb.thesis.david.monumental.utils.fadeIn
 import ubb.thesis.david.monumental.utils.fadeOut
 
@@ -137,7 +138,8 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
                             .placeholder(R.drawable.ic_account_circle_white_24dp)
                             .into(image_header_profile)
                 } ?: run {
-                    image_header_profile.setImageResource(R.drawable.ic_account_circle_white_24dp)
+                    image_header_profile.setImageResource(
+                            R.drawable.ic_account_circle_white_24dp)
                 }
             }
         }
@@ -215,7 +217,8 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
     private fun initializeGoogleSignInClient() =
         GoogleSignIn.getClient(this,
                                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                       .requestIdToken(getString(R.string.default_web_client_id))
+                                       .requestIdToken(getString(
+                                               R.string.default_web_client_id))
                                        .requestEmail()
                                        .build())
 

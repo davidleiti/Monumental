@@ -14,10 +14,10 @@ import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
-import ubb.thesis.david.monumental.BaseApplication
-import ubb.thesis.david.monumental.HostActivity
-import ubb.thesis.david.monumental.HostActivity.Companion.DESTINATION_NAVIGATION
-import ubb.thesis.david.monumental.HostActivity.Companion.KEY_LAUNCH_AT_DESTINATION
+import ubb.thesis.david.monumental.MainApplication
+import ubb.thesis.david.monumental.view.HostActivity
+import ubb.thesis.david.monumental.view.HostActivity.Companion.DESTINATION_NAVIGATION
+import ubb.thesis.david.monumental.view.HostActivity.Companion.KEY_LAUNCH_AT_DESTINATION
 import ubb.thesis.david.monumental.R
 
 class GeofenceTransitionsService : JobIntentService() {
@@ -48,7 +48,7 @@ class GeofenceTransitionsService : JobIntentService() {
         }
         val pendingIntent = PendingIntent.getActivity(this, 0, actionIntent, FLAG_UPDATE_CURRENT)
 
-        NotificationCompat.Builder(this, BaseApplication.GEOFENCE_CHANNEL_ID)
+        NotificationCompat.Builder(this, MainApplication.GEOFENCE_CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon_logo_128)
                 .setContentTitle(getString(R.string.title_notification))
                 .setContentText(getString(R.string.content_notification))

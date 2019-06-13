@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.session.tracking
+package ubb.thesis.david.monumental.view.session
 
 import android.Manifest
 import android.app.Activity
@@ -10,18 +10,22 @@ import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.provider.MediaStore
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_snapshot.*
+import ubb.thesis.david.data.FirebaseLandmarkDetector
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
+import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.utils.checkPermission
+import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortToast
 import java.io.File
 import java.io.IOException
@@ -33,22 +37,26 @@ class SnapshotFragment : BaseFragment() {
     private var tempPhotoPath: String? = null
     private var invalidatedPhotoPath: String? = null
     private lateinit var viewModel: SnapshotViewModel
+    private lateinit var targetLandmark: Landmark
 
     override fun usesNavigationDrawer(): Boolean = true
 
     override fun title(): String? = "Image capture"
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_snapshot, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_snapshot, container, false)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(SnapshotViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        targetLandmark = SnapshotFragmentArgs.fromBundle(arguments!!).targetLandmark
+        viewModel = getViewModel { SnapshotViewModel(FirebaseLandmarkDetector(context!!)) }
+        observeData()
 
         button_take_photo.setOnClickListener {
             requestStoragePermission()
+        }
+        button_accept_photo.setOnClickListener {
+            viewModel.filterLabelInitial(tempPhotoPath!!)
         }
     }
 
@@ -57,17 +65,18 @@ class SnapshotFragment : BaseFragment() {
             RC_IMAGE_CAPTURE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     setImagePreview(tempPhotoPath!!)
-                    invalidatedPhotoPath?.let { photoPath ->
-                        deletePhoto(photoPath)
-                        invalidatedPhotoPath = null
+                    invalidatedPhotoPath?.let {
+                        deletePhoto(it)
                     } ?: run {
-                        button_accept_photo.visibility = View.VISIBLE
-                        button_take_photo.invertColors()
-                        photo_preview.background = null
+                        updateUi()
                     }
                 } else {
-                    deletePhoto(tempPhotoPath!!)
+                    invalidatedPhotoPath?.let {
+                        deletePhoto(tempPhotoPath!!)
+                        tempPhotoPath = invalidatedPhotoPath
+                    }
                 }
+                invalidatedPhotoPath = null
             }
         }
     }
@@ -80,6 +89,33 @@ class SnapshotFragment : BaseFragment() {
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+
+    private fun observeData() {
+        viewModel.initialLabelingPassed.observe(viewLifecycleOwner, Observer { passed ->
+            if (passed) {
+                viewModel.detectLandmark(targetLandmark, tempPhotoPath!!)
+            } else {
+                context!!.shortToast("Image didn't pass initial filtering criteria")
+            }
+        })
+        viewModel.detectionPassed.observe(viewLifecycleOwner, Observer { passed ->
+            if (passed) {
+                context!!.shortToast("Image has been recognized successfully")
+            } else {
+                viewModel.filterImageFinal(tempPhotoPath!!)
+            }
+        })
+        viewModel.finalLabelingPassed.observe(viewLifecycleOwner, Observer{  passed ->
+            if (passed) {
+                context!!.shortToast("Final filtering passed, we consider the landmark recognized")
+            } else {
+                context!!.shortToast("The filtering process has passed successfully")
+            }
+        })
+        viewModel.errors.observe(viewLifecycleOwner, Observer { errorMessage ->
+            context!!.shortToast("An error has occurred, message: $errorMessage")
+        })
     }
 
     private fun requestStoragePermission() {
@@ -126,6 +162,13 @@ class SnapshotFragment : BaseFragment() {
                 photo_preview.setImageDrawable(drawable)
             }
         }
+    }
+
+    private fun updateUi() {
+        TransitionManager.beginDelayedTransition(container)
+        button_accept_photo.visibility = View.VISIBLE
+        button_take_photo.invertColors()
+        photo_preview.background = null
     }
 
     private fun deletePhoto(photoPath: String) {

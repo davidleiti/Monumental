@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.session.setup
+package ubb.thesis.david.monumental.view.setup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

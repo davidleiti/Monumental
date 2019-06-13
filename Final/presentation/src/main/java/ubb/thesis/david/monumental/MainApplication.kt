@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.os.Build
 import androidx.core.app.JobIntentService
 
-class BaseApplication : Application() {
+class MainApplication : Application() {
 
     init {
         Instance = this
@@ -37,10 +37,10 @@ class BaseApplication : Application() {
     }
 
     companion object {
-        fun getAppContext(): BaseApplication = Instance
+        fun getAppContext(): MainApplication = Instance
 
         const val GEOFENCE_CHANNEL_ID = "GeofenceNotificationsChannel"
 
-        private lateinit var Instance: BaseApplication
+        private lateinit var Instance: MainApplication
     }
 }

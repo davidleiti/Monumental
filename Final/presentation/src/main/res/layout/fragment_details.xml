@@ -6,7 +6,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical"
               android:weightSum="2"
-              tools:context=".session.setup.DetailsFragment">
+              tools:context=".view.setup.DetailsFragment">
 
     <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"

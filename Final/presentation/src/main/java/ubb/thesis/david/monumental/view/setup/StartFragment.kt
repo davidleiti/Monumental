@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.session.setup
+package ubb.thesis.david.monumental.view.setup
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_start.*
-import ubb.thesis.david.monumental.BaseApplication
-import ubb.thesis.david.monumental.HostActivity
+import ubb.thesis.david.monumental.MainApplication
+import ubb.thesis.david.monumental.view.HostActivity
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.databinding.FragmentStartBinding
@@ -23,7 +23,7 @@ class StartFragment : BaseFragment() {
         val binding: FragmentStartBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_start, container, false)
         binding.lifecycleOwner = this
 
-        viewModel = getViewModel { StartViewModel(getBeaconManager(), BaseApplication.getAppContext()) }
+        viewModel = getViewModel { StartViewModel(getBeaconManager(), MainApplication.getAppContext()) }
         binding.viewModel = viewModel
 
         return binding.root

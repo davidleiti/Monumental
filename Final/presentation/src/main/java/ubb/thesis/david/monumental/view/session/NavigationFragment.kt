@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.session.tracking
+package ubb.thesis.david.monumental.view.session
 
 
 import android.annotation.SuppressLint
@@ -50,8 +50,7 @@ class NavigationFragment : LocationTrackerFragment() {
         viewModel.loadSessionLandmarks(getUserId())
 
         button_take_photo.setOnClickListener {
-            Navigation.findNavController(it)
-                    .navigate(NavigationFragmentDirections.actionNavigateSnapshot(viewModel.nearestLandmark.value!!.id))
+            navigateToSnapshot()
         }
     }
 
@@ -118,7 +117,7 @@ class NavigationFragment : LocationTrackerFragment() {
             label_target.text = "Target: ${landmark.label}"
         })
         viewModel.distanceToTarget.observe(viewLifecycleOwner, Observer { distance ->
-            label_distance.text = "Distance: $distance"
+            label_distance.text = "Distance: $distance" // TODO Adjust visibility based on the distance to target
         })
         viewModel.errorMessages.observe(viewLifecycleOwner, Observer { error ->
             debug(TAG_LOG, "The following error has occurred: $error")
@@ -135,6 +134,11 @@ class NavigationFragment : LocationTrackerFragment() {
                     getBeaconManager().setupBeacon(landmark.id, landmark.lat, landmark.lng, getUserId())
             }
         }
+    }
+
+    private fun navigateToSnapshot() {
+        Navigation.findNavController(view!!)
+                .navigate(NavigationFragmentDirections.actionNavigateSnapshot(viewModel.nearestLandmark.value!!))
     }
 
     companion object {

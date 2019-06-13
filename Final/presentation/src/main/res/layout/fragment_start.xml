@@ -9,7 +9,7 @@
 
         <variable
                 name="viewModel"
-                type="ubb.thesis.david.monumental.session.setup.StartViewModel" />
+                type="ubb.thesis.david.monumental.view.setup.StartViewModel" />
 
     </data>
 
@@ -17,7 +17,7 @@
             android:id="@+id/content_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".session.setup.StartFragment">
+            tools:context=".view.setup.StartFragment">
 
         <ImageView
                 android:id="@+id/header_start"

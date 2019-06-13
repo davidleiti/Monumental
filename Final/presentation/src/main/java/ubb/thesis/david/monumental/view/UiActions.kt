@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.common
+package ubb.thesis.david.monumental.view
 
 interface UiActions {
     fun setTitle(text: String?)

@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental
+package ubb.thesis.david.monumental.geofencing
 
 import android.Manifest
 import android.app.PendingIntent
@@ -11,7 +11,6 @@ import com.google.android.gms.location.LocationServices
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.BeaconManager
-import ubb.thesis.david.monumental.geofencing.GeofenceBroadcastReceiver
 import ubb.thesis.david.monumental.utils.checkPermission
 
 class GeofencingClientAdapter(private val context: Context) : BeaconManager {
@@ -32,7 +31,8 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
                             info(TAG_LOG, "Created and registered geofence $id")
                             storage.edit { putBoolean(id, true) }
                         }
-                        .addOnFailureListener { debug(TAG_LOG, "Failed to create geofence $id, cause: $it") }
+                        .addOnFailureListener { debug(
+                                TAG_LOG, "Failed to create geofence $id, cause: $it") }
             }
         }
     }
@@ -43,8 +43,10 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
             for (entry in storage.all) {
                 remove(entry.key)
                 removeGeofence(entry.key,
-                               onSuccess = { info(TAG_LOG, "Removed geofence ${entry.key}") },
-                               onFailure = { debug(TAG_LOG, "Failed to remove geofence ${entry.key}") })
+                               onSuccess = { info(
+                                       TAG_LOG, "Removed geofence ${entry.key}") },
+                               onFailure = { debug(
+                                       TAG_LOG, "Failed to remove geofence ${entry.key}") })
             }
             apply()
         }
@@ -65,7 +67,8 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
         Geofence.Builder()
                 .setRequestId(id)
                 .setLoiteringDelay(10)
-                .setCircularRegion(lat, lng, DEFAULT_RADIUS)
+                .setCircularRegion(lat, lng,
+                                   DEFAULT_RADIUS)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build()

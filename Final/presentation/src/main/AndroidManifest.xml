@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-            android:name=".BaseApplication"
+            android:name=".MainApplication"
             android:theme="@style/AppTheme"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -24,7 +24,7 @@
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
         <activity
-                android:name=".HostActivity"
+                android:name=".view.HostActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:configChanges="orientation|keyboardHidden"
                 android:screenOrientation="portrait"
@@ -58,7 +58,7 @@
                 android:enabled="true"
                 tools:ignore="ExportedReceiver" />
 
-        <!-- Image cache content provider -->
+        <!-- ImageEntity cache content provider -->
         <provider
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="ubb.thesis.david.monumental"
@@ -68,6 +68,11 @@
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- ML kit model auto-download -->
+        <meta-data
+                android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+                android:value="label" />
 
         <!-- API keys metadata -->
         <meta-data

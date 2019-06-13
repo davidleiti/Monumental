@@ -6,10 +6,14 @@ import ubb.license.david.foursquareapi.FoursquareApi
 import ubb.license.david.foursquareapi.model.Photo
 import ubb.license.david.foursquareapi.model.Venue
 import ubb.thesis.david.domain.LandmarkApi
+import ubb.thesis.david.domain.common.Mapper
+import ubb.thesis.david.domain.entities.ImageEntity
 import ubb.thesis.david.domain.entities.Landmark
 import java.util.*
 
-class FoursquareApiAdapter(private val api: FoursquareApi) : LandmarkApi {
+class FoursquareApiAdapter(private val api: FoursquareApi,
+                           private val landmarkMapper: Mapper<Venue, Landmark>,
+                           private val imageMapper: Mapper<Photo, ImageEntity>) : LandmarkApi {
 
     override fun searchVenues(lat: Double,
                               long: Double,
@@ -27,13 +31,11 @@ class FoursquareApiAdapter(private val api: FoursquareApi) : LandmarkApi {
         })
     }
 
-    // TODO map result to actual entity object
-    override fun getVenueDetails(id: String): Single<Venue> =
-        api.venueDetails(id)
+    override fun getLandmarkDetails(id: String): Single<Landmark> =
+        api.venueDetails(id).map { landmarkMapper.mapFrom(it) }
 
-    // TODO map result to actual entity object
-    override fun getVenuePhotos(id: String): Single<List<Photo>> =
-        api.venuePhotos(id)
+    override fun getLandmarkImages(id: String): Single<List<ImageEntity>> =
+        api.venuePhotos(id).map { it.map { photo -> imageMapper.mapFrom(photo) } }
 
     private fun combineResults(searchResults: List<Landmark>,
                                exploreResults: List<Landmark>): List<Landmark> {
@@ -43,10 +45,10 @@ class FoursquareApiAdapter(private val api: FoursquareApi) : LandmarkApi {
         }
         return allVenues.distinctBy { venue -> venue.id }
     }
+
+    private fun Single<List<Venue>>.filterExploreResults(categoriesString: String): Single<List<Venue>> =
+        map { venues -> venues.filter { venue -> categoriesString.contains(venue.categories!![0].id) } }
+
+    private fun Single<List<Venue>>.transformToLandmarkList(): Single<List<Landmark>> =
+        map { venues -> venues.map { venue -> landmarkMapper.mapFrom(venue) } }
 }
-
-private fun Single<List<Venue>>.filterExploreResults(categoriesString: String): Single<List<Venue>> =
-    map { venues -> venues.filter { venue -> categoriesString.contains(venue.categories!![0].id) } }
-
-private fun Single<List<Venue>>.transformToLandmarkList(): Single<List<Landmark>> =
-    map { venues -> venues.map { venue -> Landmark.fromVenue(venue) } }

@@ -4,14 +4,13 @@ import androidx.room.Entity
 import ubb.thesis.david.domain.entities.Landmark
 import java.util.*
 
-@Entity(
-        tableName = "beacons",
+@Entity(tableName = "beacons",
         primaryKeys = ["id", "userId"])
 data class BeaconData(val id: String,
                       val lat: Double,
                       val lng: Double,
-                      var label: String? = "null",
-                      var userId: String = "",
+                      var label: String? = null,
+                      var userId: String = "Unknown user",
                       var foundAt: Date? = null) {
     companion object {
         fun fromEntity(entity: Landmark, userId: String): BeaconData =
@@ -27,8 +26,7 @@ data class BeaconData(val id: String,
             Landmark(id = beaconData.id,
                      lat = beaconData.lat,
                      lng = beaconData.lng,
-                     label = beaconData.label,
-                     photoPath = null
+                     label = beaconData.label
             )
     }
 }

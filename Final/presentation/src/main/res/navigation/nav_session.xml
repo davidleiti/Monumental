@@ -7,16 +7,16 @@
 
     <fragment
             android:id="@+id/snapshotDestination"
-            android:name="ubb.thesis.david.monumental.session.tracking.SnapshotFragment"
+            android:name="ubb.thesis.david.monumental.view.session.SnapshotFragment"
             android:label="fragment_snapshot"
             tools:layout="@layout/fragment_snapshot" >
         <argument
-                android:name="targetId"
-                app:argType="string" />
+                android:name="targetLandmark"
+                app:argType="ubb.thesis.david.domain.entities.Landmark" />
     </fragment>
     <fragment
             android:id="@+id/navigationFragment"
-            android:name="ubb.thesis.david.monumental.session.tracking.NavigationFragment"
+            android:name="ubb.thesis.david.monumental.view.session.NavigationFragment"
             android:label="fragment_navigation"
             tools:layout="@layout/fragment_navigation" >
         <action

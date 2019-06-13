@@ -101,7 +101,7 @@
     <string name="default_web_client_id">4585234938-6dpf3tnfn8v6m2ma21ag30p31jf8n0mu.apps.googleusercontent.com</string>
     <string name="nav_arrow">Navigation Arrow</string>
     <string name="label_take_photo">Take a photo</string>
-    <string name="label_accept_photo">Accept photo</string>
+    <string name="label_accept_photo">Use image</string>
     <string name="cd_photo_preview">Photo preview</string>
     <string name="label_capture_landmark">Capture landmark</string>
 </resources>

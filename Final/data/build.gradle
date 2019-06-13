@@ -30,16 +30,20 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api project(':domain')
+    api project(':foursquareApi')
 
     // Room
     implementation "androidx.room:room-runtime:2.1.0-rc01"
     implementation 'androidx.room:room-rxjava2:2.1.0-rc01'
     kapt "androidx.room:room-compiler:2.1.0-rc01"
 
-    // Firebase
+    // Cloud storage
     implementation 'com.google.firebase:firebase-storage:17.0.0'
     implementation 'com.google.firebase:firebase-firestore:19.0.2'
+
+    // Landmark recognition
     implementation 'com.google.firebase:firebase-ml-vision:20.0.0'
+    implementation 'com.google.firebase:firebase-ml-vision-image-label-model:17.0.2'
 
     // Lifecycle
     api "android.arch.lifecycle:extensions:2.1.0-alpha01"
