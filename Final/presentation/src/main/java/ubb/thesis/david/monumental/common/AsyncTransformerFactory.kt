@@ -11,13 +11,17 @@ sealed class AsyncTransformerFactory {
     companion object {
         fun create(): CompletableTransformer =
             CompletableTransformer { completable ->
-                completable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                completable.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnError { error -> error.printStackTrace() }
             }
 
         inline fun <reified T : Any> create(): Transformer<T> =
             object : Transformer<T>() {
                 override fun apply(upstream: Observable<T>): ObservableSource<T> =
-                    upstream.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    upstream.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnError { error -> error.printStackTrace() }
             }
     }
 }
