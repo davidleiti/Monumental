@@ -104,4 +104,13 @@
     <string name="label_accept_photo">Use image</string>
     <string name="cd_photo_preview">Photo preview</string>
     <string name="label_capture_landmark">Capture landmark</string>
+    <string name="label_ok">Ok</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="title_placeholder">Title</string>
+    <string name="desc_placeholder">Description</string>
+    <string name="desc_photo_invalid">This doesn\'t seem right, make sure the photo is focused on the landmark!</string>
+    <string name="title_photo_invalid">Oops..</string>
+    <string name="desc_unrecognized_photo">Unable to recognize the landmark, make sure that its not obfuscated and it is visible in its entirety</string>
+    <string name="title_unrecognized_photo">Error</string>
+    <string name="message_error_detection">An unexpected error has occurred, check your network connection! \n Message: %1$s</string>
 </resources>

@@ -88,7 +88,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
         createFirebaseImage(imagePath)?.let { image ->
             landmarkDetector.detectInImage(image)
                     .addOnSuccessListener { landmarks ->
-                        detectionSource.onNext(detectedLandmark(targetLandmark, landmarks))
+                        detectionSource.onNext(verifyDetectedLandmark(targetLandmark, landmarks))
                     }
                     .addOnFailureListener {
                         detectionSource.onError(it)
@@ -101,7 +101,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
         return detectionSource.take(1)
     }
 
-    private fun detectedLandmark(target: Landmark, landmarks: List<FirebaseVisionCloudLandmark>): String {
+    private fun verifyDetectedLandmark(target: Landmark, landmarks: List<FirebaseVisionCloudLandmark>): String {
         if (landmarks.isEmpty())
             return NONE_DETECTED
 

@@ -24,8 +24,10 @@ import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
+import ubb.thesis.david.monumental.common.SimpleDialog
 import ubb.thesis.david.monumental.utils.checkPermission
 import ubb.thesis.david.monumental.utils.getViewModel
+import ubb.thesis.david.monumental.utils.longToast
 import ubb.thesis.david.monumental.utils.shortToast
 import java.io.File
 import java.io.IOException
@@ -60,6 +62,21 @@ class SnapshotFragment : BaseFragment() {
         }
     }
 
+    private fun observeData() {
+        viewModel.initialLabelingPassed.observe(viewLifecycleOwner, Observer { passed ->
+            onInitialFilteringFinished(passed)
+        })
+        viewModel.detectionPassed.observe(viewLifecycleOwner, Observer { passed ->
+            onDetectionFinished(passed)
+        })
+        viewModel.finalLabelingPassed.observe(viewLifecycleOwner, Observer { passed ->
+            onFinalFilteringFinished(passed)
+        })
+        viewModel.errors.observe(viewLifecycleOwner, Observer { errorMessage ->
+            context!!.longToast(getString(R.string.message_error_detection, errorMessage))
+        })
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             RC_IMAGE_CAPTURE -> {
@@ -91,31 +108,38 @@ class SnapshotFragment : BaseFragment() {
         }
     }
 
-    private fun observeData() {
-        viewModel.initialLabelingPassed.observe(viewLifecycleOwner, Observer { passed ->
-            if (passed) {
-                viewModel.detectLandmark(targetLandmark, tempPhotoPath!!)
-            } else {
-                context!!.shortToast("Image didn't pass initial filtering criteria")
-            }
-        })
-        viewModel.detectionPassed.observe(viewLifecycleOwner, Observer { passed ->
-            if (passed) {
-                context!!.shortToast("Image has been recognized successfully")
-            } else {
-                viewModel.filterImageFinal(tempPhotoPath!!)
-            }
-        })
-        viewModel.finalLabelingPassed.observe(viewLifecycleOwner, Observer{  passed ->
-            if (passed) {
-                context!!.shortToast("Final filtering passed, we consider the landmark recognized")
-            } else {
-                context!!.shortToast("The filtering process has passed successfully")
-            }
-        })
-        viewModel.errors.observe(viewLifecycleOwner, Observer { errorMessage ->
-            context!!.shortToast("An error has occurred, message: $errorMessage")
-        })
+    private fun onInitialFilteringFinished(passed: Boolean) {
+        if (passed)
+            viewModel.detectLandmark(targetLandmark, tempPhotoPath!!)
+        else
+            SimpleDialog(context!!, getString(R.string.title_photo_invalid), getString(R.string.desc_photo_invalid))
+                    .show()
+    }
+
+    private fun onDetectionFinished(passed: Boolean) {
+        if (passed)
+            onLandmarkRecognized()
+        else
+            viewModel.filterImageFinal(tempPhotoPath!!)
+    }
+
+    private fun onFinalFilteringFinished(passed: Boolean) {
+        if (passed)
+            onLandmarkRecognized()
+        else
+            SimpleDialog(context!!, getString(R.string.title_unrecognized_photo),
+                         getString(R.string.desc_unrecognized_photo)).show()
+    }
+
+    private fun onLandmarkRecognized() {
+        context!!.shortToast("Image has been recognized successfully")
+    }
+
+    private fun updateUi() {
+        TransitionManager.beginDelayedTransition(container)
+        button_accept_photo.visibility = View.VISIBLE
+        button_take_photo.invertColors()
+        photo_preview.background = null
     }
 
     private fun requestStoragePermission() {
@@ -162,13 +186,6 @@ class SnapshotFragment : BaseFragment() {
                 photo_preview.setImageDrawable(drawable)
             }
         }
-    }
-
-    private fun updateUi() {
-        TransitionManager.beginDelayedTransition(container)
-        button_accept_photo.visibility = View.VISIBLE
-        button_take_photo.invertColors()
-        photo_preview.background = null
     }
 
     private fun deletePhoto(photoPath: String) {

@@ -21,5 +21,10 @@
     <style name="TextInputLayoutHintAppearance" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/primary_dark</item>
     </style>
+    
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/fade_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/fade_out_bottom</item>
+    </style>
 
 </resources>
