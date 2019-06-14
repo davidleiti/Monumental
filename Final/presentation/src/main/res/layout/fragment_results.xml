@@ -53,25 +53,14 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
     <ubb.thesis.david.monumental.common.FlatButton
-            android:id="@+id/button_retry"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:text="@string/adjust_parameters"
-            app:invertColors="true"
-            app:layout_constraintEnd_toEndOf="@+id/button_next"
-            app:layout_constraintBottom_toTopOf="@+id/button_next"
-            app:layout_constraintStart_toEndOf="@+id/button_cancel" />
-
-    <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_cancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:text="@string/cancel"
             app:invertColors="true"
             app:layout_constraintStart_toStartOf="@+id/button_next"
-            app:layout_constraintTop_toTopOf="@+id/button_retry"
-            app:layout_constraintBottom_toBottomOf="@+id/button_retry"
-            app:layout_constraintEnd_toStartOf="@+id/button_retry" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/button_next" />
 
     <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_next"

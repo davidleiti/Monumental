@@ -40,14 +40,14 @@
             tools:layout="@layout/fragment_details" >
         <action
                 android:id="@+id/actionAdvance"
-                app:destination="@id/categoriesFragment"
+                app:destination="@id/categoriesDestination"
                 app:enterAnim="@anim/fade_in_right"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                 app:popExitAnim="@anim/fade_out_right"
                 app:exitAnim="@anim/nav_default_exit_anim" />
     </fragment>
     <fragment
-            android:id="@+id/categoriesFragment"
+            android:id="@+id/categoriesDestination"
             android:name="ubb.thesis.david.monumental.view.setup.CategoriesFragment"
             android:label="fragment_categories"
             tools:layout="@layout/fragment_categories" >
@@ -61,7 +61,7 @@
                 android:defaultValue="0" />
         <action
                 android:id="@+id/actionAdvance"
-                app:destination="@id/landmarkResultsFragment"
+                app:destination="@id/landmarkResultsDestination"
                 app:enterAnim="@anim/fade_in_right"
                 app:exitAnim="@anim/nav_default_exit_anim"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -71,7 +71,7 @@
                 app:argType="com.google.android.gms.maps.model.LatLng" />
     </fragment>
     <fragment
-            android:id="@+id/landmarkResultsFragment"
+            android:id="@+id/landmarkResultsDestination"
             android:name="ubb.thesis.david.monumental.view.setup.ResultFragment"
             android:label="fragment_landmark_results"
             tools:layout="@layout/fragment_results" >
@@ -100,6 +100,14 @@
                 app:popUpTo="@+id/startDestination"
                 app:popUpToInclusive="true"
                 app:launchSingleTop="true" />
+        <action
+                android:id="@+id/actionRestartSetup"
+                app:destination="@id/detailsDestination"
+                app:popUpTo="@+id/startDestination"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/fade_out_bottom"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/fade_out_right" />
     </fragment>
     <fragment
             android:id="@+id/loginDestination"

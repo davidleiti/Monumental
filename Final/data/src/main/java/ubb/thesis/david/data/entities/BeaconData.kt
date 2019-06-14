@@ -9,17 +9,19 @@ import java.util.*
 data class BeaconData(val id: String,
                       val lat: Double,
                       val lng: Double,
-                      var label: String? = null,
-                      var userId: String = "Unknown user",
-                      var foundAt: Date? = null) {
+                      var label: String?,
+                      var userId: String,
+                      var photoPath: String?,
+                      var foundAt: Date?) {
     companion object {
-        fun fromEntity(entity: Landmark, userId: String): BeaconData =
+        fun fromEntity(entity: Landmark, userId: String, photoPath: String? = null, foundAt: Date? = null): BeaconData =
             BeaconData(id = entity.id,
                        lat = entity.lat,
                        lng = entity.lng,
                        label = entity.label,
                        userId = userId,
-                       foundAt = null
+                       photoPath = photoPath,
+                       foundAt = foundAt
             )
 
         fun toEntity(beaconData: BeaconData): Landmark =

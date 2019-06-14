@@ -52,8 +52,11 @@ class SessionRepository private constructor(private val database: SessionDatabas
                 }.map { beacons -> beacons.map { BeaconData.toEntity(it) } }
 
 
-    override fun updateLandmark(userId: String, landmark: Landmark): Completable =
-        database.beaconDao().updateBeacon(BeaconData.fromEntity(landmark, userId))
+    override fun updateLandmark(landmark: Landmark,
+                       userId: String,
+                       photoPath: String?,
+                       foundAt: Date?): Completable =
+        database.beaconDao().updateBeacon(BeaconData.fromEntity(landmark, userId, photoPath, foundAt))
 
     override fun wipeSession(userId: String): Completable =
         Completable.fromCallable {

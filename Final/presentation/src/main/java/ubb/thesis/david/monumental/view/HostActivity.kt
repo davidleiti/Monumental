@@ -25,9 +25,9 @@ import kotlinx.android.synthetic.main.nav_header_home.view.*
 import kotlinx.android.synthetic.main.progress_overlay.*
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
-import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.ClientProvider
+import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
 import ubb.thesis.david.monumental.utils.fadeIn
 import ubb.thesis.david.monumental.utils.fadeOut
 
@@ -158,7 +158,7 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         drawer_layout.closeDrawer(GravityCompat.START)
         return when (item.itemId) {
             R.id.option_sign_out -> {
-                geofencingClientAdapter.removeBeacons(collectionId = firebaseAuth.currentUser!!.uid)
+                geofencingClientAdapter.wipeBeacons(collectionId = firebaseAuth.currentUser!!.uid)
                 signOut()
                 navigateToLogin()
                 false

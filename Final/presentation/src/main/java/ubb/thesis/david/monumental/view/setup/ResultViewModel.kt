@@ -18,20 +18,20 @@ class ResultViewModel(private val beaconManager: BeaconManager) : BaseViewModel(
 
     private val sessionCreatedObservable = BehaviorSubject.create<Unit>()
     private val landmarksObservable = MutableLiveData<List<Landmark>>()
-    private val errorsObservable = MutableLiveData<String>()
+    private val errorsObservable = MutableLiveData<Throwable>()
 
     fun getVenuesObservable(): LiveData<List<Landmark>> = landmarksObservable
 
     fun getSessionCreatedObservable(): BehaviorSubject<Unit> = sessionCreatedObservable
 
-    fun getErrorsObservable(): LiveData<String> = errorsObservable
+    fun getErrorsObservable(): LiveData<Throwable> = errorsObservable
 
     fun searchLandmarks(lat: Double, long: Double, radius: Int, limit: Int, categories: String) {
         val params = SearchLandmarks.RequestValues(lat, long, radius, categories, limit)
         SearchLandmarks(params, landmarkApi, AsyncTransformerFactory.create<List<Landmark>>())
                 .execute()
                 .subscribe({ landmarksObservable.value = it },
-                           { errorsObservable.value = it.message })
+                           { errorsObservable.value = it })
                 .also { addDisposable(it) }
     }
 
@@ -40,7 +40,7 @@ class ResultViewModel(private val beaconManager: BeaconManager) : BaseViewModel(
         CreateSession(params, sessionManager, beaconManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ sessionCreatedObservable.onNext(Unit) },
-                           { errorsObservable.value = it.message })
+                           { errorsObservable.value = it })
                 .also { addDisposable(it) }
     }
 }

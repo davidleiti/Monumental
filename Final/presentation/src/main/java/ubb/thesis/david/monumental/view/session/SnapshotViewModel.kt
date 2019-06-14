@@ -5,25 +5,34 @@ import androidx.lifecycle.MutableLiveData
 import ubb.thesis.david.data.FirebaseLandmarkDetector
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
+import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.domain.LandmarkDetector
+import ubb.thesis.david.domain.SessionManager
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.DetectLandmark
 import ubb.thesis.david.domain.usecases.FilterImageCloud
 import ubb.thesis.david.domain.usecases.FilterImageOnDevice
+import ubb.thesis.david.domain.usecases.UpdateLandmarkData
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
+import java.util.*
 
-class SnapshotViewModel(private val landmarkDetector: LandmarkDetector) : BaseViewModel() {
+class SnapshotViewModel(private val sessionManager: SessionManager,
+                        private val beaconManager: BeaconManager,
+                        private val landmarkDetector: LandmarkDetector) : BaseViewModel() {
 
     private val _initialLabelingPass = MutableLiveData<Boolean>()
     private val _finalLabelingPass = MutableLiveData<Boolean>()
     private val _detectionPass = MutableLiveData<Boolean>()
-    private val _errors = MutableLiveData<String>()
+    private val _errors = MutableLiveData<Throwable>()
+
+    private val _onLandmarkSaved = MutableLiveData<Unit>()
 
     val initialLabelingPassed: LiveData<Boolean> = _initialLabelingPass
     val finalLabelingPassed: LiveData<Boolean> = _finalLabelingPass
     val detectionPassed: LiveData<Boolean> = _detectionPass
-    val errors: LiveData<String> = _errors
+    val errors: LiveData<Throwable> = _errors
+    val onLandmarkSaved: LiveData<Unit> = _onLandmarkSaved
 
     fun filterLabelInitial(path: String) {
         FilterImageOnDevice(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>()).execute()
@@ -36,7 +45,7 @@ class SnapshotViewModel(private val landmarkDetector: LandmarkDetector) : BaseVi
                                _initialLabelingPass.value = passed
                            }, { error ->
                                debug(TAG_LOG, "Error encountered while labeling on device, message: ${error.message}")
-                               _errors.value = error.message
+                               _errors.value = error
                            })
                 .also { addDisposable(it) }
     }
@@ -45,14 +54,15 @@ class SnapshotViewModel(private val landmarkDetector: LandmarkDetector) : BaseVi
         DetectLandmark(landmark, imagePath, landmarkDetector, AsyncTransformerFactory.create<String>()).execute()
                 .subscribe({ detection ->
                                if (detection != FirebaseLandmarkDetector.NONE_DETECTED)
-                                   info(TAG_LOG, "Recognized the following landmark while analyzing the image: $detection")
+                                   info(TAG_LOG,
+                                        "Recognized the following landmark while analyzing the image: $detection")
                                else
                                    info(TAG_LOG, "Failed to recognize any landmark while analyzing the image")
 
                                _detectionPass.value = detection != FirebaseLandmarkDetector.NONE_DETECTED
-                           }, {
-                               debug(TAG_LOG, "Error encountered while detecting, message: ${it.message}")
-                               _errors.value = it.message
+                           }, { error ->
+                               debug(TAG_LOG, "Error encountered while detecting, message: ${error.message}")
+                               _errors.value = error
                            })
                 .also { addDisposable(it) }
     }
@@ -68,9 +78,22 @@ class SnapshotViewModel(private val landmarkDetector: LandmarkDetector) : BaseVi
                                _finalLabelingPass.value = passed
                            }, { error ->
                                debug(TAG_LOG, "Error encountered while labeling on cloud, message: ${error.message}")
-                               _errors.value = error.message
+                               _errors.value = error
                            })
                 .also { addDisposable(it) }
+    }
+
+    fun saveLandmark(landmark: Landmark, userId: String, photoPath: String, timeDiscovered: Date) {
+        val parameters = UpdateLandmarkData.Params(landmark, userId, photoPath, timeDiscovered)
+        UpdateLandmarkData(parameters, sessionManager, AsyncTransformerFactory.create()).execute()
+                .subscribe({
+                               info(TAG_LOG, "Updated landmark $landmark data successfully!")
+                               beaconManager.removeBeacon(landmark.id, userId)
+                               _onLandmarkSaved.value = Unit
+                           }, {
+                               debug(TAG_LOG, "Error updating landmark, cause: ${it.message}")
+                               _errors.value
+                           }).also { addDisposable(it) }
     }
 
     companion object {

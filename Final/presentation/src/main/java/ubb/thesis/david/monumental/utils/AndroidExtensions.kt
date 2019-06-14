@@ -42,3 +42,4 @@ fun Context.shortToast(message: String) =
 
 fun Context.longToast(message: String) =
     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+

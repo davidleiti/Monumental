@@ -31,22 +31,35 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
                             info(TAG_LOG, "Created and registered geofence $id")
                             storage.edit { putBoolean(id, true) }
                         }
-                        .addOnFailureListener { debug(
-                                TAG_LOG, "Failed to create geofence $id, cause: $it") }
+                        .addOnFailureListener {
+                            debug(TAG_LOG, "Failed to create geofence $id, cause: $it")
+                        }
             }
         }
     }
 
-    override fun removeBeacons(collectionId: String) {
+    override fun removeBeacon(id: String, collectionId: String) {
+        val storage = context.getSharedPreferences(collectionId, Context.MODE_PRIVATE)
+        removeGeofence(id, {
+            storage.edit { remove(id) }
+            info(TAG_LOG, "Removed geofence $id")
+        }, {
+            debug(TAG_LOG, "Failed to remove geofence $id")
+        })
+    }
+
+    override fun wipeBeacons(collectionId: String) {
         val storage = context.getSharedPreferences(collectionId, Context.MODE_PRIVATE)
         storage.edit().run {
             for (entry in storage.all) {
                 remove(entry.key)
                 removeGeofence(entry.key,
-                               onSuccess = { info(
-                                       TAG_LOG, "Removed geofence ${entry.key}") },
-                               onFailure = { debug(
-                                       TAG_LOG, "Failed to remove geofence ${entry.key}") })
+                               onSuccess = {
+                                   info(TAG_LOG, "Removed geofence ${entry.key}")
+                               },
+                               onFailure = {
+                                   debug(TAG_LOG, "Failed to remove geofence ${entry.key}")
+                               })
             }
             apply()
         }
@@ -67,8 +80,7 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
         Geofence.Builder()
                 .setRequestId(id)
                 .setLoiteringDelay(10)
-                .setCircularRegion(lat, lng,
-                                   DEFAULT_RADIUS)
+                .setCircularRegion(lat, lng, DEFAULT_RADIUS)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build()

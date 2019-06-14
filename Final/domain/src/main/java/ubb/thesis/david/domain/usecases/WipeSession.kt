@@ -13,6 +13,6 @@ class WipeSession(private val userId: String,
 
     override fun createSource(): Completable =
         sessionManager.wipeSession(userId)
-                .doOnComplete { beaconManager.removeBeacons(userId) }
+                .doOnComplete { beaconManager.wipeBeacons(userId) }
 
 }

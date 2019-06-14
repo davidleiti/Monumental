@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.entities.Session
+import java.util.*
 
 interface SessionManager {
 
@@ -12,6 +13,6 @@ interface SessionManager {
     fun wipeSession(userId: String): Completable
 
     fun getSessionLandmarks(userId: String): Maybe<List<Landmark>>
-    fun updateLandmark(userId: String, landmark: Landmark): Completable
+    fun updateLandmark(landmark: Landmark, userId: String, photoPath: String?, foundAt: Date?): Completable
 
 }

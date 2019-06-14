@@ -78,7 +78,7 @@
 
     <!--ResultFragment-->
     <string name="cancel">Cancel</string>
-    <string name="adjust_parameters">Retry</string>
+    <string name="label_retry">Retry</string>
     <string name="start">Start</string>
     <string name="warning_error_search">An error has occurred while looking for landmarks</string>
     <string name="venues_found">Found %1$d landmarks near your location.</string>
@@ -109,8 +109,12 @@
     <string name="title_placeholder">Title</string>
     <string name="desc_placeholder">Description</string>
     <string name="desc_photo_invalid">This doesn\'t seem right, make sure the photo is focused on the landmark!</string>
-    <string name="title_photo_invalid">Oops..</string>
     <string name="desc_unrecognized_photo">Unable to recognize the landmark, make sure that its not obfuscated and it is visible in its entirety</string>
     <string name="title_unrecognized_photo">Error</string>
     <string name="message_error_detection">An unexpected error has occurred, check your network connection! \n Message: %1$s</string>
+    <string name="message_landmark_Saved">The landmark\'s data has been stored successfully, you may resume to pursue a new one!</string>
+    <string name="title_landmark_saved">Success</string>
+    <string name="message_oops">Oops...</string>
+    <string name="message_no_landmarks">Could not find any new landmarks nearby. You may try adjusting the search parameters.</string>
+    <string name="label_error">Error</string>
 </resources>

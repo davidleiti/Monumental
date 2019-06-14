@@ -17,17 +17,19 @@ import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_snapshot.*
 import ubb.thesis.david.data.FirebaseLandmarkDetector
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
+import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.common.SimpleDialog
+import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
 import ubb.thesis.david.monumental.utils.checkPermission
 import ubb.thesis.david.monumental.utils.getViewModel
-import ubb.thesis.david.monumental.utils.longToast
 import ubb.thesis.david.monumental.utils.shortToast
 import java.io.File
 import java.io.IOException
@@ -51,7 +53,13 @@ class SnapshotFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         targetLandmark = SnapshotFragmentArgs.fromBundle(arguments!!).targetLandmark
-        viewModel = getViewModel { SnapshotViewModel(FirebaseLandmarkDetector(context!!)) }
+
+        viewModel = getViewModel {
+            SnapshotViewModel(sessionManager = Configuration.provideSessionManager(),
+                              beaconManager = GeofencingClientAdapter(context!!),
+                              landmarkDetector = FirebaseLandmarkDetector(context!!))
+        }
+
         observeData()
 
         button_take_photo.setOnClickListener {
@@ -72,8 +80,14 @@ class SnapshotFragment : BaseFragment() {
         viewModel.finalLabelingPassed.observe(viewLifecycleOwner, Observer { passed ->
             onFinalFilteringFinished(passed)
         })
-        viewModel.errors.observe(viewLifecycleOwner, Observer { errorMessage ->
-            context!!.longToast(getString(R.string.message_error_detection, errorMessage))
+        viewModel.onLandmarkSaved.observe(viewLifecycleOwner, Observer {
+            onLandmarkSaved()
+        })
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
+            SimpleDialog(context!!,
+                         getString(R.string.message_oops),
+                         getString(R.string.message_error_detection))
+                    .show()
         })
     }
 
@@ -112,7 +126,7 @@ class SnapshotFragment : BaseFragment() {
         if (passed)
             viewModel.detectLandmark(targetLandmark, tempPhotoPath!!)
         else
-            SimpleDialog(context!!, getString(R.string.title_photo_invalid), getString(R.string.desc_photo_invalid))
+            SimpleDialog(context!!, getString(R.string.message_oops), getString(R.string.desc_photo_invalid))
                     .show()
     }
 
@@ -129,6 +143,16 @@ class SnapshotFragment : BaseFragment() {
         else
             SimpleDialog(context!!, getString(R.string.title_unrecognized_photo),
                          getString(R.string.desc_unrecognized_photo)).show()
+    }
+
+    private fun onLandmarkSaved() {
+        SimpleDialog(context!!, getString(R.string.title_landmark_saved), getString(R.string.message_landmark_Saved))
+                .also { dialog ->
+                    dialog.updatePositiveButton(getString(R.string.label_ok)) {
+                        Navigation.findNavController(view!!).navigateUp()
+                    }
+                    dialog.show()
+                }
     }
 
     private fun onLandmarkRecognized() {

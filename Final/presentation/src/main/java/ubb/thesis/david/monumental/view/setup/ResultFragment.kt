@@ -15,8 +15,8 @@ import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
+import ubb.thesis.david.monumental.common.SimpleDialog
 import ubb.thesis.david.monumental.utils.getViewModel
-import ubb.thesis.david.monumental.utils.shortToast
 
 class ResultFragment : BaseFragment(), View.OnClickListener {
 
@@ -38,7 +38,6 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         button_cancel.setOnClickListener(this)
-        button_retry.setOnClickListener(this)
         button_next.setOnClickListener(this)
     }
 
@@ -58,7 +57,6 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
         when (v.id) {
             R.id.button_next -> setupSession()
             R.id.button_cancel -> navigateStart()
-            R.id.button_retry -> loadVenues()
         }
     }
 
@@ -68,16 +66,18 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
 
     private fun observeData() {
         viewModel.getVenuesObservable().observe(viewLifecycleOwner, Observer { venues ->
-            info(TAG_LOG, "Landmarks successfully retrieved from the api.")
+            info(TAG_LOG, "Landmarks retrieved successfully from the api.")
             venues.forEach { info(TAG_LOG, it.toString()) }
+
             landmarksRetrieved = venues
             hideProgress()
-            displayResult()
+            updateUi()
         })
-        viewModel.getErrorsObservable().observe(viewLifecycleOwner, Observer { errorMessage ->
-            debug(TAG_LOG, "An error has occurred, cause: $errorMessage")
+        viewModel.getErrorsObservable().observe(viewLifecycleOwner, Observer {
+            debug(TAG_LOG, "An unexpected error has occurred. See stacktrace in log")
+
             hideProgress()
-            context!!.shortToast(getString(R.string.default_error_message))
+            displayError()
         })
         viewModel.getSessionCreatedObservable().subscribe {
             hideProgress()
@@ -103,12 +103,34 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
         viewModel.setupSession(getUserId(), landmarksRetrieved)
     }
 
-    private fun displayResult() {
-        TransitionManager.beginDelayedTransition(container_fragment)
-        label_ready.visibility = View.VISIBLE
-        label_results.visibility = View.VISIBLE
-        label_results.text = getString(R.string.venues_found, landmarksRetrieved.size)
+    private fun updateUi() {
+        if (landmarksRetrieved.isEmpty()) {
+            SimpleDialog(context!!, getString(R.string.message_oops), getString(R.string.message_no_landmarks))
+                    .also { dialog ->
+                        dialog.updatePositiveButton(getString(R.string.label_ok)) {
+                            Navigation.findNavController(view!!).navigate(ResultFragmentDirections.actionRestartSetup())
+                        }
+                        dialog.show()
+                    }
+        } else {
+            TransitionManager.beginDelayedTransition(container_fragment)
+            label_ready.visibility = View.VISIBLE
+            label_results.visibility = View.VISIBLE
+            label_results.text = getString(R.string.venues_found, landmarksRetrieved.size)
+        }
     }
+
+    private fun displayError() =
+        SimpleDialog(context!!, getString(R.string.label_error), getString(R.string.default_error_message))
+                .also { dialog ->
+                    dialog.updatePositiveButton(getString(R.string.label_retry)) {
+                        loadVenues()
+                    }
+                    dialog.setupNegativeButton(getString(R.string.cancel)) {
+                        navigateStart()
+                    }
+                }.show()
+
 
     private fun beginSession() =
         Navigation.findNavController(view!!).navigate(ResultFragmentDirections.actionBeginSession())
