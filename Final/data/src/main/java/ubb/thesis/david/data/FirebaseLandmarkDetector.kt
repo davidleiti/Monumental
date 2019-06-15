@@ -15,6 +15,8 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import ubb.thesis.david.data.utils.debug
+import ubb.thesis.david.data.utils.toLocation
 import ubb.thesis.david.domain.LandmarkDetector
 import ubb.thesis.david.domain.entities.Landmark
 import java.io.File
@@ -51,10 +53,9 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
         createFirebaseImage(imagePath)?.let { image ->
             onDeviceImageLabeler.processImage(image)
                     .addOnSuccessListener { labels ->
-                        onDeviceLabelingSource.onNext(
-                                passesFilters(
-                                        labels = labels.map { it.text },
-                                        filters = LABELS_FILTER + LABELS_GENERIC))
+                        debug(TAG_LOG, "Labels predicted: ${labels.map { it.text + '(' + it.confidence + ')' }}")
+                        onDeviceLabelingSource.onNext(passesFilters(labels = labels.map { it.text },
+                                                                    filters = LABELS_FILTER + LABELS_GENERIC))
                     }
                     .addOnFailureListener {
                         onDeviceLabelingSource.onError(it)
@@ -71,6 +72,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
         createFirebaseImage(imagePath)?.let { image ->
             cloudImageLabeler.processImage(image)
                     .addOnSuccessListener { labels ->
+                        debug(TAG_LOG, "Labels predicted: ${labels.map { it.text + '(' + it.confidence + ')' }}")
                         cloudLabelingSource.onNext(passesFilters(labels.map { it.text }, LABELS_FILTER))
                     }
                     .addOnFailureListener {
@@ -88,6 +90,8 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
         createFirebaseImage(imagePath)?.let { image ->
             landmarkDetector.detectInImage(image)
                     .addOnSuccessListener { landmarks ->
+                        debug(TAG_LOG,
+                              "Landmarks predicted: ${landmarks.map { it.landmark + '(' + it.confidence + ')' }}")
                         detectionSource.onNext(verifyDetectedLandmark(targetLandmark, landmarks))
                     }
                     .addOnFailureListener {
@@ -134,9 +138,11 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
 
     companion object {
         const val NONE_DETECTED = "No landmark detected"
-        private const val ERROR_CREATE_IMAGE = "Failed to create image at path, see log stacktrace for details"
 
+        private const val TAG_LOG = "FirebaseLandmarkDetectorLogger"
+        private const val ERROR_CREATE_IMAGE = "Failed to create image at path, see log stacktrace for details"
         private const val DETECTION_DISTANCE_THRESHOLD = 50
+
         private val LABELS_FILTER = arrayOf(
                 "Monument",
                 "Landmark",
@@ -161,9 +167,3 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
         )
     }
 }
-
-private fun FirebaseVisionCloudLandmark.toLocation(): Location =
-    Location("").also {
-        it.longitude = locations[0].longitude
-        it.latitude = locations[0].latitude
-    }

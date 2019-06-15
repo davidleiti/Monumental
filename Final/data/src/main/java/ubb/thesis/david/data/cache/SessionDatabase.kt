@@ -10,7 +10,7 @@ import org.jetbrains.anko.doAsync
 import ubb.thesis.david.data.entities.BeaconData
 import ubb.thesis.david.data.entities.SessionData
 
-@Database(entities = [BeaconData::class, SessionData::class], version = 6, exportSchema = false)
+@Database(entities = [BeaconData::class, SessionData::class], version = 7, exportSchema = false)
 @TypeConverters(RoomConverter::class)
 abstract class SessionDatabase : RoomDatabase() {
 

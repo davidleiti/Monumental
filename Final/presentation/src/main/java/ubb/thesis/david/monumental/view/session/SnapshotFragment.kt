@@ -66,6 +66,7 @@ class SnapshotFragment : BaseFragment() {
             requestStoragePermission()
         }
         button_accept_photo.setOnClickListener {
+            displayProgress()
             viewModel.filterLabelInitial(tempPhotoPath!!)
         }
     }
@@ -83,11 +84,8 @@ class SnapshotFragment : BaseFragment() {
         viewModel.onLandmarkSaved.observe(viewLifecycleOwner, Observer {
             onLandmarkSaved()
         })
-        viewModel.errors.observe(viewLifecycleOwner, Observer {
-            SimpleDialog(context!!,
-                         getString(R.string.message_oops),
-                         getString(R.string.message_error_detection))
-                    .show()
+        viewModel.errors.observe(viewLifecycleOwner, Observer { error ->
+            onErrorOccurred(error)
         })
     }
 
@@ -123,11 +121,14 @@ class SnapshotFragment : BaseFragment() {
     }
 
     private fun onInitialFilteringFinished(passed: Boolean) {
-        if (passed)
+        if (passed) {
             viewModel.detectLandmark(targetLandmark, tempPhotoPath!!)
-        else
+        } else {
             SimpleDialog(context!!, getString(R.string.message_oops), getString(R.string.desc_photo_invalid))
                     .show()
+
+            hideProgress()
+        }
     }
 
     private fun onDetectionFinished(passed: Boolean) {
@@ -138,11 +139,17 @@ class SnapshotFragment : BaseFragment() {
     }
 
     private fun onFinalFilteringFinished(passed: Boolean) {
+        hideProgress()
         if (passed)
             onLandmarkRecognized()
         else
             SimpleDialog(context!!, getString(R.string.title_unrecognized_photo),
                          getString(R.string.desc_unrecognized_photo)).show()
+    }
+
+    private fun onLandmarkRecognized() {
+        hideProgress()
+        viewModel.saveLandmark(targetLandmark, getUserId(), tempPhotoPath!!, Date())
     }
 
     private fun onLandmarkSaved() {
@@ -155,8 +162,12 @@ class SnapshotFragment : BaseFragment() {
                 }
     }
 
-    private fun onLandmarkRecognized() {
-        context!!.shortToast("Image has been recognized successfully")
+    private fun onErrorOccurred(error: Throwable) {
+        SimpleDialog(context!!,
+                     getString(R.string.message_oops),
+                     getString(R.string.message_error_detection, error.message))
+                .show()
+        hideProgress()
     }
 
     private fun updateUi() {
@@ -206,7 +217,7 @@ class SnapshotFragment : BaseFragment() {
         if (photo.exists()) {
             val bitmap = BitmapFactory.decodeFile(photo.absolutePath)
             RoundedBitmapDrawableFactory.create(resources, bitmap).also { drawable ->
-                drawable.cornerRadius = 25 * Resources.getSystem().displayMetrics.density // 25 dp
+                drawable.cornerRadius = 100 * Resources.getSystem().displayMetrics.density // 25 dp
                 photo_preview.setImageDrawable(drawable)
             }
         }

@@ -1,6 +1,7 @@
 package ubb.thesis.david.data.entities
 
 import androidx.room.Entity
+import ubb.thesis.david.domain.entities.Discovery
 import ubb.thesis.david.domain.entities.Landmark
 import java.util.*
 
@@ -13,6 +14,19 @@ data class BeaconData(val id: String,
                       var userId: String,
                       var photoPath: String?,
                       var foundAt: Date?) {
+
+    fun extractEntity(): Landmark =
+        Landmark(id = id,
+                 lat = lat,
+                 lng = lng,
+                 label = label)
+
+    fun extractDiscovery(): Discovery? {
+        if (photoPath != null && foundAt != null)
+            return Discovery(foundAt!!, photoPath!!)
+        return null
+    }
+
     companion object {
         fun fromEntity(entity: Landmark, userId: String, photoPath: String? = null, foundAt: Date? = null): BeaconData =
             BeaconData(id = entity.id,
@@ -22,13 +36,6 @@ data class BeaconData(val id: String,
                        userId = userId,
                        photoPath = photoPath,
                        foundAt = foundAt
-            )
-
-        fun toEntity(beaconData: BeaconData): Landmark =
-            Landmark(id = beaconData.id,
-                     lat = beaconData.lat,
-                     lng = beaconData.lng,
-                     label = beaconData.label
             )
     }
 }

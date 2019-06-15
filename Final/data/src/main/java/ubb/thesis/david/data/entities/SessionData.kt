@@ -9,7 +9,8 @@ import java.util.*
 data class SessionData(
     @PrimaryKey
     val userId: String,
-    val city: String,
+    val sessionId: String? = null,
+    val landmarkCount: Int,
     val timeStarted: Date,
     var timeFinished: Date? = null
 ) {
@@ -17,13 +18,15 @@ data class SessionData(
 
         fun fromEntity(entity: Session): SessionData =
             SessionData(userId = entity.userId,
-                        city = entity.city,
+                        sessionId = entity.sessionId,
+                        landmarkCount = entity.landmarkCount,
                         timeStarted = entity.timeStarted,
                         timeFinished = entity.timeFinished)
 
         fun toEntity(data: SessionData): Session =
             Session(userId = data.userId,
-                    city = data.city,
+                    sessionId = data.sessionId,
+                    landmarkCount = data.landmarkCount,
                     timeStarted = data.timeStarted,
                     timeFinished = data.timeFinished)
 

@@ -4,6 +4,7 @@ package ubb.thesis.david.monumental.view.session
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,9 +20,11 @@ import ubb.thesis.david.data.navigation.FusedNavigator
 import ubb.thesis.david.data.navigation.Navigator
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
+import ubb.thesis.david.data.utils.toLocation
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.LocationTrackerFragment
+import ubb.thesis.david.monumental.common.SimpleDialog
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortSnack
 
@@ -41,8 +44,8 @@ class NavigationFragment : LocationTrackerFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_navigation, container, false)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         viewModel = getViewModel()
         observeData()
@@ -54,15 +57,8 @@ class NavigationFragment : LocationTrackerFragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        navigator?.let {
-            requestLocationUpdates(locationUpdateCallback)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         disableLocationUpdates()
     }
 
@@ -91,39 +87,82 @@ class NavigationFragment : LocationTrackerFragment() {
     private fun createNavigatorListener(): Navigator.OnHeadingChangedListener =
         object : Navigator.OnHeadingChangedListener {
             override fun onChanged(direction: Float) {
-                RotateAnimation(currentDegree, direction,
-                                Animation.RELATIVE_TO_SELF, 0.5F,
-                                Animation.RELATIVE_TO_SELF, 0.5F)
-                        .also { anim ->
-                            anim.duration = 500
-                            anim.repeatCount = 0
-                            anim.fillAfter = true
-                            navigation_arrow?.startAnimation(anim)
-                        }
-                currentDegree = direction
+                updateNavigationArrow(direction)
             }
         }
+
+    private fun updateNavigationArrow(direction: Float) {
+        RotateAnimation(currentDegree, direction,
+                        Animation.RELATIVE_TO_SELF, 0.5F,
+                        Animation.RELATIVE_TO_SELF, 0.5F)
+                .also { anim ->
+                    anim.duration = 500
+                    anim.repeatCount = 0
+                    anim.fillAfter = true
+                    navigation_arrow?.startAnimation(anim)
+                }
+        currentDegree = direction
+    }
 
     @SuppressLint("SetTextI18n")
     private fun observeData() {
         viewModel.sessionLandmarks.observe(viewLifecycleOwner, Observer { landmarks ->
-            reinitializeBeaconsIfNeeded(landmarks)
-            requestLocationUpdates(locationUpdateCallback)
-            hideProgress()
+            onLandmarksRetrieved(landmarks)
         })
         viewModel.nearestLandmark.observe(viewLifecycleOwner, Observer { landmark ->
-            navigator?.target = landmark.transformToLocation()
-            button_take_photo.visibility = View.VISIBLE
-            label_target.text = "Target: ${landmark.label}"
+            onNearestRetrieved(landmark)
         })
         viewModel.distanceToTarget.observe(viewLifecycleOwner, Observer { distance ->
-            label_distance.text = "Distance: $distance" // TODO Adjust visibility based on the distance to target
+            onDistanceRetrieved(distance)
         })
         viewModel.errorMessages.observe(viewLifecycleOwner, Observer { error ->
-            debug(TAG_LOG, "The following error has occurred: $error")
-            view?.shortSnack("An error has occurred!")
-            hideProgress()
+            onErrorOccurred(error)
         })
+    }
+
+    private fun onLandmarksRetrieved(landmarks: List<Landmark>) {
+        hideProgress()
+        if (landmarks.isEmpty()) {
+            onSessionFinished()
+        } else {
+            reinitializeBeaconsIfNeeded(landmarks)
+            requestLocationUpdates(locationUpdateCallback)
+            TransitionManager.beginDelayedTransition(container_fragment)
+            label_remaining.visibility = View.VISIBLE
+            label_remaining.text = getString(R.string.label_remaining, landmarks.size)
+        }
+    }
+
+    private fun onNearestRetrieved(landmark: Landmark) {
+        navigator?.target = landmark.toLocation()
+        TransitionManager.beginDelayedTransition(container_fragment)
+        navigation_arrow.visibility = View.VISIBLE
+        button_take_photo.visibility = View.VISIBLE     //  TODO Remove this line after finishing below todo
+        label_target.visibility = View.VISIBLE
+        label_target.text = getString(R.string.label_target, landmark.label)
+    }
+
+    private fun onDistanceRetrieved(distance: Float) {
+        TransitionManager.beginDelayedTransition(container_fragment)
+        label_distance.visibility = View.VISIBLE
+        label_distance.text = getString(R.string.label_distance, distance)
+        // TODO Adjust button visibility based on the distance to target
+    }
+
+    private fun onErrorOccurred(error: String?) {
+        debug(TAG_LOG, "The following error has occurred: $error")
+        view?.shortSnack("An error has occurred!")
+        hideProgress()
+    }
+
+    private fun onSessionFinished() {
+        SimpleDialog(context!!, getString(R.string.label_hooray), getString(R.string.message_session_finished))
+                .also { dialog ->
+                    dialog.updatePositiveButton(getString(R.string.label_ok)) {
+                        Navigation.findNavController(view!!).navigateUp()
+                    }
+                    dialog.show()
+                }
     }
 
     private fun reinitializeBeaconsIfNeeded(landmarks: List<Landmark>) {

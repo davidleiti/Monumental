@@ -3,33 +3,58 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.session.NavigationFragment">
 
     <TextView
             android:id="@+id/label_target"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="32dp"
+            android:layout_marginStart="24dp"
             android:textSize="24sp"
+            android:text="@string/placeholder_target"
+            android:textAlignment="center"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/navigation_arrow"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toTopOf="@+id/label_remaining" />
+
+    <TextView
+            android:id="@+id/label_remaining"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="24dp"
+            android:textSize="24sp"
+            android:text="@string/placeholder_remaining"
+            android:textAlignment="center"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/navigation_arrow" />
 
     <TextView
             android:id="@+id/label_distance"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="64dp"
+            android:layout_marginStart="24dp"
             android:textSize="24sp"
+            android:text="@string/placeholder_distance"
+            android:textAlignment="center"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/navigation_arrow"
-            app:layout_constraintTop_toBottomOf="@+id/label_target"
-            app:layout_constraintEnd_toEndOf="@+id/label_target"
-            app:layout_constraintStart_toStartOf="@+id/label_target" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_remaining" />
 
     <ImageView
             android:id="@+id/navigation_arrow"
@@ -39,17 +64,19 @@
             android:layout_marginEnd="8dp"
             android:src="@drawable/navigation_arrow_gray"
             android:contentDescription="@string/nav_arrow"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible"
+            app:layout_constraintVertical_bias="0.65"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/button_take_photo"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_take_photo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             app:text="@string/label_take_photo"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />

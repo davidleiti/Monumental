@@ -4,6 +4,7 @@ import java.util.*
 
 data class Session(
     val userId: String,
-    val city: String,
+    val sessionId: String? = null,
+    val landmarkCount: Int,
     val timeStarted: Date,
     var timeFinished: Date? = null)

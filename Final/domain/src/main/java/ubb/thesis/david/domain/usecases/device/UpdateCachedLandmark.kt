@@ -1,4 +1,4 @@
-package ubb.thesis.david.domain.usecases
+package ubb.thesis.david.domain.usecases.device
 
 import io.reactivex.Completable
 import io.reactivex.CompletableTransformer
@@ -7,9 +7,9 @@ import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.base.CompletableUseCase
 import java.util.*
 
-class UpdateLandmarkData(private val params: Params,
-                         private val sessionManager: SessionManager,
-                         transformer: CompletableTransformer) : CompletableUseCase(transformer) {
+class UpdateCachedLandmark(private val params: Params,
+                           private val sessionManager: SessionManager,
+                           transformer: CompletableTransformer) : CompletableUseCase(transformer) {
 
     data class Params(val landmark: Landmark,
                       val userId: String,

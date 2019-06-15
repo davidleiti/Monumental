@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.domain.entities.Session
-import ubb.thesis.david.domain.usecases.GetSession
-import ubb.thesis.david.domain.usecases.WipeSession
+import ubb.thesis.david.domain.usecases.device.GetCachedSession
+import ubb.thesis.david.domain.usecases.device.WipeCachedSession
 import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
@@ -29,7 +29,8 @@ class StartViewModel(private val beaconManager: BeaconManager, application: Appl
     val sessionMessage: LiveData<String> = _sessionMessage
 
     fun queryRunningSession(userId: String) {
-        GetSession(userId, sessionManager, AsyncTransformerFactory.create<Session>())
+        GetCachedSession(userId, sessionManager,
+                                                                 AsyncTransformerFactory.create<Session>())
                 .execute()
                 .subscribe({ session -> updateState(session) },
                            { debug(TAG_LOG, "Failed to retrieve session data for user $userId") })
@@ -38,7 +39,8 @@ class StartViewModel(private val beaconManager: BeaconManager, application: Appl
 
     fun wipeExistingSession() {
         runningSession?.let { session ->
-            WipeSession(session.userId, sessionManager, beaconManager, AsyncTransformerFactory.create())
+            WipeCachedSession(session.userId, sessionManager, beaconManager,
+                                                                      AsyncTransformerFactory.create())
                     .execute()
                     .subscribe({ updateState(null) },
                                { debug(TAG_LOG, "Failed to wipe session data for user ${session.userId}") })

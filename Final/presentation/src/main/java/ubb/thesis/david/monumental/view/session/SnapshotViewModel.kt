@@ -9,10 +9,10 @@ import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.domain.LandmarkDetector
 import ubb.thesis.david.domain.SessionManager
 import ubb.thesis.david.domain.entities.Landmark
-import ubb.thesis.david.domain.usecases.DetectLandmark
-import ubb.thesis.david.domain.usecases.FilterImageCloud
-import ubb.thesis.david.domain.usecases.FilterImageOnDevice
-import ubb.thesis.david.domain.usecases.UpdateLandmarkData
+import ubb.thesis.david.domain.usecases.cloud.DetectLandmark
+import ubb.thesis.david.domain.usecases.cloud.FilterImageCloud
+import ubb.thesis.david.domain.usecases.device.FilterImageOnDevice
+import ubb.thesis.david.domain.usecases.device.UpdateCachedLandmark
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
 import java.util.*
@@ -35,7 +35,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     val onLandmarkSaved: LiveData<Unit> = _onLandmarkSaved
 
     fun filterLabelInitial(path: String) {
-        FilterImageOnDevice(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>()).execute()
+        FilterImageOnDevice(path, landmarkDetector,
+                                                                    AsyncTransformerFactory.create<Boolean>()).execute()
                 .subscribe({ passed ->
                                if (passed)
                                    info(TAG_LOG, "Initial filtering passed!")
@@ -51,7 +52,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     }
 
     fun detectLandmark(landmark: Landmark, imagePath: String) {
-        DetectLandmark(landmark, imagePath, landmarkDetector, AsyncTransformerFactory.create<String>()).execute()
+        DetectLandmark(landmark, imagePath, landmarkDetector,
+                                                              AsyncTransformerFactory.create<String>()).execute()
                 .subscribe({ detection ->
                                if (detection != FirebaseLandmarkDetector.NONE_DETECTED)
                                    info(TAG_LOG,
@@ -68,7 +70,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     }
 
     fun filterImageFinal(path: String) {
-        FilterImageCloud(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>()).execute()
+        FilterImageCloud(path, landmarkDetector,
+                                                                AsyncTransformerFactory.create<Boolean>()).execute()
                 .subscribe({ passed ->
                                if (passed)
                                    info(TAG_LOG, "Final filtering passed!")
@@ -84,8 +87,9 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     }
 
     fun saveLandmark(landmark: Landmark, userId: String, photoPath: String, timeDiscovered: Date) {
-        val parameters = UpdateLandmarkData.Params(landmark, userId, photoPath, timeDiscovered)
-        UpdateLandmarkData(parameters, sessionManager, AsyncTransformerFactory.create()).execute()
+        val parameters = UpdateCachedLandmark.Params(landmark, userId, photoPath, timeDiscovered)
+        UpdateCachedLandmark(parameters, sessionManager,
+                             AsyncTransformerFactory.create()).execute()
                 .subscribe({
                                info(TAG_LOG, "Updated landmark $landmark data successfully!")
                                beaconManager.removeBeacon(landmark.id, userId)

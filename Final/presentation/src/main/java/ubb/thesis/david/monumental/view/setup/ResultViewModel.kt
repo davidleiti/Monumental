@@ -6,7 +6,7 @@ import io.reactivex.subjects.BehaviorSubject
 import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.CreateSession
-import ubb.thesis.david.domain.usecases.SearchLandmarks
+import ubb.thesis.david.domain.usecases.cloud.SearchLandmarks
 import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
@@ -28,7 +28,8 @@ class ResultViewModel(private val beaconManager: BeaconManager) : BaseViewModel(
 
     fun searchLandmarks(lat: Double, long: Double, radius: Int, limit: Int, categories: String) {
         val params = SearchLandmarks.RequestValues(lat, long, radius, categories, limit)
-        SearchLandmarks(params, landmarkApi, AsyncTransformerFactory.create<List<Landmark>>())
+        SearchLandmarks(params, landmarkApi,
+                                                               AsyncTransformerFactory.create<List<Landmark>>())
                 .execute()
                 .subscribe({ landmarksObservable.value = it },
                            { errorsObservable.value = it })

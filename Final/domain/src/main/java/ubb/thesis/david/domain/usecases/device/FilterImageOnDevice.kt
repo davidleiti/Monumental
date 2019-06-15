@@ -1,4 +1,4 @@
-package ubb.thesis.david.domain.usecases
+package ubb.thesis.david.domain.usecases.device
 
 import io.reactivex.Observable
 import ubb.thesis.david.domain.LandmarkDetector

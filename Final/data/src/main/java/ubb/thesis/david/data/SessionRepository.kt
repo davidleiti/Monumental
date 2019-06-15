@@ -8,9 +8,11 @@ import ubb.thesis.david.data.entities.SessionData
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.SessionManager
+import ubb.thesis.david.domain.entities.Discovery
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.entities.Session
 import java.util.*
+import kotlin.collections.HashMap
 
 class SessionRepository private constructor(private val database: SessionDatabase) :
     SessionManager {
@@ -21,7 +23,7 @@ class SessionRepository private constructor(private val database: SessionDatabas
             database.runInTransaction {
                 val session = SessionData(
                         userId = userId,
-                        city = "dummyCity",
+                        landmarkCount = landmarks.size,
                         timeStarted = Date()
                 )
                 database.sessionDao().createSession(session)
@@ -42,20 +44,26 @@ class SessionRepository private constructor(private val database: SessionDatabas
                     debug(TAG_LOG, "Failed to retrieve session data of user $userId, cause: ${it.message}")
                 }.map { SessionData.toEntity(it) }
 
-    override fun getSessionLandmarks(userId: String): Maybe<List<Landmark>> =
+    override fun getSessionLandmarks(userId: String): Maybe<Map<Landmark, Discovery?>> =
         database.beaconDao().getSessionBeacons(userId)
                 .doOnSuccess {
                     info(TAG_LOG, "Landmarks of user $userId retrieved successfully.")
                 }
                 .doOnError {
                     debug(TAG_LOG, "Failed to retrieve landmarks from user $userId's session")
-                }.map { beacons -> beacons.map { BeaconData.toEntity(it) } }
-
+                }
+                .map { beacons ->
+                    val entityMap = HashMap<Landmark, Discovery?>()
+                    beacons.forEach { data ->
+                        entityMap[data.extractEntity()] = data.extractDiscovery()
+                    }
+                    entityMap
+                }
 
     override fun updateLandmark(landmark: Landmark,
-                       userId: String,
-                       photoPath: String?,
-                       foundAt: Date?): Completable =
+                                userId: String,
+                                photoPath: String?,
+                                foundAt: Date?): Completable =
         database.beaconDao().updateBeacon(BeaconData.fromEntity(landmark, userId, photoPath, foundAt))
 
     override fun wipeSession(userId: String): Completable =
@@ -81,6 +89,12 @@ class SessionRepository private constructor(private val database: SessionDatabas
         }.doOnError {
             debug(TAG_LOG, "Failed to wipe session cache, cause: ${it.message}")
         }
+
+    private fun createDiscoveryData(timeFound: Date?, photoPath: String?): Discovery? {
+        if (timeFound != null && photoPath != null)
+            return Discovery(timeFound, photoPath)
+        return null
+    }
 
     companion object {
         @Volatile

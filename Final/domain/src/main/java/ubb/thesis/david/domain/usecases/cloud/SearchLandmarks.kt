@@ -1,4 +1,4 @@
-package ubb.thesis.david.domain.usecases
+package ubb.thesis.david.domain.usecases.cloud
 
 import io.reactivex.Observable
 import ubb.thesis.david.domain.LandmarkApi
