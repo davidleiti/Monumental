@@ -95,7 +95,7 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
 
         UploadImage(parameters, imageStorage, AsyncTransformerFactory.create())
                 .execute()
-                .subscribe({ updateLandmarkCache(landmark, userId, photoPath, timeDiscovered) },
+                .subscribe({ updateLandmarkCache(landmark, userId, landmark.id, timeDiscovered) },
                            { error -> _errors.value = error})
                 .also { addDisposable(it) }
     }

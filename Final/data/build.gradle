@@ -33,13 +33,16 @@ dependencies {
     api project(':foursquareApi')
 
     // Room
-    implementation "androidx.room:room-runtime:2.1.0-rc01"
-    implementation 'androidx.room:room-rxjava2:2.1.0-rc01'
-    kapt "androidx.room:room-compiler:2.1.0-rc01"
+    implementation "androidx.room:room-runtime:2.1.0"
+    implementation 'androidx.room:room-rxjava2:2.1.0'
+    kapt "androidx.room:room-compiler:2.1.0"
 
     // Cloud storage
     implementation 'com.google.firebase:firebase-storage:17.0.0'
     implementation 'com.google.firebase:firebase-firestore:19.0.2'
+
+    // Background work
+    implementation 'android.arch.work:work-runtime-ktx:1.0.1'
 
     // Landmark recognition
     implementation 'com.google.firebase:firebase-ml-vision:20.0.0'

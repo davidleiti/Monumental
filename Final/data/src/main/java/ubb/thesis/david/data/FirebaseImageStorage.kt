@@ -1,36 +1,42 @@
 package ubb.thesis.david.data
 
-import android.net.Uri
+import android.net.Network
+import androidx.work.*
 import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.subjects.CompletableSubject
 import io.reactivex.subjects.SingleSubject
+import ubb.thesis.david.data.background.UploadWorker
 import ubb.thesis.david.data.utils.debug
-import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.ImageStorage
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 class FirebaseImageStorage : ImageStorage {
 
     private val storage = FirebaseStorage.getInstance()
 
     override fun storeImage(userId: String, imageId: String, filePath: String): Completable {
-        val uploadTask = CompletableSubject.create()
+        val imageData = workDataOf("userId" to userId,
+                                   "photoId" to imageId,
+                                   "photoPath" to filePath)
 
-        val reference = storage.getReference("$userId/images/$imageId")
+        val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
 
-        val fileUri = Uri.fromFile(File(filePath))
-        reference.putFile(fileUri)
-                .addOnSuccessListener {
-                    info(TAG_LOG, "Successfully uploaded image with id $imageId")
-                    uploadTask.onComplete()
-                }.addOnFailureListener { error ->
-                    debug(TAG_LOG, "Failed to upload image with id $imageId")
-                    uploadTask.onError(error)
-                }
+        val uploadRequest = OneTimeWorkRequestBuilder<UploadWorker>()
+                .setInputData(imageData)
+                .setConstraints(constraints)
+                .setBackoffCriteria(BackoffPolicy.LINEAR,
+                                    OneTimeWorkRequest.DEFAULT_BACKOFF_DELAY_MILLIS,
+                                    TimeUnit.MILLISECONDS)
+                .build()
 
-        return uploadTask
+        WorkManager.getInstance().enqueue(uploadRequest)
+
+        return Completable.complete()
     }
 
     override fun downloadImage(userId: String, imageId: String, targetPath: String): Completable {
