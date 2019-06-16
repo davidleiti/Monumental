@@ -11,8 +11,8 @@ import ubb.thesis.david.domain.SessionManager
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.cloud.DetectLandmark
 import ubb.thesis.david.domain.usecases.cloud.FilterImageCloud
-import ubb.thesis.david.domain.usecases.device.FilterImageOnDevice
-import ubb.thesis.david.domain.usecases.device.UpdateCachedLandmark
+import ubb.thesis.david.domain.usecases.local.FilterImageLocal
+import ubb.thesis.david.domain.usecases.local.UpdateCachedLandmark
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
 import java.util.*
@@ -21,22 +21,23 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
                         private val beaconManager: BeaconManager,
                         private val landmarkDetector: LandmarkDetector) : BaseViewModel() {
 
+    // Observable sources
     private val _initialLabelingPass = MutableLiveData<Boolean>()
     private val _finalLabelingPass = MutableLiveData<Boolean>()
     private val _detectionPass = MutableLiveData<Boolean>()
+    private val _onLandmarkSaved = MutableLiveData<Unit>()
     private val _errors = MutableLiveData<Throwable>()
 
-    private val _onLandmarkSaved = MutableLiveData<Unit>()
-
+    // Exposed observable properties
     val initialLabelingPassed: LiveData<Boolean> = _initialLabelingPass
     val finalLabelingPassed: LiveData<Boolean> = _finalLabelingPass
     val detectionPassed: LiveData<Boolean> = _detectionPass
-    val errors: LiveData<Throwable> = _errors
     val onLandmarkSaved: LiveData<Unit> = _onLandmarkSaved
+    val errors: LiveData<Throwable> = _errors
 
     fun filterLabelInitial(path: String) {
-        FilterImageOnDevice(path, landmarkDetector,
-                                                                    AsyncTransformerFactory.create<Boolean>()).execute()
+        FilterImageLocal(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
+                .execute()
                 .subscribe({ passed ->
                                if (passed)
                                    info(TAG_LOG, "Initial filtering passed!")
@@ -52,8 +53,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     }
 
     fun detectLandmark(landmark: Landmark, imagePath: String) {
-        DetectLandmark(landmark, imagePath, landmarkDetector,
-                                                              AsyncTransformerFactory.create<String>()).execute()
+        DetectLandmark(landmark, imagePath, landmarkDetector, AsyncTransformerFactory.create<String>())
+                .execute()
                 .subscribe({ detection ->
                                if (detection != FirebaseLandmarkDetector.NONE_DETECTED)
                                    info(TAG_LOG,
@@ -70,8 +71,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     }
 
     fun filterImageFinal(path: String) {
-        FilterImageCloud(path, landmarkDetector,
-                                                                AsyncTransformerFactory.create<Boolean>()).execute()
+        FilterImageCloud(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
+                .execute()
                 .subscribe({ passed ->
                                if (passed)
                                    info(TAG_LOG, "Final filtering passed!")
@@ -88,8 +89,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
 
     fun saveLandmark(landmark: Landmark, userId: String, photoPath: String, timeDiscovered: Date) {
         val parameters = UpdateCachedLandmark.Params(landmark, userId, photoPath, timeDiscovered)
-        UpdateCachedLandmark(parameters, sessionManager,
-                             AsyncTransformerFactory.create()).execute()
+        UpdateCachedLandmark(parameters, sessionManager, AsyncTransformerFactory.create())
+                .execute()
                 .subscribe({
                                info(TAG_LOG, "Updated landmark $landmark data successfully!")
                                beaconManager.removeBeacon(landmark.id, userId)

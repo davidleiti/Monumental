@@ -38,7 +38,7 @@
             android:id="@+id/button_take_photo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:text="@string/label_capture_landmark"
+            app:text="@string/take_photo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

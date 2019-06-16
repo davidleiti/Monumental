@@ -1,4 +1,4 @@
-package ubb.thesis.david.domain.usecases.device
+package ubb.thesis.david.domain.usecases.local
 
 import io.reactivex.Observable
 import ubb.thesis.david.domain.SessionManager
@@ -8,9 +8,9 @@ import ubb.thesis.david.domain.usecases.base.ObservableUseCase
 
 class GetCachedSession(private val userId: String,
                        private val sessionManager: SessionManager,
-                       transformer: Transformer<Session>): ObservableUseCase<Session>(transformer) {
+                       transformer: Transformer<Session>) : ObservableUseCase<Session>(transformer) {
 
     override fun createSource(): Observable<Session> =
-            sessionManager.getSession(userId).toObservable()
+        sessionManager.getSession(userId).toObservable()
 
 }

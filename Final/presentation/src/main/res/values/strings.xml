@@ -100,7 +100,6 @@
     <string name="content_notification">Found a landmark near you. Click here to take a photo…</string>
     <string name="default_web_client_id">4585234938-6dpf3tnfn8v6m2ma21ag30p31jf8n0mu.apps.googleusercontent.com</string>
     <string name="nav_arrow">Navigation Arrow</string>
-    <string name="label_take_photo">Take a photo</string>
     <string name="label_accept_photo">Use image</string>
     <string name="cd_photo_preview">Photo preview</string>
     <string name="label_capture_landmark">Capture landmark</string>
@@ -113,7 +112,7 @@
     <string name="title_unrecognized_photo">Error</string>
     <string name="message_error_detection">An unexpected error has occurred, check your network connection! \n Message: %1$s</string>
     <string name="message_landmark_Saved">The landmark\'s data has been stored successfully, you may move on to the next one!</string>
-    <string name="title_landmark_saved">Success</string>
+    <string name="label_success">Success</string>
     <string name="message_oops">Oops…</string>
     <string name="message_no_landmarks">Could not find any new landmarks nearby. You may try adjusting the search parameters.</string>
     <string name="label_error">Error</string>
@@ -125,4 +124,12 @@
     <string name="placeholder_target">Target name</string>
     <string name="placeholder_remaining">Remaining landmarks</string>
     <string name="placeholder_distance">Distance to target</string>
+    <string name="take_photo">Take photo</string>
+    <string name="label_save_progress">Save session progress</string>
+    <string name="message_error_basic">An unexpected error has occurred!</string>
+    <string name="message_progress_saved">Your progress has been saved successfully!</string>
+    <string name="label_good_job">Good job!</string>
+    <string name="label_load">Load from cloud</string>
+    <string name="message_no_session_found">No running session was found</string>
+    <string name="message_error_operation">Couldn\'t perform operation, please check your internet connection!</string>
 </resources>

@@ -16,6 +16,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import kotlinx.android.synthetic.main.fragment_navigation.*
+import ubb.thesis.david.data.FirebaseDataSource
 import ubb.thesis.david.data.navigation.FusedNavigator
 import ubb.thesis.david.data.navigation.Navigator
 import ubb.thesis.david.data.utils.debug
@@ -25,8 +26,8 @@ import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.LocationTrackerFragment
 import ubb.thesis.david.monumental.common.SimpleDialog
+import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
 import ubb.thesis.david.monumental.utils.getViewModel
-import ubb.thesis.david.monumental.utils.shortSnack
 
 class NavigationFragment : LocationTrackerFragment() {
 
@@ -35,7 +36,7 @@ class NavigationFragment : LocationTrackerFragment() {
     private val locationUpdateCallback: LocationCallback by lazy { createLocationCallback() }
     private val navigatorListener: Navigator.OnHeadingChangedListener by lazy { createNavigatorListener() }
 
-    private lateinit var viewModel: SessionViewModel
+    private lateinit var viewModel: NavigationViewModel
 
     override fun usesNavigationDrawer(): Boolean = true
 
@@ -47,13 +48,15 @@ class NavigationFragment : LocationTrackerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = getViewModel()
+        viewModel = getViewModel { NavigationViewModel(FirebaseDataSource(), GeofencingClientAdapter(context!!)) }
         observeData()
         displayProgress()
         viewModel.loadSessionLandmarks(getUserId())
 
-        button_take_photo.setOnClickListener {
-            navigateToSnapshot()
+        button_take_photo.setOnClickListener { navigateToSnapshot() }
+        button_save_progress.setOnClickListener {
+            displayProgress()
+            viewModel.saveSessionProgress(getUserId())
         }
     }
 
@@ -115,7 +118,10 @@ class NavigationFragment : LocationTrackerFragment() {
         viewModel.distanceToTarget.observe(viewLifecycleOwner, Observer { distance ->
             onDistanceRetrieved(distance)
         })
-        viewModel.errorMessages.observe(viewLifecycleOwner, Observer { error ->
+        viewModel.progressSaved.observe(viewLifecycleOwner, Observer {
+            onProgressSaved()
+        })
+        viewModel.errorsOccurred.observe(viewLifecycleOwner, Observer { error ->
             onErrorOccurred(error)
         })
     }
@@ -149,17 +155,36 @@ class NavigationFragment : LocationTrackerFragment() {
         // TODO Adjust button visibility based on the distance to target
     }
 
-    private fun onErrorOccurred(error: String?) {
-        debug(TAG_LOG, "The following error has occurred: $error")
-        view?.shortSnack("An error has occurred!")
+    private fun onProgressSaved() {
         hideProgress()
+        SimpleDialog(context!!, getString(R.string.label_success),
+                     getString(R.string.message_progress_saved)).also { dialog ->
+            dialog.updatePositiveButton(getString(R.string.label_ok)) {
+                Navigation.findNavController(view!!).navigateUp()
+            }
+            dialog.show()
+        }
     }
 
-    private fun onSessionFinished() {
-        SimpleDialog(context!!, getString(R.string.label_hooray), getString(R.string.message_session_finished))
+    private fun onErrorOccurred(error: Throwable) {
+        debug(TAG_LOG, "The following error has occurred: ${error.message}")
+        hideProgress()
+        SimpleDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_operation))
                 .also { dialog ->
                     dialog.updatePositiveButton(getString(R.string.label_ok)) {
                         Navigation.findNavController(view!!).navigateUp()
+                    }
+                    dialog.show()
+                }
+    }
+
+    private fun onSessionFinished() {
+        SimpleDialog(context!!, getString(R.string.label_good_job), getString(R.string.message_session_finished))
+                .also { dialog ->
+                    dialog.updatePositiveButton(getString(R.string.label_ok)) {
+                        displayProgress()
+                        viewModel.saveSessionProgress(getUserId())
+                        viewModel.wipeSessionCache(getUserId())
                     }
                     dialog.show()
                 }

@@ -6,9 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.BitmapFactory
-import android.media.MediaScannerConnection
 import android.os.Bundle
-import android.os.Environment.DIRECTORY_PICTURES
 import android.provider.MediaStore
 import android.transition.TransitionManager
 import android.view.LayoutInflater
@@ -20,7 +18,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_snapshot.*
 import ubb.thesis.david.data.FirebaseLandmarkDetector
-import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.Configuration
@@ -28,12 +25,11 @@ import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.common.SimpleDialog
 import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
+import ubb.thesis.david.monumental.utils.FileUtils
 import ubb.thesis.david.monumental.utils.checkPermission
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortToast
 import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 class SnapshotFragment : BaseFragment() {
@@ -89,37 +85,6 @@ class SnapshotFragment : BaseFragment() {
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            RC_IMAGE_CAPTURE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    setImagePreview(tempPhotoPath!!)
-                    invalidatedPhotoPath?.let {
-                        deletePhoto(it)
-                    } ?: run {
-                        updateUi()
-                    }
-                } else {
-                    invalidatedPhotoPath?.let {
-                        deletePhoto(tempPhotoPath!!)
-                        tempPhotoPath = invalidatedPhotoPath
-                    }
-                }
-                invalidatedPhotoPath = null
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (requestCode) {
-            RC_REQUEST_PERMISSIONS -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    launchCaptureIntent()
-            }
-            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        }
-    }
-
     private fun onInitialFilteringFinished(passed: Boolean) {
         if (passed) {
             viewModel.detectLandmark(targetLandmark, tempPhotoPath!!)
@@ -153,7 +118,7 @@ class SnapshotFragment : BaseFragment() {
     }
 
     private fun onLandmarkSaved() {
-        SimpleDialog(context!!, getString(R.string.title_landmark_saved), getString(R.string.message_landmark_Saved))
+        SimpleDialog(context!!, getString(R.string.label_success), getString(R.string.message_landmark_Saved))
                 .also { dialog ->
                     dialog.updatePositiveButton(getString(R.string.label_ok)) {
                         Navigation.findNavController(view!!).navigateUp()
@@ -185,30 +150,51 @@ class SnapshotFragment : BaseFragment() {
         }
     }
 
-    private fun launchCaptureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            takePictureIntent.resolveActivity(context!!.packageManager)?.also {
-                createTempFile()?.let {
-                    val uri = FileProvider.getUriForFile(context!!, "ubb.thesis.david.monumental", it)
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-                    activity!!.startActivityForResult(takePictureIntent, RC_IMAGE_CAPTURE)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            RC_IMAGE_CAPTURE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    setImagePreview(tempPhotoPath!!)
+                    invalidatedPhotoPath?.let {
+                        deletePhoto(it)
+                    } ?: run {
+                        updateUi()
+                    }
+                } else {
+                    invalidatedPhotoPath?.let {
+                        deletePhoto(tempPhotoPath!!)
+                        tempPhotoPath = invalidatedPhotoPath
+                    }
                 }
+                invalidatedPhotoPath = null
             }
         }
     }
 
-    private fun createTempFile(): File? {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDirectory: File = context!!.getExternalFilesDir(DIRECTORY_PICTURES)!!
-        return try {
-            File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDirectory).also {
-                invalidatedPhotoPath = tempPhotoPath
-                tempPhotoPath = it.absolutePath
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            RC_REQUEST_PERMISSIONS -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    launchCaptureIntent()
             }
-        } catch (ex: IOException) {
-            context!!.shortToast("Failed to create temporary file...")
-            ex.printStackTrace()
-            null
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun launchCaptureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(context!!.packageManager)?.also {
+                FileUtils.createTempFile(context!!)?.let {
+                    invalidatedPhotoPath = tempPhotoPath
+                    tempPhotoPath = it.absolutePath
+
+                    val uri = FileProvider.getUriForFile(context!!, "ubb.thesis.david.monumental", it)
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+                    activity!!.startActivityForResult(takePictureIntent, RC_IMAGE_CAPTURE)
+                } ?: run {
+                    context!!.shortToast("Failed to create temporary file!")
+                }
+            }
         }
     }
 
@@ -223,18 +209,11 @@ class SnapshotFragment : BaseFragment() {
         }
     }
 
-    private fun deletePhoto(photoPath: String) {
-        val photo = File(photoPath)
-        if (photo.exists()) {
-            if (photo.delete()) {
-                info(TAG_LOGGER, "Deleted photo at path $photoPath")
-                MediaScannerConnection.scanFile(context!!, arrayOf(photoPath), null) { path, uri ->
-                    info(TAG_LOGGER, "Scanned at path $path; uri $uri")
-                }
-            } else {
-                debug(TAG_LOGGER, "Failed to delete photo at path $photoPath")
-            }
-        }
+    private fun deletePhoto(path: String) {
+        if (FileUtils.deleteFile(context!!, path))
+            info(TAG_LOGGER, "Successfully deleted photo at path $path")
+        else
+            info(TAG_LOGGER, "Failed to delete photo at path $path")
     }
 
     companion object {

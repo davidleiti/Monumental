@@ -5,52 +5,106 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.domain.BeaconManager
+import ubb.thesis.david.domain.CloudDataSource
+import ubb.thesis.david.domain.entities.Backup
 import ubb.thesis.david.domain.entities.Session
-import ubb.thesis.david.domain.usecases.device.GetCachedSession
-import ubb.thesis.david.domain.usecases.device.WipeCachedSession
+import ubb.thesis.david.domain.usecases.cloud.GetBackupSession
+import ubb.thesis.david.domain.usecases.common.WipeActiveSession
+import ubb.thesis.david.domain.usecases.local.CacheSession
+import ubb.thesis.david.domain.usecases.local.GetCachedSession
+import ubb.thesis.david.domain.usecases.local.WipeCachedSession
 import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseAndroidViewModel
+import ubb.thesis.david.monumental.common.SingleLiveEvent
 import ubb.thesis.david.monumental.utils.default
 import java.util.*
 
-class StartViewModel(private val beaconManager: BeaconManager, application: Application) :
+class StartViewModel(private val beaconManager: BeaconManager,
+                     private val cloudDataSource: CloudDataSource,
+                     application: Application) :
     BaseAndroidViewModel(application) {
 
-    private var runningSession: Session? = null
+    // Resources
     private val resources = getApplication<Application>().resources
     private val sessionManager = Configuration.provideSessionManager()
 
+    // Observable sources
+    private val _backupLoaded = SingleLiveEvent<Boolean>()
     private val _sessionAvailable = MutableLiveData<Boolean>().default(false)
     private val _sessionMessage = MutableLiveData<String>().default(resources.getString(R.string.message_journey_start))
+    private val _sessionWiped = MutableLiveData<Unit>()
+    private val _errorsOccurred = MutableLiveData<Throwable>()
 
+    // Binding properties
     val sessionAvailable: LiveData<Boolean> = _sessionAvailable
     val sessionMessage: LiveData<String> = _sessionMessage
 
-    fun queryRunningSession(userId: String) {
-        GetCachedSession(userId, sessionManager,
-                                                                 AsyncTransformerFactory.create<Session>())
+    // Observable properties
+    val backupLoaded: LiveData<Boolean> = _backupLoaded
+    val sessionWiped: LiveData<Unit> = _sessionWiped
+    val errorsOccurred: LiveData<Throwable> = _errorsOccurred
+
+    // Synchronization flag
+    private var backupFound: Boolean = false
+
+    fun loadSessionBackup(userId: String) {
+        backupFound = false
+        GetBackupSession(userId, cloudDataSource, AsyncTransformerFactory.create<Backup>())
+                .execute()
+                .subscribe({ backup ->
+                               backupFound = true
+                               cacheSession(backup)
+                           },
+                           { error ->
+                               _errorsOccurred.value = error
+                           }, {
+                               if (!backupFound) {
+                                   _backupLoaded.value = false
+                                   wipeLocalCache(userId)
+                               }
+                           })
+                .also { addDisposable(it) }
+    }
+
+    fun loadSessionCache(userId: String) {
+        GetCachedSession(userId, sessionManager, AsyncTransformerFactory.create<Session>())
                 .execute()
                 .subscribe({ session -> updateState(session) },
                            { debug(TAG_LOG, "Failed to retrieve session data for user $userId") })
                 .also { addDisposable(it) }
     }
 
-    fun wipeExistingSession() {
-        runningSession?.let { session ->
-            WipeCachedSession(session.userId, sessionManager, beaconManager,
-                                                                      AsyncTransformerFactory.create())
-                    .execute()
-                    .subscribe({ updateState(null) },
-                               { debug(TAG_LOG, "Failed to wipe session data for user ${session.userId}") })
-                    .also { addDisposable(it) }
-        }
+    private fun cacheSession(backup: Backup) {
+        CacheSession(backup, sessionManager, AsyncTransformerFactory.create())
+                .execute()
+                .subscribe({
+                               _backupLoaded.value = true
+                               updateState(backup.session)
+                           }, { error ->
+                               _errorsOccurred.value = error
+                           })
+                .also { addDisposable(it) }
+    }
+
+    private fun wipeLocalCache(userId: String) {
+        WipeCachedSession(userId, sessionManager, beaconManager, AsyncTransformerFactory.create())
+                .execute()
+                .subscribe { updateState(null) }
+                .also { addDisposable(it) }
+    }
+
+    fun wipeSessionData(userId: String) {
+        WipeActiveSession(userId, cloudDataSource, sessionManager, beaconManager, AsyncTransformerFactory.create())
+                .execute()
+                .subscribe({ _sessionWiped.value = Unit },
+                           { error -> _errorsOccurred.value = error })
+                .also { addDisposable(it) }
     }
 
     private fun updateState(session: Session?) {
-        runningSession = session
-        runningSession?.let {
+        session?.let {
             _sessionAvailable.value = true
             _sessionMessage.value =
                 resources.getString(R.string.message_journey_found, getTimeElapsedString(it.timeStarted))

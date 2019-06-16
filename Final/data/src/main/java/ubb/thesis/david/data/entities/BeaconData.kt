@@ -37,5 +37,8 @@ data class BeaconData(val id: String,
                        photoPath = photoPath,
                        foundAt = foundAt
             )
+
+        fun fromMapEntry(userId: String, data: Map.Entry<Landmark, Discovery?>): BeaconData =
+            fromEntity(data.key, userId, data.value?.photoPath, data.value?.time)
     }
 }

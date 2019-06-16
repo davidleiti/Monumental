@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_results.*
+import ubb.thesis.david.data.FirebaseDataSource
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
@@ -30,7 +31,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = getViewModel {
-            ResultViewModel(getBeaconManager())
+            ResultViewModel(getBeaconManager(), FirebaseDataSource())
         }
         observeData()
     }
@@ -65,24 +66,24 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     override fun title(): String? = "Landmarks discovered"
 
     private fun observeData() {
-        viewModel.getVenuesObservable().observe(viewLifecycleOwner, Observer { venues ->
+        viewModel.foundLandmarks.observe(viewLifecycleOwner, Observer { landmarks ->
             info(TAG_LOG, "Landmarks retrieved successfully from the api.")
-            venues.forEach { info(TAG_LOG, it.toString()) }
+            landmarks.forEach { info(TAG_LOG, it.toString()) }
 
-            landmarksRetrieved = venues
+            landmarksRetrieved = landmarks
             hideProgress()
             updateUi()
         })
-        viewModel.getErrorsObservable().observe(viewLifecycleOwner, Observer {
+        viewModel.sessionCreated.subscribe {
+            hideProgress()
+            beginSession()
+        }.also { disposable.add(it) }
+        viewModel.errorsOccurred.observe(viewLifecycleOwner, Observer {
             debug(TAG_LOG, "An unexpected error has occurred. See stacktrace in log")
 
             hideProgress()
             displayError()
         })
-        viewModel.getSessionCreatedObservable().subscribe {
-            hideProgress()
-            beginSession()
-        }.also { disposable.add(it) }
     }
 
     private fun loadVenues() {

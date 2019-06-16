@@ -1,4 +1,4 @@
-package ubb.thesis.david.domain.usecases.device
+package ubb.thesis.david.domain.usecases.local
 
 import io.reactivex.Observable
 import ubb.thesis.david.domain.SessionManager
