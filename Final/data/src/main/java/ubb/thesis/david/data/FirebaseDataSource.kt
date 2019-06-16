@@ -92,7 +92,7 @@ class FirebaseDataSource : CloudDataSource {
                 val documentRef = landmarksRef.document(landmarkData.key.id)
                 val data = landmarkData.key.asDataMapping().also { map ->
                     map["foundAt"] = landmarkData.value?.time
-                    map["photoPath"] = landmarkData.value?.photoPath
+                    map["photoId"] = landmarkData.value?.photoId
                 }
                 transaction.set(documentRef, data, SetOptions.merge())
             }

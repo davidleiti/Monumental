@@ -13,14 +13,14 @@ class UpdateCachedLandmark(private val params: Params,
 
     data class Params(val landmark: Landmark,
                       val userId: String,
-                      val photoPath: String? = null,
+                      val photoId: String? = null,
                       val foundAt: Date? = null)
 
     override fun createSource(): Completable =
         sessionManager.updateLandmark(
                 landmark = params.landmark,
                 userId = params.userId,
-                photoPath = params.photoPath,
+                photoId = params.photoId,
                 foundAt = params.foundAt
         )
 }

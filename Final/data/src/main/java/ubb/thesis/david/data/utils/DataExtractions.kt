@@ -11,7 +11,7 @@ fun Landmark.asDataMapping(): MutableMap<String, Any?> =
               "lng" to lng,
               "label" to label,
               "foundAt" to null,
-              "photoPath" to null)
+              "photoId" to null)
 
 fun Session.asDataMapping(): Map<String, Any?> =
     hashMapOf("userId" to userId,
@@ -27,10 +27,10 @@ fun DocumentSnapshot.extractLandmarkData(): Pair<Landmark, Discovery?> {
             lng = this["lng"] as Double)
 
     val foundAt = (this["foundAt"] as? Timestamp)?.toDate()
-    val photoPath = this["photoPath"] as? String
+    val photoId = this["photoId"] as? String
 
-    if (foundAt != null && photoPath != null)
-        return Pair(landmark, Discovery(foundAt, photoPath))
+    if (foundAt != null && photoId != null)
+        return Pair(landmark, Discovery(foundAt, photoId))
 
     return Pair(landmark, null)
 }

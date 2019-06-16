@@ -59,8 +59,8 @@ class SessionCache private constructor(private val database: SessionDatabase) :
                     entityMap
                 }
 
-    override fun updateLandmark(landmark: Landmark, userId: String, photoPath: String?, foundAt: Date?): Completable =
-        database.beaconDao().updateBeacon(BeaconData.fromEntity(landmark, userId, photoPath, foundAt))
+    override fun updateLandmark(landmark: Landmark, userId: String, photoId: String?, foundAt: Date?): Completable =
+        database.beaconDao().updateBeacon(BeaconData.fromEntity(landmark, userId, photoId, foundAt))
 
     override fun wipeSession(userId: String): Completable =
         Completable.fromCallable {

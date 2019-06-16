@@ -16,7 +16,7 @@ interface SessionManager {
     fun getSession(userId: String): Maybe<Session>
     fun getSessionLandmarks(userId: String): Maybe<Map<Landmark, Discovery?>>
 
-    fun updateLandmark(landmark: Landmark, userId: String, photoPath: String?, foundAt: Date?): Completable
+    fun updateLandmark(landmark: Landmark, userId: String, photoId: String?, foundAt: Date?): Completable
     fun wipeSession(userId: String): Completable
 
 }

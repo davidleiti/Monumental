@@ -90,8 +90,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
                 .also { addDisposable(it) }
     }
 
-    fun saveLandmark(landmark: Landmark, userId: String, photoPath: String, timeDiscovered: Date) {
-        val parameters = UpdateCachedLandmark.Params(landmark, userId, photoPath, timeDiscovered)
+    fun saveLandmark(landmark: Landmark, userId: String, photoId: String, timeDiscovered: Date) {
+        val parameters = UpdateCachedLandmark.Params(landmark, userId, photoId, timeDiscovered)
         UpdateCachedLandmark(parameters, sessionManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({

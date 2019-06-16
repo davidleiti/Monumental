@@ -13,7 +13,7 @@ data class BeaconData(val id: String,
                       val lng: Double,
                       var label: String?,
                       var userId: String,
-                      var photoPath: String?,
+                      var photoId: String?,
                       var foundAt: Date?) {
 
     fun extractEntity(): Landmark =
@@ -23,23 +23,23 @@ data class BeaconData(val id: String,
                  label = label)
 
     fun extractDiscovery(): Discovery? {
-        if (photoPath != null && foundAt != null)
-            return Discovery(foundAt!!, photoPath!!)
+        if (photoId != null && foundAt != null)
+            return Discovery(foundAt!!, photoId!!)
         return null
     }
 
     companion object {
-        fun fromEntity(entity: Landmark, userId: String, photoPath: String? = null, foundAt: Date? = null): BeaconData =
+        fun fromEntity(entity: Landmark, userId: String, photoId: String? = null, foundAt: Date? = null): BeaconData =
             BeaconData(id = entity.id,
                        lat = entity.lat,
                        lng = entity.lng,
                        label = entity.label,
                        userId = userId,
-                       photoPath = photoPath,
+                       photoId = photoId,
                        foundAt = foundAt
             )
 
         fun fromMapEntry(userId: String, data: Map.Entry<Landmark, Discovery?>): BeaconData =
-            fromEntity(data.key, userId, data.value?.photoPath, data.value?.time)
+            fromEntity(data.key, userId, data.value?.photoId, data.value?.time)
     }
 }
