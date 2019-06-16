@@ -6,9 +6,11 @@ import ubb.thesis.david.data.FirebaseLandmarkDetector
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.BeaconManager
+import ubb.thesis.david.domain.ImageStorage
 import ubb.thesis.david.domain.LandmarkDetector
 import ubb.thesis.david.domain.SessionManager
 import ubb.thesis.david.domain.entities.Landmark
+import ubb.thesis.david.domain.usecases.cloud.UploadImage
 import ubb.thesis.david.domain.usecases.detection.DetectLandmark
 import ubb.thesis.david.domain.usecases.detection.FilterImageCloud
 import ubb.thesis.david.domain.usecases.detection.FilterImageLocal
@@ -19,6 +21,7 @@ import java.util.*
 
 class SnapshotViewModel(private val sessionManager: SessionManager,
                         private val beaconManager: BeaconManager,
+                        private val imageStorage: ImageStorage,
                         private val landmarkDetector: LandmarkDetector) : BaseViewModel() {
 
     // Observable sources
@@ -36,8 +39,7 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     val errors: LiveData<Throwable> = _errors
 
     fun filterLabelInitial(path: String) {
-        FilterImageLocal(path, landmarkDetector,
-                                                                    AsyncTransformerFactory.create<Boolean>())
+        FilterImageLocal(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
                 .execute()
                 .subscribe({ passed ->
                                if (passed)
@@ -54,8 +56,7 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     }
 
     fun detectLandmark(landmark: Landmark, imagePath: String) {
-        DetectLandmark(landmark, imagePath, landmarkDetector,
-                                                                  AsyncTransformerFactory.create<String>())
+        DetectLandmark(landmark, imagePath, landmarkDetector, AsyncTransformerFactory.create<String>())
                 .execute()
                 .subscribe({ detection ->
                                if (detection != FirebaseLandmarkDetector.NONE_DETECTED)
@@ -73,8 +74,7 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     }
 
     fun filterImageFinal(path: String) {
-        FilterImageCloud(path, landmarkDetector,
-                                                                    AsyncTransformerFactory.create<Boolean>())
+        FilterImageCloud(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
                 .execute()
                 .subscribe({ passed ->
                                if (passed)
@@ -90,17 +90,28 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
                 .also { addDisposable(it) }
     }
 
-    fun saveLandmark(landmark: Landmark, userId: String, photoId: String, timeDiscovered: Date) {
+    fun saveLandmark(landmark: Landmark, userId: String, photoPath: String, timeDiscovered: Date) {
+        val parameters = UploadImage.Params(userId, landmark.id, photoPath)
+
+        UploadImage(parameters, imageStorage, AsyncTransformerFactory.create())
+                .execute()
+                .subscribe({ updateLandmarkCache(landmark, userId, photoPath, timeDiscovered) },
+                           { error -> _errors.value = error})
+                .also { addDisposable(it) }
+    }
+
+    private fun updateLandmarkCache(landmark: Landmark, userId: String, photoId: String, timeDiscovered: Date) {
         val parameters = UpdateCachedLandmark.Params(landmark, userId, photoId, timeDiscovered)
+
         UpdateCachedLandmark(parameters, sessionManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({
                                info(TAG_LOG, "Updated landmark $landmark data successfully!")
                                beaconManager.removeBeacon(landmark.id, userId)
                                _onLandmarkSaved.value = Unit
-                           }, {
-                               debug(TAG_LOG, "Error updating landmark, cause: ${it.message}")
-                               _errors.value
+                           }, { error ->
+                               debug(TAG_LOG, "Error updating landmark, cause: ${error.message}")
+                               _errors.value = error
                            }).also { addDisposable(it) }
     }
 

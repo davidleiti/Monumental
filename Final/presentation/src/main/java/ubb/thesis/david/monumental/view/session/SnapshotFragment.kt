@@ -17,6 +17,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_snapshot.*
+import ubb.thesis.david.data.FirebaseImageStorage
 import ubb.thesis.david.data.FirebaseLandmarkDetector
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
@@ -53,7 +54,8 @@ class SnapshotFragment : BaseFragment() {
         viewModel = getViewModel {
             SnapshotViewModel(sessionManager = Configuration.provideSessionManager(),
                               beaconManager = GeofencingClientAdapter(context!!),
-                              landmarkDetector = FirebaseLandmarkDetector(context!!))
+                              landmarkDetector = FirebaseLandmarkDetector(context!!),
+                              imageStorage = FirebaseImageStorage())
         }
 
         observeData()
@@ -104,20 +106,21 @@ class SnapshotFragment : BaseFragment() {
     }
 
     private fun onFinalFilteringFinished(passed: Boolean) {
-        hideProgress()
         if (passed)
             onLandmarkRecognized()
-        else
+        else {
             SimpleDialog(context!!, getString(R.string.title_unrecognized_photo),
                          getString(R.string.desc_unrecognized_photo)).show()
+            hideProgress()
+        }
     }
 
     private fun onLandmarkRecognized() {
-        hideProgress()
         viewModel.saveLandmark(targetLandmark, getUserId(), tempPhotoPath!!, Date())
     }
 
     private fun onLandmarkSaved() {
+        hideProgress()
         SimpleDialog(context!!,
                      getString(R.string.label_success),
                      getString(R.string.message_landmark_discovered, targetLandmark.label)).also { dialog ->
