@@ -5,9 +5,9 @@ import io.reactivex.Single
 
 interface ImageStorage {
 
-    fun storeImage(filePath: String): Single<String>
-    fun getURL(id: String): Single<String>
-    fun downloadImage(imageUrl: String): Completable
-    fun deleteImage(id: String): Completable
+    fun storeImage(userId: String, imageId: String, filePath: String): Completable
+    fun downloadImage(userId: String, imageUrl: String): Completable
+    fun deleteImage(userId: String, imageId: String): Completable
+    fun getImageUrl(userId: String, imageId: String): Single<String>
 
 }

@@ -7,21 +7,21 @@ import ubb.thesis.david.domain.ImageStorage
 
 class FirebaseImageStorage : ImageStorage {
 
-    private val storage = FirebaseStorage.getInstance()
+    private val reference = FirebaseStorage.getInstance().getReference("images")
 
-    override fun storeImage(filePath: String): Single<String> {
+    override fun storeImage(userId: String, imageId: String, filePath: String): Completable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getURL(id: String): Single<String> {
+    override fun downloadImage(userId: String, imageUrl: String): Completable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun downloadImage(imageUrl: String): Completable {
+    override fun deleteImage(userId: String, imageId: String): Completable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun deleteImage(id: String): Completable {
+    override fun getImageUrl(userId: String, imageId: String): Single<String> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
