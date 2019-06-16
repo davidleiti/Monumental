@@ -3,7 +3,7 @@ package ubb.thesis.david.monumental
 import android.content.Context
 import ubb.license.david.foursquareapi.FoursquareApi
 import ubb.thesis.david.data.FoursquareApiAdapter
-import ubb.thesis.david.data.SessionRepository
+import ubb.thesis.david.data.SessionCache
 import ubb.thesis.david.data.cache.SessionDatabase
 import ubb.thesis.david.data.common.ImageMapper
 import ubb.thesis.david.data.common.LandmarkMapper
@@ -15,7 +15,7 @@ object Configuration {
     fun provideLandmarkApi(): LandmarkApi = FoursquareApiAdapter(FoursquareApi, LandmarkMapper(), ImageMapper())
 
     fun provideSessionManager(): SessionManager =
-        SessionRepository.getInstance(provideDatabase(MainApplication.getAppContext()))
+        SessionCache.getInstance(provideDatabase(MainApplication.getAppContext()))
 
     private fun provideDatabase(context: Context) = SessionDatabase.getInstance(context)
 }

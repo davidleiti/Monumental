@@ -111,6 +111,7 @@
     <string name="desc_unrecognized_photo">Unable to recognize the landmark, make sure that its not obfuscated and it is visible in its entirety</string>
     <string name="title_unrecognized_photo">Error</string>
     <string name="message_error_detection">An unexpected error has occurred, check your network connection! \n Message: %1$s</string>
+    <string name="message_landmark_discovered">You just discovered %1$s! You may now move on to your next landmark!</string>
     <string name="message_landmark_Saved">The landmark\'s data has been stored successfully, you may move on to the next one!</string>
     <string name="label_success">Success</string>
     <string name="message_oops">Oops…</string>

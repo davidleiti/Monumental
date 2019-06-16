@@ -118,13 +118,14 @@ class SnapshotFragment : BaseFragment() {
     }
 
     private fun onLandmarkSaved() {
-        SimpleDialog(context!!, getString(R.string.label_success), getString(R.string.message_landmark_Saved))
-                .also { dialog ->
-                    dialog.updatePositiveButton(getString(R.string.label_ok)) {
-                        Navigation.findNavController(view!!).navigateUp()
-                    }
-                    dialog.show()
-                }
+        SimpleDialog(context!!,
+                     getString(R.string.label_success),
+                     getString(R.string.message_landmark_discovered, targetLandmark.label)).also { dialog ->
+            dialog.updatePositiveButton(getString(R.string.label_ok)) {
+                Navigation.findNavController(view!!).navigateUp()
+            }
+            dialog.show()
+        }
     }
 
     private fun onErrorOccurred(error: Throwable) {

@@ -15,7 +15,7 @@ import ubb.thesis.david.domain.entities.Session
 import java.util.*
 import kotlin.collections.HashMap
 
-class SessionRepository private constructor(private val database: SessionDatabase) :
+class SessionCache private constructor(private val database: SessionDatabase) :
     SessionManager {
 
     override fun createSession(session: Session, landmarks: List<Landmark>): Completable =
@@ -95,7 +95,7 @@ class SessionRepository private constructor(private val database: SessionDatabas
         fun getInstance(database: SessionDatabase) =
             sInstance ?: synchronized(this) {
                 sInstance
-                    ?: SessionRepository(database)
+                    ?: SessionCache(database)
             }
     }
 }
