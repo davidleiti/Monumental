@@ -75,7 +75,7 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
                 .execute()
                 .subscribe({ passed ->
                                if (passed)
-                                   info(TAG_LOG, "Final filtering passed!")
+                                   info(TAG_LOG, "Final filtering has passed!")
                                else
                                    info(TAG_LOG, "Final filter has failed!")
 

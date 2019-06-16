@@ -81,7 +81,7 @@ class SnapshotFragment : BaseFragment() {
             onLandmarkSaved()
         })
         viewModel.errors.observe(viewLifecycleOwner, Observer { error ->
-            onErrorOccurred(error)
+            onErrorOccurred()
         })
     }
 
@@ -128,10 +128,10 @@ class SnapshotFragment : BaseFragment() {
         }
     }
 
-    private fun onErrorOccurred(error: Throwable) {
+    private fun onErrorOccurred() {
         SimpleDialog(context!!,
                      getString(R.string.message_oops),
-                     getString(R.string.message_error_detection, error.message))
+                     getString(R.string.message_error_operation))
                 .show()
         hideProgress()
     }
