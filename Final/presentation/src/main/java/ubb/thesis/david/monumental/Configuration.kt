@@ -7,12 +7,12 @@ import ubb.thesis.david.data.SessionCache
 import ubb.thesis.david.data.cache.SessionDatabase
 import ubb.thesis.david.data.common.ImageMapper
 import ubb.thesis.david.data.common.LandmarkMapper
-import ubb.thesis.david.domain.LandmarkApi
+import ubb.thesis.david.domain.LandmarkProvider
 import ubb.thesis.david.domain.SessionManager
 
 object Configuration {
 
-    fun provideLandmarkApi(): LandmarkApi = FoursquareApiAdapter(FoursquareApi, LandmarkMapper(), ImageMapper())
+    fun provideLandmarkApi(): LandmarkProvider = FoursquareApiAdapter(FoursquareApi, LandmarkMapper(), ImageMapper())
 
     fun provideSessionManager(): SessionManager =
         SessionCache.getInstance(provideDatabase(MainApplication.getAppContext()))

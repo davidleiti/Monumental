@@ -5,7 +5,7 @@ import io.reactivex.functions.BiFunction
 import ubb.license.david.foursquareapi.FoursquareApi
 import ubb.license.david.foursquareapi.model.Photo
 import ubb.license.david.foursquareapi.model.Venue
-import ubb.thesis.david.domain.LandmarkApi
+import ubb.thesis.david.domain.LandmarkProvider
 import ubb.thesis.david.domain.common.Mapper
 import ubb.thesis.david.domain.entities.ImageEntity
 import ubb.thesis.david.domain.entities.Landmark
@@ -13,7 +13,7 @@ import java.util.*
 
 class FoursquareApiAdapter(private val api: FoursquareApi,
                            private val landmarkMapper: Mapper<Venue, Landmark>,
-                           private val imageMapper: Mapper<Photo, ImageEntity>) : LandmarkApi {
+                           private val imageMapper: Mapper<Photo, ImageEntity>) : LandmarkProvider {
 
     override fun searchVenues(lat: Double,
                               long: Double,

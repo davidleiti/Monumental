@@ -9,9 +9,9 @@ import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.domain.LandmarkDetector
 import ubb.thesis.david.domain.SessionManager
 import ubb.thesis.david.domain.entities.Landmark
-import ubb.thesis.david.domain.usecases.cloud.DetectLandmark
-import ubb.thesis.david.domain.usecases.cloud.FilterImageCloud
-import ubb.thesis.david.domain.usecases.local.FilterImageLocal
+import ubb.thesis.david.domain.usecases.detection.DetectLandmark
+import ubb.thesis.david.domain.usecases.detection.FilterImageCloud
+import ubb.thesis.david.domain.usecases.detection.FilterImageLocal
 import ubb.thesis.david.domain.usecases.local.UpdateCachedLandmark
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
@@ -36,7 +36,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     val errors: LiveData<Throwable> = _errors
 
     fun filterLabelInitial(path: String) {
-        FilterImageLocal(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
+        FilterImageLocal(path, landmarkDetector,
+                                                                    AsyncTransformerFactory.create<Boolean>())
                 .execute()
                 .subscribe({ passed ->
                                if (passed)
@@ -53,7 +54,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     }
 
     fun detectLandmark(landmark: Landmark, imagePath: String) {
-        DetectLandmark(landmark, imagePath, landmarkDetector, AsyncTransformerFactory.create<String>())
+        DetectLandmark(landmark, imagePath, landmarkDetector,
+                                                                  AsyncTransformerFactory.create<String>())
                 .execute()
                 .subscribe({ detection ->
                                if (detection != FirebaseLandmarkDetector.NONE_DETECTED)
@@ -71,7 +73,8 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
     }
 
     fun filterImageFinal(path: String) {
-        FilterImageCloud(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
+        FilterImageCloud(path, landmarkDetector,
+                                                                    AsyncTransformerFactory.create<Boolean>())
                 .execute()
                 .subscribe({ passed ->
                                if (passed)
