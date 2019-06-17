@@ -17,7 +17,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_snapshot.*
-import ubb.thesis.david.data.FirebaseImageStorage
+import ubb.thesis.david.data.FirebaseStorageAdapter
 import ubb.thesis.david.data.FirebaseLandmarkDetector
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
@@ -55,7 +55,7 @@ class SnapshotFragment : BaseFragment() {
             SnapshotViewModel(sessionManager = Configuration.provideSessionManager(),
                               beaconManager = GeofencingClientAdapter(context!!),
                               landmarkDetector = FirebaseLandmarkDetector(context!!),
-                              imageStorage = FirebaseImageStorage())
+                              imageStorage = FirebaseStorageAdapter())
         }
 
         observeData()

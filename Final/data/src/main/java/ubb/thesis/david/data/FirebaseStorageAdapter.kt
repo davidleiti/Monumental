@@ -12,7 +12,7 @@ import ubb.thesis.david.domain.ImageStorage
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class FirebaseImageStorage : ImageStorage {
+class FirebaseStorageAdapter : ImageStorage {
 
     private val storage = FirebaseStorage.getInstance()
 
