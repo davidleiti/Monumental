@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
@@ -72,6 +73,9 @@ dependencies {
 
     // Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    // Data binding adapters
+    kapt "com.android.databinding:compiler:$android_plugin_version"
 
     // Stylized toast messages
 //    implementation 'com.github.GrenderG:Toasty:1.4.2'

@@ -20,13 +20,13 @@ class ResultViewModel(private val beaconManager: BeaconManager,
     private val sessionManager = Configuration.provideSessionManager()
 
     // Observable sources
-    private val _sessionCreatedObservable = BehaviorSubject.create<Unit>()
+    private val _sessionCreatedObservable = MutableLiveData<Unit>()
     private val _landmarksObservable = MutableLiveData<List<Landmark>>()
     private val _errorsObservable = MutableLiveData<Throwable>()
 
     // Exposed observable properties
     val foundLandmarks: LiveData<List<Landmark>> = _landmarksObservable
-    val sessionCreated: BehaviorSubject<Unit> = _sessionCreatedObservable
+    val sessionCreated: LiveData<Unit> = _sessionCreatedObservable
     val errorsOccurred: LiveData<Throwable> = _errorsObservable
 
     fun searchLandmarks(lat: Double, long: Double, radius: Int, limit: Int, categories: String) {
@@ -42,7 +42,7 @@ class ResultViewModel(private val beaconManager: BeaconManager,
         val params = CreateSession.RequestValues(userId, landmarks)
         CreateSession(params, cloudDataSource, sessionManager, beaconManager, AsyncTransformerFactory.create())
                 .execute()
-                .subscribe({ _sessionCreatedObservable.onNext(Unit) },
+                .subscribe({ _sessionCreatedObservable.value = Unit },
                            { _errorsObservable.value = it })
                 .also { addDisposable(it) }
     }

@@ -2,6 +2,7 @@ package ubb.thesis.david.monumental.view.session
 
 import android.location.Location
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.data.utils.toLocation
@@ -24,18 +25,20 @@ class NavigationViewModel(private val cloudDataSource: CloudDataSource,
     private val sessionManager: SessionManager = Configuration.provideSessionManager()
 
     // Observable sources
-    private val _sessionLandmarks: SingleLiveEvent<List<Landmark>> = SingleLiveEvent()
-    private val _nearestLandmark: SingleLiveEvent<Landmark> = SingleLiveEvent()
-    private val _distanceToTarget: SingleLiveEvent<Float> = SingleLiveEvent()
-    private val _progressSaved: SingleLiveEvent<Unit> = SingleLiveEvent()
-    private val _errorsOccurred: SingleLiveEvent<Throwable> = SingleLiveEvent()
+    private val _sessionLandmarks: MutableLiveData<List<Landmark>> = MutableLiveData()
+    private val _nearestLandmark: MutableLiveData<Landmark> = MutableLiveData()
+    private val _distanceToTarget: MutableLiveData<Float> = MutableLiveData()
+    private val _progressSaved: MutableLiveData<Unit> = MutableLiveData()
+    private val _errorsOccurred: MutableLiveData<Throwable> = MutableLiveData()
 
     // Exposed observable properties
     val sessionLandmarks: LiveData<List<Landmark>> = _sessionLandmarks
-    val nearestLandmark: LiveData<Landmark> = _nearestLandmark
-    val distanceToTarget: LiveData<Float> = _distanceToTarget
     val progressSaved: LiveData<Unit> = _progressSaved
     val errorsOccurred: LiveData<Throwable> = _errorsOccurred
+
+    // Data binding properties
+    val distanceToTarget: LiveData<Float> = _distanceToTarget
+    val nearestLandmark: LiveData<Landmark> = _nearestLandmark
 
     fun loadSessionLandmarks(sessionId: String) {
         GetUndiscoveredLandmarks(sessionId, sessionManager, AsyncTransformerFactory.create<List<Landmark>>())
@@ -48,7 +51,7 @@ class NavigationViewModel(private val cloudDataSource: CloudDataSource,
     fun saveSessionProgress(userId: String) {
         SaveSessionProgress(userId, sessionManager, cloudDataSource, AsyncTransformerFactory.create())
                 .execute()
-                .subscribe({ _progressSaved.call() },
+                .subscribe({ _progressSaved.value = Unit },
                            { error -> _errorsOccurred.value = error })
                 .also { addDisposable(it) }
     }

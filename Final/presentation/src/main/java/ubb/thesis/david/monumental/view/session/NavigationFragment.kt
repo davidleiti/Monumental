@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import com.google.android.gms.location.LocationCallback
@@ -26,6 +27,7 @@ import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.LocationTrackerFragment
 import ubb.thesis.david.monumental.common.SimpleDialog
+import ubb.thesis.david.monumental.databinding.FragmentNavigationBinding
 import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
 import ubb.thesis.david.monumental.utils.getViewModel
 
@@ -42,22 +44,29 @@ class NavigationFragment : LocationTrackerFragment() {
 
     override fun title(): String? = "Navigation"
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_navigation, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding: FragmentNavigationBinding =
+            DataBindingUtil.inflate(layoutInflater, R.layout.fragment_navigation, container, false)
+        binding.lifecycleOwner = this
+
+        viewModel = getViewModel { NavigationViewModel(FirebaseDataSource(), GeofencingClientAdapter(context!!)) }
+        binding.viewModel = viewModel
+
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = getViewModel { NavigationViewModel(FirebaseDataSource(), GeofencingClientAdapter(context!!)) }
-        observeData()
-        displayProgress()
-        viewModel.loadSessionLandmarks(getUserId())
 
         button_take_photo.setOnClickListener { navigateToSnapshot() }
         button_save_progress.setOnClickListener {
             displayProgress()
             viewModel.saveSessionProgress(getUserId())
         }
+
+        observeData()
+        displayProgress()
+        viewModel.loadSessionLandmarks(getUserId())
     }
 
     override fun onDestroy() {
@@ -115,9 +124,6 @@ class NavigationFragment : LocationTrackerFragment() {
         viewModel.nearestLandmark.observe(viewLifecycleOwner, Observer { landmark ->
             onNearestRetrieved(landmark)
         })
-        viewModel.distanceToTarget.observe(viewLifecycleOwner, Observer { distance ->
-            onDistanceRetrieved(distance)
-        })
         viewModel.progressSaved.observe(viewLifecycleOwner, Observer {
             onProgressSaved()
         })
@@ -133,26 +139,11 @@ class NavigationFragment : LocationTrackerFragment() {
         } else {
             reinitializeBeaconsIfNeeded(landmarks)
             requestLocationUpdates(locationUpdateCallback)
-            TransitionManager.beginDelayedTransition(container_fragment)
-            label_remaining.visibility = View.VISIBLE
-            label_remaining.text = getString(R.string.label_remaining, landmarks.size)
         }
     }
 
     private fun onNearestRetrieved(landmark: Landmark) {
         navigator?.target = landmark.toLocation()
-        TransitionManager.beginDelayedTransition(container_fragment)
-        navigation_arrow.visibility = View.VISIBLE
-        button_take_photo.visibility = View.VISIBLE     //  TODO Remove this line after finishing below todo
-        label_target.visibility = View.VISIBLE
-        label_target.text = getString(R.string.label_target, landmark.label)
-    }
-
-    private fun onDistanceRetrieved(distance: Float) {
-        TransitionManager.beginDelayedTransition(container_fragment)
-        label_distance.visibility = View.VISIBLE
-        label_distance.text = getString(R.string.label_distance, distance)
-        // TODO Adjust button visibility based on the distance to target
     }
 
     private fun onProgressSaved() {

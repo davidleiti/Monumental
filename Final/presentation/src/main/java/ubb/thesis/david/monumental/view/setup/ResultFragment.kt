@@ -21,7 +21,6 @@ import ubb.thesis.david.monumental.utils.getViewModel
 
 class ResultFragment : BaseFragment(), View.OnClickListener {
 
-    private val disposable = CompositeDisposable()
     private lateinit var viewModel: ResultViewModel
     private lateinit var landmarksRetrieved: List<Landmark>
 
@@ -48,12 +47,6 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
             loadVenues()
     }
 
-    override fun onStop() {
-        super.onStop()
-        hideProgress()
-        disposable.dispose()
-    }
-
     override fun onClick(v: View) {
         when (v.id) {
             R.id.button_next -> setupSession()
@@ -74,10 +67,11 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
             hideProgress()
             updateUi()
         })
-        viewModel.sessionCreated.subscribe {
+        viewModel.sessionCreated.observe(viewLifecycleOwner, Observer {
+            info(TAG_LOG, "Session created successfully!")
             hideProgress()
             beginSession()
-        }.also { disposable.add(it) }
+        })
         viewModel.errorsOccurred.observe(viewLifecycleOwner, Observer {
             debug(TAG_LOG, "An unexpected error has occurred. See stacktrace in log")
 
