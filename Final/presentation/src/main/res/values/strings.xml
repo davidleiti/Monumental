@@ -133,4 +133,8 @@
     <string name="label_load">Load from cloud</string>
     <string name="message_no_session_found">No running session was found</string>
     <string name="message_error_operation">Couldn\'t perform operation, please check your internet connection!</string>
+    <string name="message_error_signin">There was an error signing in, please check your credentials and your internet connection!</string>
+    <string name="label_sign_up">Sign up</string>
+    <string name="label_show">Show</string>
+    <string name="message_error_signup">Failed to create account. There might already be an account registered with this email or no internet connection is available.</string>
 </resources>

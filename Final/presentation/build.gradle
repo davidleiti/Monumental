@@ -62,8 +62,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
-    // Authentication
-    implementation 'com.google.firebase:firebase-auth:17.0.0'
+    // Third part authentication
     implementation 'com.facebook.android:facebook-login:4.40.0'
     implementation 'com.shobhitpuri.custombuttons:google-signin:1.0.0'
 

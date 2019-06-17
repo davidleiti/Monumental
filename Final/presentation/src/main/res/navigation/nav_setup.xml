@@ -111,7 +111,7 @@
     </fragment>
     <fragment
             android:id="@+id/loginDestination"
-            android:name="ubb.thesis.david.monumental.view.LoginFragment"
+            android:name="ubb.thesis.david.monumental.view.authentication.LoginFragment"
             android:label="LoginFragment"
             tools:layout="@layout/fragment_login" >
         <action
@@ -123,6 +123,14 @@
                 app:popUpToInclusive="true"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                 app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+                android:id="@+id/actionRegister"
+                app:destination="@id/registerDestination"
+                app:popUpTo="@+id/loginDestination"
+                app:enterAnim="@anim/fade_in_right"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/fade_out_right" />
     </fragment>
     <fragment
             android:id="@+id/splashFragment"
@@ -148,5 +156,19 @@
                 app:launchSingleTop="true" />
     </fragment>
     <include app:graph="@navigation/nav_session" />
+    <fragment
+            android:id="@+id/registerDestination"
+            android:name="ubb.thesis.david.monumental.view.authentication.RegisterFragment"
+            android:label="RegisterFragment" >
+        <action
+                android:id="@+id/actionNavigateHome"
+                app:destination="@id/startDestination"
+                app:popUpTo="@+id/loginDestination"
+                app:popUpToInclusive="true"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/fade_out_bottom"
+                app:enterAnim="@anim/fade_in_right"
+                app:exitAnim="@anim/nav_default_exit_anim" />
+    </fragment>
 
 </navigation>

@@ -41,6 +41,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:17.0.0'
     implementation 'com.google.firebase:firebase-firestore:19.0.2'
 
+    // Authentication
+    api 'com.google.firebase:firebase-auth:17.0.0'
+
     // Background work
     implementation 'android.arch.work:work-runtime-ktx:1.0.1'
 
