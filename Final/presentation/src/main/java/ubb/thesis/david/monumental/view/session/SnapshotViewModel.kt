@@ -95,28 +95,28 @@ class SnapshotViewModel(private val beaconManager: BeaconManager,
     }
 
     fun saveLandmark(landmark: Landmark, userId: String, photoPath: String, timeDiscovered: Date) {
-        val parameters = UploadImage.Params(userId, landmark.id, photoPath)
-
-        UploadImage(parameters, imageStorage, AsyncTransformerFactory.create())
-                .execute()
-                .subscribe({ updateLandmarkCache(landmark, userId, landmark.id, timeDiscovered) },
-                           { error -> _errors.value = error})
-                .also { addDisposable(it) }
-    }
-
-    private fun updateLandmarkCache(landmark: Landmark, userId: String, photoId: String, timeDiscovered: Date) {
-        val parameters = UpdateCachedLandmark.Params(landmark, userId, photoId, timeDiscovered)
+        val parameters = UpdateCachedLandmark.Params(landmark, userId, landmark.id, timeDiscovered)
 
         UpdateCachedLandmark(parameters, sessionManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({
                                info(TAG_LOG, "Updated landmark $landmark data successfully!")
                                beaconManager.removeBeacon(landmark.id, userId)
+                               uploadImage(landmark, userId, photoPath)
                                _landmarkSaved.value = Unit
                            }, { error ->
                                debug(TAG_LOG, "Error updating landmark, cause: ${error.message}")
                                _errors.value = error
                            }).also { addDisposable(it) }
+    }
+
+    private fun uploadImage(landmark: Landmark, userId: String, photoPath: String) {
+        val parameters = UploadImage.Params(userId, landmark.id, photoPath)
+
+        UploadImage(parameters, imageStorage, AsyncTransformerFactory.create())
+                .execute()
+                .subscribe({}, { error -> _errors.value = error })
+                .also { addDisposable(it) }
     }
 
     companion object {

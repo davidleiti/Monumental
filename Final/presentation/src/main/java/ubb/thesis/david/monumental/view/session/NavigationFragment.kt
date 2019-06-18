@@ -104,19 +104,6 @@ class NavigationFragment : LocationTrackerFragment() {
             }
         }
 
-    private fun updateNavigationArrow(direction: Float) {
-        RotateAnimation(currentDegree, direction,
-                        Animation.RELATIVE_TO_SELF, 0.5F,
-                        Animation.RELATIVE_TO_SELF, 0.5F)
-                .also { anim ->
-                    anim.duration = 500
-                    anim.repeatCount = 0
-                    anim.fillAfter = true
-                    navigation_arrow?.startAnimation(anim)
-                }
-        currentDegree = direction
-    }
-
     @SuppressLint("SetTextI18n")
     private fun observeData() {
         viewModel.sessionLandmarks.observe(viewLifecycleOwner, Observer { landmarks ->
@@ -126,7 +113,6 @@ class NavigationFragment : LocationTrackerFragment() {
             onNearestRetrieved(landmark)
         })
         viewModel.sessionFinished.observe(viewLifecycleOwner, Observer {
-            viewModel.wipeSessionCache(getUserId()!!)
             onTaskFinished(getString(R.string.label_success), getString(R.string.label_session_ended))
         })
         viewModel.progressSaved.observe(viewLifecycleOwner, Observer {
@@ -177,6 +163,19 @@ class NavigationFragment : LocationTrackerFragment() {
                     }
                     dialog.show()
                 }
+    }
+
+    private fun updateNavigationArrow(direction: Float) {
+        RotateAnimation(currentDegree, direction,
+                        Animation.RELATIVE_TO_SELF, 0.5F,
+                        Animation.RELATIVE_TO_SELF, 0.5F)
+                .also { anim ->
+                    anim.duration = 500
+                    anim.repeatCount = 0
+                    anim.fillAfter = true
+                    navigation_arrow?.startAnimation(anim)
+                }
+        currentDegree = direction
     }
 
     private fun reinitializeBeaconsIfNeeded(landmarks: List<Landmark>) {

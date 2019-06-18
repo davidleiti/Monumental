@@ -128,10 +128,7 @@ class SnapshotFragment : BaseFragment() {
     }
 
     private fun onErrorOccurred() {
-        TextDialog(context!!,
-                   getString(R.string.message_oops),
-                   getString(R.string.message_error_operation))
-                .show()
+        TextDialog(context!!, getString(R.string.message_oops), getString(R.string.message_error_operation)).show()
         hideProgress()
     }
 
@@ -140,13 +137,6 @@ class SnapshotFragment : BaseFragment() {
         button_accept_photo.visibility = View.VISIBLE
         button_save_photo.visibility = View.VISIBLE
         photo_preview.background = null
-    }
-
-    private fun savePhoto() {
-        if (FileUtils.copyToShared(context!!, tempPhotoPath!!))
-            TextDialog(context!!, getString(R.string.label_success), getString(R.string.message_save_success)).show()
-        else
-            TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_save_failed)).show()
     }
 
     private fun requestStoragePermission() {
@@ -214,6 +204,13 @@ class SnapshotFragment : BaseFragment() {
                 photo_preview.setImageDrawable(drawable)
             }
         }
+    }
+
+    private fun savePhoto() {
+        if (FileUtils.copyToShared(context!!, tempPhotoPath!!))
+            TextDialog(context!!, getString(R.string.label_success), getString(R.string.message_save_success)).show()
+        else
+            TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_save_failed)).show()
     }
 
     private fun deletePhoto(path: String) {

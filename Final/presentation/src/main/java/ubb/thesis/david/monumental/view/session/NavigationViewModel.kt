@@ -61,12 +61,15 @@ class NavigationViewModel(private val cloudDataSource: CloudDataSource,
     fun finishSession(userId: String) {
         SaveSessionProgress(userId, true, sessionManager, cloudDataSource, AsyncTransformerFactory.create())
                 .execute()
-                .subscribe({ _sessionEnded.value = Unit },
+                .subscribe({
+                               _sessionEnded.value = Unit
+                               wipeSessionCache(userId)
+                           },
                            { error -> _errors.value = error })
                 .also { addDisposable(it) }
     }
 
-    fun wipeSessionCache(userId: String) {
+    private fun wipeSessionCache(userId: String) {
         WipeCachedSession(userId, sessionManager, beaconManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ info(TAG_LOG, "Wiped session cache of user $userId") },

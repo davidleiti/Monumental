@@ -3,7 +3,7 @@
     <string name="download_enqueued">Image is downloading…</string>
     <string name="download_finished">Image has been downloaded successfully!</string>
     <string name="download_failed">Failed to download image…</string>
-    <string name="message_upload_enqueued">Uploading photo…</string>
+    <string name="message_upload_enqueued">Uploading image…</string>
     <string name="message_upload_finished">Image uploaded successfully!</string>
     <string name="message_upload_failed">Failed to upload photo…</string>
 </resources>
