@@ -161,4 +161,6 @@
     <string name="title_session_landmarks">Discovered landmarks</string>
     <string name="message_no_landmarks_discovered">No landmarks have been discovered in this session…</string>
     <string name="message_error_download_file">Failed to create download file…</string>
+    <string name="message_save_failed">Failed to save image…</string>
+    <string name="message_save_success">Image has been saved, you can now access it from your gallery!</string>
 </resources>

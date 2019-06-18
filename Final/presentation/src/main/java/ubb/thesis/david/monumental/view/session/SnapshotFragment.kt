@@ -17,12 +17,12 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_snapshot.*
+import ubb.thesis.david.data.utils.FileUtils
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.common.TextDialog
-import ubb.thesis.david.data.utils.FileUtils
 import ubb.thesis.david.monumental.utils.checkPermission
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortToast
@@ -48,7 +48,7 @@ class SnapshotFragment : BaseFragment() {
         targetLandmark = SnapshotFragmentArgs.fromBundle(arguments!!).targetLandmark
 
         viewModel = getViewModel {
-            SnapshotViewModel(getBeaconManager(),  getImageStorage(), getLandmarkDetector())
+            SnapshotViewModel(getBeaconManager(), getImageStorage(), getLandmarkDetector())
         }
 
         observeData()
@@ -59,6 +59,9 @@ class SnapshotFragment : BaseFragment() {
         button_accept_photo.setOnClickListener {
             displayProgress()
             viewModel.filterLabelInitial(tempPhotoPath!!)
+        }
+        button_save_photo.setOnClickListener {
+            savePhoto()
         }
     }
 
@@ -135,8 +138,15 @@ class SnapshotFragment : BaseFragment() {
     private fun updateUi() {
         TransitionManager.beginDelayedTransition(container)
         button_accept_photo.visibility = View.VISIBLE
-        button_take_photo.invertColors()
+        button_save_photo.visibility = View.VISIBLE
         photo_preview.background = null
+    }
+
+    private fun savePhoto() {
+        if (FileUtils.copyToShared(context!!, tempPhotoPath!!))
+            TextDialog(context!!, getString(R.string.label_success), getString(R.string.message_save_success)).show()
+        else
+            TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_save_failed)).show()
     }
 
     private fun requestStoragePermission() {

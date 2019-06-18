@@ -25,14 +25,30 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     <ubb.thesis.david.monumental.common.FlatButton
+            android:id="@+id/button_save_photo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:text="Save image"
+            app:invertColors="true"
+            android:visibility="gone"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/button_take_photo"
+            app:layout_constraintEnd_toStartOf="@+id/button_accept_photo" />
+
+    <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_accept_photo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:text="@string/label_accept_photo"
-            android:visibility="invisible"
+            app:invertColors="true"
+            android:visibility="gone"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/button_take_photo"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/button_save_photo">
+
+    </ubb.thesis.david.monumental.common.FlatButton>
 
     <ubb.thesis.david.monumental.common.FlatButton
             android:id="@+id/button_take_photo"

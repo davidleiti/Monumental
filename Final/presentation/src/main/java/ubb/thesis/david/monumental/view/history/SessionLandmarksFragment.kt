@@ -19,6 +19,8 @@ import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.common.TextDialog
 import ubb.thesis.david.monumental.databinding.FragmentSessionLandmarksBinding
 import ubb.thesis.david.monumental.utils.getViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 class SessionLandmarksFragment : BaseFragment() {
 
@@ -72,21 +74,11 @@ class SessionLandmarksFragment : BaseFragment() {
             }.toMap()
 
             val listAdapter = LandmarkDataListAdapter(context!!, sortedByDiscovery) { photoId ->
-                val targetFile = FileUtils.createSharedFile(photoId)
-
-                targetFile?.let { file ->
-                    viewModel.downloadImage(getUserId()!!, photoId, file.absolutePath)
-                } ?: run {
-                    onFileCreationFailed()
-                }
+                downloadImage(photoId)
             }
             list_landmarks.adapter = listAdapter
             list_landmarks.layoutManager = LinearLayoutManager(context!!)
         }
-    }
-
-    private fun onFileCreationFailed() {
-        TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_download_file)).show()
     }
 
     private fun onError(error: Throwable) {
@@ -98,6 +90,20 @@ class SessionLandmarksFragment : BaseFragment() {
                     }
                 }
     }
+
+    private fun downloadImage(photoId: String) {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val targetFile = FileUtils.createSharedFile("${photoId}_$timeStamp")
+
+        targetFile?.let { file ->
+            viewModel.downloadImage(getUserId()!!, photoId, file.absolutePath)
+        } ?: run {
+            onFileCreationFailed()
+        }
+    }
+
+    private fun onFileCreationFailed() =
+        TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_download_file)).show()
 
     companion object {
         private const val TAG_LOG = "SessionLandmarksViewLogger"
