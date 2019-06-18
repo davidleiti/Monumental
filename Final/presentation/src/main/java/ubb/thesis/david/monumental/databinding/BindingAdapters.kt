@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.view
+package ubb.thesis.david.monumental.databinding
 
 import android.transition.TransitionManager
 import android.view.View
@@ -13,7 +13,7 @@ fun setAnimatedVisibility(view: View, visibility: Int) {
     view.visibility = if (visibility == View.VISIBLE) View.VISIBLE else View.GONE
 }
 
-@BindingAdapter("app:textAnimated")
+@BindingAdapter("app:animatedText")
 fun animateTextChange(textView: TextView, text: String) {
     TransitionManager.beginDelayedTransition(textView.rootView as ViewGroup)
     textView.text = text

@@ -11,6 +11,6 @@ class FilterImageLocal(private val photoId: String,
     : ObservableUseCase<Boolean>(transformer) {
 
     override fun createSource(): Observable<Boolean> =
-        landmarkDetector.filterImageOnDevice(photoId)
+        landmarkDetector.filterImageLocal(photoId).toObservable()
 
 }

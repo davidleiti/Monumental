@@ -1,6 +1,5 @@
 package ubb.thesis.david.monumental.view
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -9,11 +8,8 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigator
 import kotlinx.android.synthetic.main.fragment_splash.*
-import ubb.thesis.david.monumental.MainApplication
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 
 
 class SplashFragment : BaseFragment() {
@@ -28,7 +24,7 @@ class SplashFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val signedIn = getAuth().currentUser != null
+        val signedIn = getUserId() != null
         val navController = Navigation.findNavController(view!!)
 
         Handler().postDelayed(
@@ -48,19 +44,4 @@ class SplashFragment : BaseFragment() {
 
     }
 
-    private fun getShaSignature() {
-        try {
-            val info = context!!.packageManager.getPackageInfo(
-                    MainApplication.getAppContext().packageName,
-                    PackageManager.GET_SIGNATURES)
-            for (signature in info.signatures) {
-                val md = MessageDigest.getInstance("SHA")
-                md.update(signature.toByteArray())
-            }
-        } catch (e: PackageManager.NameNotFoundException) {
-
-        } catch (e: NoSuchAlgorithmException) {
-
-        }
-    }
 }

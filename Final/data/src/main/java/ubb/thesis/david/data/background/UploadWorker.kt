@@ -2,22 +2,17 @@ package ubb.thesis.david.data.background
 
 import android.content.Context
 import android.net.Uri
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.firebase.storage.FirebaseStorage
+import ubb.thesis.david.data.R
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import java.io.File
-import java.util.concurrent.CountDownLatch
 
-class UploadWorker(appContext: Context,
-                   workerParameters: WorkerParameters) : Worker(appContext, workerParameters) {
+class UploadWorker(appContext: Context, workerParameters: WorkerParameters) :
+    BaseWorker(appContext, workerParameters) {
 
-    private lateinit var delayedResult: Result
-
-    override fun doWork(): Result {
-        val latch = CountDownLatch(1)
-
+    override fun executeTask() {
         val userId = inputData.getString("userId")
         val photoId = inputData.getString("photoId")
         val photoPath = inputData.getString("photoPath")
@@ -27,26 +22,24 @@ class UploadWorker(appContext: Context,
         val fileUri = Uri.fromFile(File(photoPath))
 
         info(TAG_LOG, "Image upload of $photoId has been enqueued!")
+        displayProgress(applicationContext.getString(R.string.message_upload_enqueued))
+
         imageRef.putFile(fileUri)
                 .addOnSuccessListener {
                     info(TAG_LOG, "Image $photoId from $photoPath uploaded successfully!")
-                    delayedResult = Result.success()
-                    latch.countDown()
+                    displayProgress(applicationContext.getString(R.string.message_upload_finished))
+
+                    onWorkDone(Result.success())
                 }.addOnFailureListener { error ->
                     debug(TAG_LOG, "Failed to upload image $photoId with error ${error.message}")
+                    displayProgress(applicationContext.getString(R.string.message_upload_failed))
                     error.printStackTrace()
-                    delayedResult = Result.retry()
-                    latch.countDown()
+
+                    onWorkDone(Result.retry())
                 }.addOnCanceledListener {
                     debug(TAG_LOG, "Image upload of $photoId has been canceled.")
-                    latch.countDown()
-                    delayedResult = Result.failure()
+                    onWorkDone(Result.failure())
                 }
-
-        latch.await()
-
-        return Result.success()
-
     }
 
     companion object {

@@ -17,9 +17,10 @@ class SearchLandmarks(private val params: RequestValues,
                              val limit: Int = 0)
 
     override fun createSource(): Observable<List<Landmark>> {
-        val source = provider.searchVenues(params.lat, params.long, params.radius, params.categories)
+        val source = provider.searchLandmarks(params.lat, params.long, params.radius, params.categories)
         if (params.limit > 0)
             source.map { it.take(params.limit) }
         return source.toObservable()
     }
+
 }

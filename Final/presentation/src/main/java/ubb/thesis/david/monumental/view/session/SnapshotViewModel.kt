@@ -15,27 +15,31 @@ import ubb.thesis.david.domain.usecases.detection.DetectLandmark
 import ubb.thesis.david.domain.usecases.detection.FilterImageCloud
 import ubb.thesis.david.domain.usecases.detection.FilterImageLocal
 import ubb.thesis.david.domain.usecases.local.UpdateCachedLandmark
+import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
+import ubb.thesis.david.monumental.common.SingleLiveEvent
 import java.util.*
 
-class SnapshotViewModel(private val sessionManager: SessionManager,
-                        private val beaconManager: BeaconManager,
+class SnapshotViewModel(private val beaconManager: BeaconManager,
                         private val imageStorage: ImageStorage,
                         private val landmarkDetector: LandmarkDetector) : BaseViewModel() {
 
+    // Resources
+    private val sessionManager: SessionManager = Configuration.provideSessionManager()
+
     // Observable sources
+    private val _landmarkSaved = SingleLiveEvent<Unit>()
     private val _initialLabelingPass = MutableLiveData<Boolean>()
     private val _finalLabelingPass = MutableLiveData<Boolean>()
     private val _detectionPass = MutableLiveData<Boolean>()
-    private val _onLandmarkSaved = MutableLiveData<Unit>()
     private val _errors = MutableLiveData<Throwable>()
 
     // Exposed observable properties
     val initialLabelingPassed: LiveData<Boolean> = _initialLabelingPass
     val finalLabelingPassed: LiveData<Boolean> = _finalLabelingPass
     val detectionPassed: LiveData<Boolean> = _detectionPass
-    val onLandmarkSaved: LiveData<Unit> = _onLandmarkSaved
+    val landmarkSaved: LiveData<Unit> = _landmarkSaved
     val errors: LiveData<Throwable> = _errors
 
     fun filterLabelInitial(path: String) {
@@ -108,7 +112,7 @@ class SnapshotViewModel(private val sessionManager: SessionManager,
                 .subscribe({
                                info(TAG_LOG, "Updated landmark $landmark data successfully!")
                                beaconManager.removeBeacon(landmark.id, userId)
-                               _onLandmarkSaved.value = Unit
+                               _landmarkSaved.value = Unit
                            }, { error ->
                                debug(TAG_LOG, "Error updating landmark, cause: ${error.message}")
                                _errors.value = error

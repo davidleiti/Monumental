@@ -170,5 +170,6 @@
                 app:enterAnim="@anim/fade_in_right"
                 app:exitAnim="@anim/nav_default_exit_anim" />
     </fragment>
+    <include app:graph="@navigation/nav_history" />
 
 </navigation>

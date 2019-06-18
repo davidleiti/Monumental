@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/nav_history"
+            app:startDestination="@id/sessionHistoryDestination">
+
+    <fragment
+            android:id="@+id/sessionHistoryDestination"
+            android:name="ubb.thesis.david.monumental.view.history.SessionHistoryFragment"
+            android:label="SessionHistoryFragment"
+            tools:layout="@layout/fragment_session_history">
+        <action
+                android:id="@+id/actionLoadDetails"
+                app:destination="@id/sessionLandmarksDestination"
+                app:enterAnim="@anim/fade_in_right"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/fade_out_right" />
+    </fragment>
+    <fragment
+            android:id="@+id/sessionLandmarksDestination"
+            android:name="ubb.thesis.david.monumental.view.history.SessionLandmarksFragment"
+            android:label="fragment_session_landmarks"
+            tools:layout="@layout/fragment_session_landmarks" >
+        <argument
+                android:name="sessionId"
+                app:argType="string" />
+    </fragment>
+</navigation>

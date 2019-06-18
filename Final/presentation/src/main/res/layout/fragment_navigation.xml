@@ -30,7 +30,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/label_remaining"
-                app:textAnimated="@{String.format(@string/label_target, viewModel.nearestLandmark.label)}"
+                app:animatedText="@{String.format(@string/label_target, viewModel.nearestLandmark.label)}"
                 app:animatedVisibility="@{(viewModel.nearestLandmark != null) ? View.VISIBLE : View.GONE}" />
 
         <TextView
@@ -46,7 +46,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/navigation_arrow"
-                app:textAnimated="@{String.format(@string/label_remaining, viewModel.sessionLandmarks.size)}"
+                app:animatedText="@{String.format(@string/label_remaining, viewModel.sessionLandmarks.size)}"
                 app:animatedVisibility="@{(viewModel.sessionLandmarks != null) ? View.VISIBLE : View.GONE}" />
 
         <TextView
@@ -63,7 +63,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/label_remaining"
-                app:textAnimated="@{String.format(@string/label_distance, viewModel.distanceToTarget)}"
+                app:animatedText="@{String.format(@string/label_distance, viewModel.distanceToTarget)}"
                 app:animatedVisibility="@{(viewModel.distanceToTarget != null) ? View.VISIBLE : View.GONE}" />
 
         <ImageView
@@ -82,14 +82,26 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         <ubb.thesis.david.monumental.common.FlatButton
+                android:id="@+id/button_finish_session"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:invertColors="true"
+                app:text="@string/label_finish_session"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/button_take_photo"
+                app:layout_constraintEnd_toStartOf="@+id/button_save_progress"/>
+
+        <ubb.thesis.david.monumental.common.FlatButton
                 android:id="@+id/button_save_progress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:text="@string/label_save_progress"
                 app:invertColors="true"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintBottom_toTopOf="@+id/button_take_photo"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/button_finish_session" />
 
         <ubb.thesis.david.monumental.common.FlatButton
                 android:id="@+id/button_take_photo"

@@ -3,20 +3,14 @@ package ubb.thesis.david.monumental.utils
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
-import ubb.thesis.david.domain.entities.Landmark
-import ubb.thesis.david.monumental.MainApplication
 
 fun <T : Any> MutableLiveData<T>.default(value: T) = apply { setValue(value) }
-
-val Context.appContext: MainApplication
-    get() = applicationContext as MainApplication
 
 fun Fragment.requestPermission(permission: String, code: Int) =
     requestPermissions(arrayOf(permission), code)

@@ -1,12 +1,12 @@
 package ubb.thesis.david.domain
 
-import io.reactivex.Observable
+import io.reactivex.Single
 import ubb.thesis.david.domain.entities.Landmark
 
 interface LandmarkDetector {
 
-    fun filterImageOnDevice(imagePath: String): Observable<Boolean>
-    fun filterImageCloud(imagePath: String): Observable<Boolean>
-    fun detectLandmark(targetLandmark: Landmark, imagePath: String): Observable<String>
+    fun filterImageLocal(imagePath: String): Single<Boolean>
+    fun filterImageCloud(imagePath: String): Single<Boolean>
+    fun detectLandmark(targetLandmark: Landmark, imagePath: String): Single<String>
 
 }

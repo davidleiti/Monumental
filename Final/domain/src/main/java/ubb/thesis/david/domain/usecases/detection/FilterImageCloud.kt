@@ -11,6 +11,6 @@ class FilterImageCloud(private val photoId: String,
     : ObservableUseCase<Boolean>(transformer) {
 
     override fun createSource(): Observable<Boolean> =
-        landmarkDetector.filterImageCloud(photoId)
+        landmarkDetector.filterImageCloud(photoId).toObservable()
 
 }

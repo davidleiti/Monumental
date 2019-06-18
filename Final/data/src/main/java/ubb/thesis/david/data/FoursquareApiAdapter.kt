@@ -15,10 +15,10 @@ class FoursquareApiAdapter(private val api: FoursquareApi,
                            private val landmarkMapper: Mapper<Venue, Landmark>,
                            private val imageMapper: Mapper<Photo, ImageEntity>) : LandmarkProvider {
 
-    override fun searchVenues(lat: Double,
-                              long: Double,
-                              radius: Int,
-                              categories: String): Single<List<Landmark>> {
+    override fun searchLandmarks(lat: Double,
+                                 long: Double,
+                                 radius: Int,
+                                 categories: String): Single<List<Landmark>> {
         val searchRes = api.searchVenues("$lat,$long", radius, FoursquareApi.ID_MONUMENT)
                 .transformToLandmarkList()
 

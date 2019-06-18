@@ -31,8 +31,8 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
                             info(TAG_LOG, "Created and registered geofence $id")
                             storage.edit { putBoolean(id, true) }
                         }
-                        .addOnFailureListener {
-                            debug(TAG_LOG, "Failed to create geofence $id, cause: $it")
+                        .addOnFailureListener { error ->
+                            debug(TAG_LOG, "Failed to create geofence $id, cause: $error")
                         }
             }
         }
@@ -44,8 +44,8 @@ class GeofencingClientAdapter(private val context: Context) : BeaconManager {
             storage.edit { remove(id) }
             info(TAG_LOG, "Removed geofence $id")
         }, {
-            debug(TAG_LOG, "Failed to remove geofence $id")
-        })
+                           debug(TAG_LOG, "Failed to remove geofence $id")
+                       })
     }
 
     override fun wipeBeacons(collectionId: String) {

@@ -12,7 +12,7 @@ import org.jetbrains.anko.backgroundColorResource
 import org.jetbrains.anko.textColorResource
 import ubb.thesis.david.monumental.R
 
-class SimpleDialog(mContext: Context, private var title: String, private var message: String) : Dialog(mContext) {
+class TextDialog(mContext: Context, private var title: String, private var message: String) : Dialog(mContext) {
 
     private var positiveButtonModel: ButtonModel? = null
     private var negativeButtonModel: ButtonModel? = null

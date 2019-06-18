@@ -9,31 +9,9 @@ import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.UserAuthenticator
 import ubb.thesis.david.domain.entities.Credentials
 
-class FirebaseAuthenticator : UserAuthenticator {
+class FirebaseAuthenticatorAdapter : UserAuthenticator {
 
     private val authenticatorClient = FirebaseAuth.getInstance()
-
-    override fun thirdPartyAuth(credentials: Credentials): Completable {
-        val authTask = CompletableSubject.create()
-
-        val authCredentials = (credentials.getCredentials() as? AuthCredential)
-
-        authCredentials?.let {
-            authenticatorClient.signInWithCredential(it)
-                    .addOnSuccessListener { _ ->
-                        info(TAG_LOG, "Authentication via ${it.provider} has been successful!")
-                        authTask.onComplete()
-                    }.addOnFailureListener { error ->
-                        debug(TAG_LOG, "Authentication via ${it.provider} has failed with error ${error.message}")
-                        authTask.onError(error)
-                    }
-        } ?: run {
-            authTask.onError(RuntimeException("Invalid credential type has been provided! " +
-                                                      "Authenticator needs credentials of type ${AuthCredential::class.java.name}"))
-        }
-
-        return authTask
-    }
 
     override fun emailAuth(email: String, password: String): Completable {
         val authTask = CompletableSubject.create()
@@ -63,6 +41,28 @@ class FirebaseAuthenticator : UserAuthenticator {
                 }
 
         return signUpTask
+    }
+
+    override fun thirdPartyAuth(credentials: Credentials): Completable {
+        val authTask = CompletableSubject.create()
+
+        val authCredentials = (credentials.getCredentials() as? AuthCredential)
+
+        authCredentials?.let {
+            authenticatorClient.signInWithCredential(it)
+                    .addOnSuccessListener { _ ->
+                        info(TAG_LOG, "Authentication via ${it.provider} has been successful!")
+                        authTask.onComplete()
+                    }.addOnFailureListener { error ->
+                        debug(TAG_LOG, "Authentication via ${it.provider} has failed with error ${error.message}")
+                        authTask.onError(error)
+                    }
+        } ?: run {
+            authTask.onError(RuntimeException("Invalid credential type has been provided! " +
+                                                      "Authenticator needs credentials of type ${AuthCredential::class.java.name}"))
+        }
+
+        return authTask
     }
 
     companion object {

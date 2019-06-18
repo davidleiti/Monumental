@@ -37,4 +37,5 @@ class CreateSession(private val params: RequestValues,
             beaconManager.setupBeacon(landmark.id, landmark.lat, landmark.lng, params.userId)
         }
     }
+
 }

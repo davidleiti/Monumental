@@ -43,7 +43,6 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="24dp"
                 android:textSize="32sp"
-                android:text="@{viewModel.sessionMessage}"
                 android:lines="3"
                 android:textColor="@color/secondary_text"
                 android:textAlignment="center"
@@ -51,7 +50,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:animatedText="@{viewModel.sessionMessage}" />
 
         <TextView
                 android:id="@+id/label_continue"
@@ -65,10 +65,10 @@
                 android:textColor="@color/secondary_text"
                 android:textAlignment="center"
                 android:textAppearance="@style/Widget.MaterialComponents.Button"
-                android:visibility="@{viewModel.sessionAvailable ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/button_resume" />
+                app:layout_constraintBottom_toTopOf="@+id/button_resume"
+                app:animatedVisibility="@{viewModel.sessionAvailable ? View.VISIBLE : View.GONE}" />
 
         <ubb.thesis.david.monumental.common.FlatButton
                 android:id="@+id/button_load"
@@ -87,11 +87,11 @@
                 android:layout_height="wrap_content"
                 app:text="@string/resume"
                 app:invertColors="true"
-                android:visibility="@{viewModel.sessionAvailable ? View.VISIBLE : View.GONE}"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintBottom_toTopOf="@+id/button_start_new"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/button_load" />
+                app:layout_constraintStart_toEndOf="@+id/button_load"
+                app:animatedVisibility="@{viewModel.sessionAvailable ? View.VISIBLE : View.GONE}" />
 
         <ubb.thesis.david.monumental.common.FlatButton
                 android:id="@+id/button_start_new"

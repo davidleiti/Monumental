@@ -2,7 +2,6 @@ package ubb.thesis.david.monumental.view.setup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.subjects.BehaviorSubject
 import ubb.thesis.david.domain.BeaconManager
 import ubb.thesis.david.domain.CloudDataSource
 import ubb.thesis.david.domain.entities.Landmark
@@ -22,19 +21,19 @@ class ResultViewModel(private val beaconManager: BeaconManager,
     // Observable sources
     private val _sessionCreatedObservable = MutableLiveData<Unit>()
     private val _landmarksObservable = MutableLiveData<List<Landmark>>()
-    private val _errorsObservable = MutableLiveData<Throwable>()
+    private val _errors = MutableLiveData<Throwable>()
 
     // Exposed observable properties
     val foundLandmarks: LiveData<List<Landmark>> = _landmarksObservable
     val sessionCreated: LiveData<Unit> = _sessionCreatedObservable
-    val errorsOccurred: LiveData<Throwable> = _errorsObservable
+    val errors: LiveData<Throwable> = _errors
 
     fun searchLandmarks(lat: Double, long: Double, radius: Int, limit: Int, categories: String) {
         val params = SearchLandmarks.RequestValues(lat, long, radius, categories, limit)
         SearchLandmarks(params, landmarkApi, AsyncTransformerFactory.create<List<Landmark>>())
                 .execute()
                 .subscribe({ _landmarksObservable.value = it },
-                           { _errorsObservable.value = it })
+                           { _errors.value = it })
                 .also { addDisposable(it) }
     }
 
@@ -43,7 +42,7 @@ class ResultViewModel(private val beaconManager: BeaconManager,
         CreateSession(params, cloudDataSource, sessionManager, beaconManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ _sessionCreatedObservable.value = Unit },
-                           { _errorsObservable.value = it })
+                           { _errors.value = it })
                 .also { addDisposable(it) }
     }
 }

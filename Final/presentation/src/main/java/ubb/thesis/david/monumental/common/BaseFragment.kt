@@ -3,30 +3,36 @@ package ubb.thesis.david.monumental.common
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.firebase.auth.FirebaseAuth
-import ubb.thesis.david.domain.BeaconManager
-import ubb.thesis.david.monumental.view.UiActions
+import ubb.thesis.david.domain.*
+import ubb.thesis.david.monumental.view.HostActivity
+import ubb.thesis.david.monumental.view.FragmentHostActions
 
 abstract class BaseFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (usesNavigationDrawer())
-            (activity as UiActions).enableUserNavigation()
+            (activity as FragmentHostActions).enableUserNavigation()
         else
-            (activity as UiActions).disableUserNavigation()
-        (activity as UiActions).setTitle(title())
+            (activity as FragmentHostActions).disableUserNavigation()
+        (activity as FragmentHostActions).setTitle(title())
     }
 
+    // Fragment display options
     protected abstract fun usesNavigationDrawer(): Boolean
     protected abstract fun title(): String?
-    protected fun displayProgress() = (activity as UiActions).displayProgress()
-    protected fun hideProgress() = (activity as UiActions).hideProgress()
 
-    protected fun getUserId(): String = (activity as ClientProvider).getUserId()
-    protected fun getAuth(): FirebaseAuth = (activity as ClientProvider).getAuth()
-    protected fun getGoogleApiClient(): GoogleApiClient = (activity as ClientProvider).getApiClient()
+    // Progress overlay actions
+    protected fun displayProgress() = (activity as FragmentHostActions).displayProgress()
+    protected fun hideProgress() = (activity as FragmentHostActions).hideProgress()
+
+    // Client provider actions
+    protected fun getUserId(): String? = (activity as HostActivity).getUserId()
+    protected fun getBeaconManager(): BeaconManager = (activity as ClientProvider).getBeaconManager()
     protected fun getGoogleSignInClient(): GoogleSignInClient = (activity as ClientProvider).getSignInClient()
-    protected fun getBeaconManager(): BeaconManager = (activity as ClientProvider).getGeofencingClient()
+    protected fun getDataSource(): CloudDataSource = (activity as ClientProvider).getDataSource()
+    protected fun getImageStorage(): ImageStorage = (activity as ClientProvider).getImageStorage()
+    protected fun getLandmarkDetector(): LandmarkDetector = (activity as ClientProvider).getLandmarkDetector()
+    protected fun getUserAuthenticator(): UserAuthenticator = (activity as ClientProvider).getUserAuthenticator()
+
 }

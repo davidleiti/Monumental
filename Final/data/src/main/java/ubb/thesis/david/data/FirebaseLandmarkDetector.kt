@@ -11,10 +11,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
-import io.reactivex.subjects.Subject
+import io.reactivex.Single
+import io.reactivex.subjects.SingleSubject
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.toLocation
 import ubb.thesis.david.domain.LandmarkDetector
@@ -27,10 +25,6 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
     private val onDeviceImageLabeler: FirebaseVisionImageLabeler
     private val cloudImageLabeler: FirebaseVisionImageLabeler
     private val landmarkDetector: FirebaseVisionCloudLandmarkDetector
-
-    private var onDeviceLabelingSource: Subject<Boolean> = PublishSubject.create()
-    private var cloudLabelingSource: Subject<Boolean> = PublishSubject.create()
-    private var detectionSource: Subject<String> = PublishSubject.create()
 
     init {
         val onDeviceLabelerOptions = FirebaseVisionOnDeviceImageLabelerOptions.Builder()
@@ -49,60 +43,66 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
         landmarkDetector = FirebaseVision.getInstance().getVisionCloudLandmarkDetector(detectorOptions)
     }
 
-    override fun filterImageOnDevice(imagePath: String): Observable<Boolean> {
+    override fun filterImageLocal(imagePath: String): Single<Boolean> {
+        val labelingTask = SingleSubject.create<Boolean>()
+
         createFirebaseImage(imagePath)?.let { image ->
             onDeviceImageLabeler.processImage(image)
                     .addOnSuccessListener { labels ->
                         debug(TAG_LOG, "Labels predicted: ${labels.map { it.text + '(' + it.confidence + ')' }}")
-                        onDeviceLabelingSource.onNext(passesFilters(labels = labels.map { it.text },
-                                                                    filters = LABELS_FILTER + LABELS_GENERIC))
+                        labelingTask.onSuccess(passesFilters(labels = labels.map { it.text },
+                                                             filters = LABELS_SPECIFIC + LABELS_GENERIC))
                     }
-                    .addOnFailureListener {
-                        onDeviceLabelingSource.onError(it)
-                        onDeviceLabelingSource = BehaviorSubject.create()
+                    .addOnFailureListener { error ->
+                        debug(TAG_LOG, "Failed to label image with error ${error.message}")
+                        labelingTask.onError(error)
                     }
         } ?: run {
-            detectionSource.onError(Throwable(ERROR_CREATE_IMAGE))
+            labelingTask.onError(Throwable(ERROR_CREATE_IMAGE))
         }
 
-        return onDeviceLabelingSource.take(1)
+        return labelingTask
     }
 
-    override fun filterImageCloud(imagePath: String): Observable<Boolean> {
+    override fun filterImageCloud(imagePath: String): Single<Boolean> {
+        val labelingTask = SingleSubject.create<Boolean>()
+
         createFirebaseImage(imagePath)?.let { image ->
             cloudImageLabeler.processImage(image)
                     .addOnSuccessListener { labels ->
                         debug(TAG_LOG, "Labels predicted: ${labels.map { it.text + '(' + it.confidence + ')' }}")
-                        cloudLabelingSource.onNext(passesFilters(labels.map { it.text }, LABELS_FILTER))
+                        labelingTask.onSuccess(passesFilters(labels.map { it.text }, LABELS_SPECIFIC))
                     }
-                    .addOnFailureListener {
-                        onDeviceLabelingSource.onError(it)
-                        onDeviceLabelingSource = BehaviorSubject.create()
+                    .addOnFailureListener { error ->
+                        debug(TAG_LOG, "Failed to detect landmark with error ${error.message}")
+                        labelingTask.onError(error)
                     }
         } ?: run {
-            detectionSource.onError(Throwable(ERROR_CREATE_IMAGE))
+            labelingTask.onError(Throwable(ERROR_CREATE_IMAGE))
         }
 
-        return cloudLabelingSource.take(1)
+        return labelingTask
     }
 
-    override fun detectLandmark(targetLandmark: Landmark, imagePath: String): Observable<String> {
+    override fun detectLandmark(targetLandmark: Landmark, imagePath: String): Single<String> {
+        val detectionTask = SingleSubject.create<String>()
+
         createFirebaseImage(imagePath)?.let { image ->
             landmarkDetector.detectInImage(image)
                     .addOnSuccessListener { landmarks ->
                         debug(TAG_LOG,
                               "Landmarks predicted: ${landmarks.map { it.landmark + '(' + it.confidence + ')' }}")
-                        detectionSource.onNext(verifyDetectedLandmark(targetLandmark, landmarks))
+                        detectionTask.onSuccess(verifyDetectedLandmark(targetLandmark, landmarks))
                     }
-                    .addOnFailureListener {
-                        detectionSource.onError(it)
-                        detectionSource = BehaviorSubject.create()
+                    .addOnFailureListener { error ->
+                        debug(TAG_LOG, "Failed to label image with error ${error.message}")
+                        detectionTask.onError(error)
                     }
         } ?: run {
-            detectionSource.onError(Throwable(ERROR_CREATE_IMAGE))
+            detectionTask.onError(Throwable(ERROR_CREATE_IMAGE))
         }
 
-        return detectionSource.take(1)
+        return detectionTask
     }
 
     private fun verifyDetectedLandmark(target: Landmark, landmarks: List<FirebaseVisionCloudLandmark>): String {
@@ -143,7 +143,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
         private const val ERROR_CREATE_IMAGE = "Failed to create image at path, see log stacktrace for details"
         private const val DETECTION_DISTANCE_THRESHOLD = 50
 
-        private val LABELS_FILTER = arrayOf(
+        private val LABELS_SPECIFIC = arrayOf(
                 "Monument",
                 "Landmark",
                 "Tourist Attraction",
@@ -154,10 +154,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
                 "Palace",
                 "Memorial",
                 "Basilica",
-                "Statue",
-                "Building",
-                "Architecture",
-                "Tower"
+                "Statue"
         )
 
         private val LABELS_GENERIC = arrayOf(

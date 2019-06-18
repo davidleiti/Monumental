@@ -22,13 +22,12 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.fragment_login.*
-import ubb.thesis.david.data.FirebaseAuthenticator
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.monumental.MainApplication
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
-import ubb.thesis.david.monumental.common.SimpleDialog
+import ubb.thesis.david.monumental.common.TextDialog
 import ubb.thesis.david.monumental.databinding.FragmentLoginBinding
 import ubb.thesis.david.monumental.utils.*
 
@@ -47,7 +46,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
         binding.lifecycleOwner = this
 
         viewModel = getViewModel {
-            LoginViewModel(FirebaseAuthenticator(), MainApplication.getAppContext())
+            LoginViewModel(getUserAuthenticator(), MainApplication.getAppContext())
         }
         binding.viewModel = viewModel
 
@@ -74,7 +73,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
         viewModel.authenticationFinished.observe(viewLifecycleOwner, Observer {
             onAuthenticationFinished()
         })
-        viewModel.errorsOccurred.observe(viewLifecycleOwner, Observer {
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
             onError()
         })
     }
@@ -192,7 +191,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     private fun onError() {
         hideProgress()
-        SimpleDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_signin)).show()
+        TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_signin)).show()
     }
 
     private fun validateEmail() = viewModel.validateEmail(field_email.text.toString())

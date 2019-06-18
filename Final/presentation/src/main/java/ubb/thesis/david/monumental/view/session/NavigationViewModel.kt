@@ -25,16 +25,18 @@ class NavigationViewModel(private val cloudDataSource: CloudDataSource,
     private val sessionManager: SessionManager = Configuration.provideSessionManager()
 
     // Observable sources
+    private val _sessionEnded: SingleLiveEvent<Unit> = SingleLiveEvent()
+    private val _progressSaved: SingleLiveEvent<Unit> = SingleLiveEvent()
     private val _sessionLandmarks: MutableLiveData<List<Landmark>> = MutableLiveData()
     private val _nearestLandmark: MutableLiveData<Landmark> = MutableLiveData()
     private val _distanceToTarget: MutableLiveData<Float> = MutableLiveData()
-    private val _progressSaved: MutableLiveData<Unit> = MutableLiveData()
-    private val _errorsOccurred: MutableLiveData<Throwable> = MutableLiveData()
+    private val _errors: MutableLiveData<Throwable> = MutableLiveData()
 
     // Exposed observable properties
     val sessionLandmarks: LiveData<List<Landmark>> = _sessionLandmarks
     val progressSaved: LiveData<Unit> = _progressSaved
-    val errorsOccurred: LiveData<Throwable> = _errorsOccurred
+    val sessionFinished: LiveData<Unit> = _sessionEnded
+    val errors: LiveData<Throwable> = _errors
 
     // Data binding properties
     val distanceToTarget: LiveData<Float> = _distanceToTarget
@@ -44,15 +46,23 @@ class NavigationViewModel(private val cloudDataSource: CloudDataSource,
         GetUndiscoveredLandmarks(sessionId, sessionManager, AsyncTransformerFactory.create<List<Landmark>>())
                 .execute()
                 .subscribe({ _sessionLandmarks.value = it },
-                           { _errorsOccurred.value = it })
+                           { error -> _errors.value = error })
                 .also { addDisposable(it) }
     }
 
     fun saveSessionProgress(userId: String) {
-        SaveSessionProgress(userId, sessionManager, cloudDataSource, AsyncTransformerFactory.create())
+        SaveSessionProgress(userId, false, sessionManager, cloudDataSource, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ _progressSaved.value = Unit },
-                           { error -> _errorsOccurred.value = error })
+                           { error -> _errors.value = error })
+                .also { addDisposable(it) }
+    }
+
+    fun finishSession(userId: String) {
+        SaveSessionProgress(userId, true, sessionManager, cloudDataSource, AsyncTransformerFactory.create())
+                .execute()
+                .subscribe({ _sessionEnded.value = Unit },
+                           { error -> _errors.value = error })
                 .also { addDisposable(it) }
     }
 
@@ -78,6 +88,6 @@ class NavigationViewModel(private val cloudDataSource: CloudDataSource,
     }
 
     companion object {
-        private const val TAG_LOG = "NavigationViewModelLogger"
+        private const val TAG_LOG = "NavigationViewLogger"
     }
 }

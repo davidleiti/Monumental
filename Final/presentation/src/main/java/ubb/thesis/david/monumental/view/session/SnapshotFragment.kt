@@ -17,16 +17,12 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_snapshot.*
-import ubb.thesis.david.data.FirebaseStorageAdapter
-import ubb.thesis.david.data.FirebaseLandmarkDetector
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
-import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
-import ubb.thesis.david.monumental.common.SimpleDialog
-import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
-import ubb.thesis.david.monumental.utils.FileUtils
+import ubb.thesis.david.monumental.common.TextDialog
+import ubb.thesis.david.data.utils.FileUtils
 import ubb.thesis.david.monumental.utils.checkPermission
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.shortToast
@@ -42,7 +38,7 @@ class SnapshotFragment : BaseFragment() {
 
     override fun usesNavigationDrawer(): Boolean = true
 
-    override fun title(): String? = "Image capture"
+    override fun title(): String? = getString(R.string.title_image_capture)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_snapshot, container, false)
@@ -52,10 +48,7 @@ class SnapshotFragment : BaseFragment() {
         targetLandmark = SnapshotFragmentArgs.fromBundle(arguments!!).targetLandmark
 
         viewModel = getViewModel {
-            SnapshotViewModel(sessionManager = Configuration.provideSessionManager(),
-                              beaconManager = GeofencingClientAdapter(context!!),
-                              landmarkDetector = FirebaseLandmarkDetector(context!!),
-                              imageStorage = FirebaseStorageAdapter())
+            SnapshotViewModel(getBeaconManager(),  getImageStorage(), getLandmarkDetector())
         }
 
         observeData()
@@ -79,7 +72,7 @@ class SnapshotFragment : BaseFragment() {
         viewModel.finalLabelingPassed.observe(viewLifecycleOwner, Observer { passed ->
             onFinalFilteringFinished(passed)
         })
-        viewModel.onLandmarkSaved.observe(viewLifecycleOwner, Observer {
+        viewModel.landmarkSaved.observe(viewLifecycleOwner, Observer {
             onLandmarkSaved()
         })
         viewModel.errors.observe(viewLifecycleOwner, Observer { error ->
@@ -91,7 +84,7 @@ class SnapshotFragment : BaseFragment() {
         if (passed) {
             viewModel.detectLandmark(targetLandmark, tempPhotoPath!!)
         } else {
-            SimpleDialog(context!!, getString(R.string.message_oops), getString(R.string.desc_photo_invalid))
+            TextDialog(context!!, getString(R.string.message_oops), getString(R.string.desc_photo_invalid))
                     .show()
 
             hideProgress()
@@ -109,21 +102,21 @@ class SnapshotFragment : BaseFragment() {
         if (passed)
             onLandmarkRecognized()
         else {
-            SimpleDialog(context!!, getString(R.string.title_unrecognized_photo),
-                         getString(R.string.desc_unrecognized_photo)).show()
+            TextDialog(context!!, getString(R.string.title_unrecognized_photo),
+                       getString(R.string.desc_unrecognized_photo)).show()
             hideProgress()
         }
     }
 
     private fun onLandmarkRecognized() {
-        viewModel.saveLandmark(targetLandmark, getUserId(), tempPhotoPath!!, Date())
+        viewModel.saveLandmark(targetLandmark, getUserId()!!, tempPhotoPath!!, Date())
     }
 
     private fun onLandmarkSaved() {
         hideProgress()
-        SimpleDialog(context!!,
-                     getString(R.string.label_success),
-                     getString(R.string.message_landmark_discovered, targetLandmark.label)).also { dialog ->
+        TextDialog(context!!,
+                   getString(R.string.label_success),
+                   getString(R.string.message_landmark_discovered, targetLandmark.label)).also { dialog ->
             dialog.updatePositiveButton(getString(R.string.label_ok)) {
                 Navigation.findNavController(view!!).navigateUp()
             }
@@ -132,9 +125,9 @@ class SnapshotFragment : BaseFragment() {
     }
 
     private fun onErrorOccurred() {
-        SimpleDialog(context!!,
-                     getString(R.string.message_oops),
-                     getString(R.string.message_error_operation))
+        TextDialog(context!!,
+                   getString(R.string.message_oops),
+                   getString(R.string.message_error_operation))
                 .show()
         hideProgress()
     }

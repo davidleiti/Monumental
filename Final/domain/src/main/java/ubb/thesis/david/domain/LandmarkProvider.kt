@@ -6,7 +6,7 @@ import ubb.thesis.david.domain.entities.Landmark
 
 interface LandmarkProvider {
 
-    fun searchVenues(lat: Double, long: Double, radius: Int, categories: String): Single<List<Landmark>>
+    fun searchLandmarks(lat: Double, long: Double, radius: Int, categories: String): Single<List<Landmark>>
     fun getLandmarkDetails(id: String): Single<Landmark>
     fun getLandmarkImages(id: String): Single<List<ImageEntity>>
 

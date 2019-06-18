@@ -6,52 +6,33 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.subjects.CompletableSubject
 import io.reactivex.subjects.SingleSubject
+import ubb.thesis.david.data.background.DownloadWorker
 import ubb.thesis.david.data.background.UploadWorker
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.domain.ImageStorage
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 class FirebaseStorageAdapter : ImageStorage {
 
     private val storage = FirebaseStorage.getInstance()
+    private val defaultConstraints: Constraints by lazy { createDefaultConstraints() }
 
     override fun storeImage(userId: String, imageId: String, filePath: String): Completable {
         val imageData = workDataOf("userId" to userId,
                                    "photoId" to imageId,
                                    "photoPath" to filePath)
 
-        val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-
-        val uploadRequest = OneTimeWorkRequestBuilder<UploadWorker>()
-                .setInputData(imageData)
-                .setConstraints(constraints)
-                .setBackoffCriteria(BackoffPolicy.LINEAR,
-                                    OneTimeWorkRequest.DEFAULT_BACKOFF_DELAY_MILLIS,
-                                    TimeUnit.MILLISECONDS)
-                .build()
-
-        WorkManager.getInstance().enqueue(uploadRequest)
-
+        WorkManager.getInstance().enqueue(createDefaultRequest<UploadWorker>(imageData, defaultConstraints))
         return Completable.complete()
     }
 
     override fun downloadImage(userId: String, imageId: String, targetPath: String): Completable {
-        val downloadTask = CompletableSubject.create()
-        val targetFile = File(targetPath)
+        val imageData = workDataOf("userId" to userId,
+                                   "photoId" to imageId,
+                                   "targetPath" to targetPath)
 
-        storage.getReference("$userId/images/$imageId").getFile(targetFile)
-                .addOnSuccessListener {
-                    logEvent("Saved image $imageId successfully to $targetPath")
-                    downloadTask.onComplete()
-                }.addOnFailureListener { error ->
-                    logEvent("Failed to save image $imageId with error ${error.message}")
-                    downloadTask.onError(error)
-                }
-
-        return downloadTask
+        WorkManager.getInstance().enqueue(createDefaultRequest<DownloadWorker>(imageData, defaultConstraints))
+        return Completable.complete()
     }
 
     override fun deleteImage(userId: String, imageId: String): Completable {
@@ -83,6 +64,20 @@ class FirebaseStorageAdapter : ImageStorage {
 
         return getUrlTask
     }
+
+    private fun createDefaultConstraints(): Constraints =
+        Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+    private inline fun <reified T : Worker> createDefaultRequest(data: Data, constraints: Constraints) =
+        OneTimeWorkRequestBuilder<T>()
+                .setInputData(data)
+                .setConstraints(constraints)
+                .setBackoffCriteria(BackoffPolicy.LINEAR,
+                                    OneTimeWorkRequest.DEFAULT_BACKOFF_DELAY_MILLIS,
+                                    TimeUnit.MILLISECONDS)
+                .build()
 
     private fun logEvent(message: String) = debug(TAG_LOG, message)
 

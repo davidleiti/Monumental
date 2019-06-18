@@ -243,6 +243,5 @@ class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapRe
     companion object {
         private const val RADIUS_FACTOR = 500
         private const val RC_LOCATION_REQUEST = 200
-        private const val TAG_LOG = "SetupLogger"
     }
 }

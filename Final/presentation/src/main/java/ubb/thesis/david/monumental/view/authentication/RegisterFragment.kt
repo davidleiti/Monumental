@@ -14,11 +14,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_register.*
-import ubb.thesis.david.data.FirebaseAuthenticator
 import ubb.thesis.david.monumental.MainApplication
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
-import ubb.thesis.david.monumental.common.SimpleDialog
+import ubb.thesis.david.monumental.common.TextDialog
 import ubb.thesis.david.monumental.databinding.FragmentRegisterBinding
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.utils.hideSoftKeyboard
@@ -32,14 +31,12 @@ class RegisterFragment : BaseFragment() {
     override fun title(): String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        sharedElementEnterTransition = ChangeBounds().apply { duration = 300 }
-
         val binding: FragmentRegisterBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_register, container, false)
         binding.lifecycleOwner = this
 
         viewModel = getViewModel {
-            RegisterViewModel(FirebaseAuthenticator(), MainApplication.getAppContext())
+            RegisterViewModel(getUserAuthenticator(), MainApplication.getAppContext())
         }
         binding.viewModel = viewModel
 
@@ -56,7 +53,7 @@ class RegisterFragment : BaseFragment() {
         viewModel.registrationFinished.observe(viewLifecycleOwner, Observer {
             onSignUpFinished()
         })
-        viewModel.errorsOccurred.observe(viewLifecycleOwner, Observer {
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
             onError()
         })
     }
@@ -110,7 +107,7 @@ class RegisterFragment : BaseFragment() {
 
     private fun onError() {
         hideProgress()
-        SimpleDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_signup)).show()
+        TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_signup)).show()
     }
 
     private fun onSignUpFinished() {

@@ -8,11 +8,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_start.*
-import ubb.thesis.david.data.FirebaseDataSource
 import ubb.thesis.david.monumental.MainApplication
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
-import ubb.thesis.david.monumental.common.SimpleDialog
+import ubb.thesis.david.monumental.common.TextDialog
 import ubb.thesis.david.monumental.databinding.FragmentStartBinding
 import ubb.thesis.david.monumental.utils.getViewModel
 import ubb.thesis.david.monumental.view.HostActivity
@@ -24,14 +23,14 @@ class StartFragment : BaseFragment() {
 
     override fun usesNavigationDrawer(): Boolean = true
 
-    override fun title(): String? = "Home"
+    override fun title(): String? = getString(R.string.title_home)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding: FragmentStartBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_start, container, false)
         binding.lifecycleOwner = this
 
         viewModel = getViewModel {
-            StartViewModel(getBeaconManager(), FirebaseDataSource(), MainApplication.getAppContext())
+            StartViewModel(getBeaconManager(), getDataSource(), MainApplication.getAppContext())
         }
         binding.viewModel = viewModel
 
@@ -50,14 +49,25 @@ class StartFragment : BaseFragment() {
 
         button_resume.setOnClickListener { navigateToSession() }
         button_start_new.setOnClickListener {
-            displayProgress()
-            viewModel.wipeSessionData(getUserId())
+            promptStartNew()
         }
         button_load.setOnClickListener {
             displayProgress()
-            viewModel.loadSessionBackup(getUserId())
+            viewModel.loadSessionBackup(getUserId()!!)
         }
         observeData()
+    }
+
+    private fun promptStartNew() {
+        TextDialog(context!!, getString(R.string.label_warning), getString(R.string.message_prompt_start))
+                .also { dialog ->
+                    dialog.updatePositiveButton(getString(R.string.label_yes)) {
+                        displayProgress()
+                        viewModel.wipeSessionData(getUserId()!!)
+                    }
+                    dialog.setupNegativeButton(getString(R.string.label_cancel))
+                    dialog.show()
+                }
     }
 
     override fun onStart() {
@@ -74,21 +84,21 @@ class StartFragment : BaseFragment() {
             hideProgress()
             navigateToSetup()
         })
-        viewModel.errorsOccurred.observe(viewLifecycleOwner, Observer {
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
             hideProgress()
-            SimpleDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_operation)).show()
+            TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_operation)).show()
         })
     }
 
     private fun onBackupQueryCompleted(success: Boolean) {
         if (!success) {
-            SimpleDialog(context!!, getString(R.string.label_error), getString(R.string.message_no_session_found))
+            TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_no_session_found))
                     .show()
             checkCachedSession()
         }
     }
 
-    private fun checkCachedSession() = viewModel.loadSessionCache(getUserId())
+    private fun checkCachedSession() = viewModel.loadSessionCache(getUserId()!!)
 
     private fun navigateToSetup() =
         Navigation.findNavController(view!!).navigate(StartFragmentDirections.actionSetupSession())

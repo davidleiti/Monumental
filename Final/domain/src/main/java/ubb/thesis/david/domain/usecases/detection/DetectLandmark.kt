@@ -12,6 +12,6 @@ class DetectLandmark(private val targetLandmark: Landmark,
                      transformer: Transformer<String>) : ObservableUseCase<String>(transformer) {
 
     override fun createSource(): Observable<String> =
-        landmarkDetector.detectLandmark(targetLandmark, photoId)
+        landmarkDetector.detectLandmark(targetLandmark, photoId).toObservable()
 
 }

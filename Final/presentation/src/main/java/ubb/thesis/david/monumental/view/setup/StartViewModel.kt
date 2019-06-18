@@ -32,10 +32,10 @@ class StartViewModel(private val beaconManager: BeaconManager,
 
     // Observable sources
     private val _backupLoaded = SingleLiveEvent<Boolean>()
+    private val _sessionWiped = SingleLiveEvent<Unit>()
     private val _sessionAvailable = MutableLiveData<Boolean>().default(false)
     private val _sessionMessage = MutableLiveData<String>().default(resources.getString(R.string.message_journey_start))
-    private val _sessionWiped = MutableLiveData<Unit>()
-    private val _errorsOccurred = MutableLiveData<Throwable>()
+    private val _errors = MutableLiveData<Throwable>()
 
     // Binding properties
     val sessionAvailable: LiveData<Boolean> = _sessionAvailable
@@ -44,7 +44,7 @@ class StartViewModel(private val beaconManager: BeaconManager,
     // Observable properties
     val backupLoaded: LiveData<Boolean> = _backupLoaded
     val sessionWiped: LiveData<Unit> = _sessionWiped
-    val errorsOccurred: LiveData<Throwable> = _errorsOccurred
+    val errors: LiveData<Throwable> = _errors
 
     // Synchronization flag
     private var backupFound: Boolean = false
@@ -57,9 +57,8 @@ class StartViewModel(private val beaconManager: BeaconManager,
                                backupFound = true
                                cacheSession(backup)
                            },
-                           { error ->
-                               _errorsOccurred.value = error
-                           }, {
+                           { error -> _errors.value = error },
+                           {
                                if (!backupFound) {
                                    _backupLoaded.value = false
                                    wipeLocalCache(userId)
@@ -69,10 +68,12 @@ class StartViewModel(private val beaconManager: BeaconManager,
     }
 
     fun loadSessionCache(userId: String) {
+        _sessionAvailable.value = false
         GetCachedSession(userId, sessionManager, AsyncTransformerFactory.create<Session>())
                 .execute()
                 .subscribe({ session -> updateState(session) },
-                           { debug(TAG_LOG, "Failed to retrieve session data for user $userId") })
+                           { debug(TAG_LOG, "Failed to retrieve session data for user $userId") },
+                           { if (_sessionAvailable.value == false) updateState(null) })
                 .also { addDisposable(it) }
     }
 
@@ -83,8 +84,16 @@ class StartViewModel(private val beaconManager: BeaconManager,
                                _backupLoaded.value = true
                                updateState(backup.session)
                            }, { error ->
-                               _errorsOccurred.value = error
+                               _errors.value = error
                            })
+                .also { addDisposable(it) }
+    }
+
+    fun wipeSessionData(userId: String) {
+        WipeActiveSession(userId, cloudDataSource, sessionManager, beaconManager, AsyncTransformerFactory.create())
+                .execute()
+                .subscribe({ _sessionWiped.call() },
+                           { error -> _errors.value = error })
                 .also { addDisposable(it) }
     }
 
@@ -92,14 +101,6 @@ class StartViewModel(private val beaconManager: BeaconManager,
         WipeCachedSession(userId, sessionManager, beaconManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe { updateState(null) }
-                .also { addDisposable(it) }
-    }
-
-    fun wipeSessionData(userId: String) {
-        WipeActiveSession(userId, cloudDataSource, sessionManager, beaconManager, AsyncTransformerFactory.create())
-                .execute()
-                .subscribe({ _sessionWiped.value = Unit },
-                           { error -> _errorsOccurred.value = error })
                 .also { addDisposable(it) }
     }
 

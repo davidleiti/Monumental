@@ -8,15 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_results.*
-import ubb.thesis.david.data.FirebaseDataSource
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
-import ubb.thesis.david.monumental.common.SimpleDialog
+import ubb.thesis.david.monumental.common.TextDialog
 import ubb.thesis.david.monumental.utils.getViewModel
 
 class ResultFragment : BaseFragment(), View.OnClickListener {
@@ -30,7 +28,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = getViewModel {
-            ResultViewModel(getBeaconManager(), FirebaseDataSource())
+            ResultViewModel(getBeaconManager(), getDataSource())
         }
         observeData()
     }
@@ -56,7 +54,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
 
     override fun usesNavigationDrawer(): Boolean = true
 
-    override fun title(): String? = "Landmarks discovered"
+    override fun title(): String? = getString(R.string.title_discovered)
 
     private fun observeData() {
         viewModel.foundLandmarks.observe(viewLifecycleOwner, Observer { landmarks ->
@@ -72,7 +70,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
             hideProgress()
             beginSession()
         })
-        viewModel.errorsOccurred.observe(viewLifecycleOwner, Observer {
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
             debug(TAG_LOG, "An unexpected error has occurred. See stacktrace in log")
 
             hideProgress()
@@ -95,12 +93,12 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
 
     private fun setupSession() {
         displayProgress()
-        viewModel.setupSession(getUserId(), landmarksRetrieved)
+        viewModel.setupSession(getUserId()!!, landmarksRetrieved)
     }
 
     private fun updateUi() {
         if (landmarksRetrieved.isEmpty()) {
-            SimpleDialog(context!!, getString(R.string.message_oops), getString(R.string.message_no_landmarks))
+            TextDialog(context!!, getString(R.string.message_oops), getString(R.string.message_no_landmarks))
                     .also { dialog ->
                         dialog.updatePositiveButton(getString(R.string.label_ok)) {
                             Navigation.findNavController(view!!).navigate(ResultFragmentDirections.actionRestartSetup())
@@ -116,7 +114,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun displayError() =
-        SimpleDialog(context!!, getString(R.string.label_error), getString(R.string.default_error_message))
+        TextDialog(context!!, getString(R.string.label_error), getString(R.string.default_error_message))
                 .also { dialog ->
                     dialog.updatePositiveButton(getString(R.string.label_retry)) {
                         loadVenues()

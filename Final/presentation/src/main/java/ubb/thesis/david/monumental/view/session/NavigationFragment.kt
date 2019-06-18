@@ -4,7 +4,6 @@ package ubb.thesis.david.monumental.view.session
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import kotlinx.android.synthetic.main.fragment_navigation.*
-import ubb.thesis.david.data.FirebaseDataSource
 import ubb.thesis.david.data.navigation.FusedNavigator
 import ubb.thesis.david.data.navigation.Navigator
 import ubb.thesis.david.data.utils.debug
@@ -26,9 +24,8 @@ import ubb.thesis.david.data.utils.toLocation
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.LocationTrackerFragment
-import ubb.thesis.david.monumental.common.SimpleDialog
+import ubb.thesis.david.monumental.common.TextDialog
 import ubb.thesis.david.monumental.databinding.FragmentNavigationBinding
-import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
 import ubb.thesis.david.monumental.utils.getViewModel
 
 class NavigationFragment : LocationTrackerFragment() {
@@ -42,14 +39,14 @@ class NavigationFragment : LocationTrackerFragment() {
 
     override fun usesNavigationDrawer(): Boolean = true
 
-    override fun title(): String? = "Navigation"
+    override fun title(): String? = getString(R.string.title_navigation)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding: FragmentNavigationBinding =
             DataBindingUtil.inflate(layoutInflater, R.layout.fragment_navigation, container, false)
         binding.lifecycleOwner = this
 
-        viewModel = getViewModel { NavigationViewModel(FirebaseDataSource(), GeofencingClientAdapter(context!!)) }
+        viewModel = getViewModel { NavigationViewModel(getDataSource(), getBeaconManager()) }
         binding.viewModel = viewModel
 
         return binding.root
@@ -59,14 +56,18 @@ class NavigationFragment : LocationTrackerFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         button_take_photo.setOnClickListener { navigateToSnapshot() }
+        button_finish_session.setOnClickListener {
+            displayProgress()
+            viewModel.finishSession(getUserId()!!)
+        }
         button_save_progress.setOnClickListener {
             displayProgress()
-            viewModel.saveSessionProgress(getUserId())
+            viewModel.saveSessionProgress(getUserId()!!)
         }
 
         observeData()
         displayProgress()
-        viewModel.loadSessionLandmarks(getUserId())
+        viewModel.loadSessionLandmarks(getUserId()!!)
     }
 
     override fun onDestroy() {
@@ -124,18 +125,28 @@ class NavigationFragment : LocationTrackerFragment() {
         viewModel.nearestLandmark.observe(viewLifecycleOwner, Observer { landmark ->
             onNearestRetrieved(landmark)
         })
+        viewModel.sessionFinished.observe(viewLifecycleOwner, Observer {
+            viewModel.wipeSessionCache(getUserId()!!)
+            onTaskFinished(getString(R.string.label_success), getString(R.string.label_session_ended))
+        })
         viewModel.progressSaved.observe(viewLifecycleOwner, Observer {
-            onProgressSaved()
+            onTaskFinished(getString(R.string.label_success), getString(R.string.message_progress_saved))
         })
-        viewModel.errorsOccurred.observe(viewLifecycleOwner, Observer { error ->
-            onErrorOccurred(error)
+        viewModel.errors.observe(viewLifecycleOwner, Observer { error ->
+            onError(error)
         })
+    }
+
+    private fun onError(error: Throwable) {
+        debug(TAG_LOG, "The following error has occurred: ${error.message}")
+        hideProgress()
+        TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_operation)).show()
     }
 
     private fun onLandmarksRetrieved(landmarks: List<Landmark>) {
         hideProgress()
         if (landmarks.isEmpty()) {
-            onSessionFinished()
+            onLandmarksDiscovered()
         } else {
             reinitializeBeaconsIfNeeded(landmarks)
             requestLocationUpdates(locationUpdateCallback)
@@ -146,21 +157,9 @@ class NavigationFragment : LocationTrackerFragment() {
         navigator?.target = landmark.toLocation()
     }
 
-    private fun onProgressSaved() {
+    private fun onTaskFinished(messageTitle: String, messageDescription: String) {
         hideProgress()
-        SimpleDialog(context!!, getString(R.string.label_success),
-                     getString(R.string.message_progress_saved)).also { dialog ->
-            dialog.updatePositiveButton(getString(R.string.label_ok)) {
-                Navigation.findNavController(view!!).navigateUp()
-            }
-            dialog.show()
-        }
-    }
-
-    private fun onErrorOccurred(error: Throwable) {
-        debug(TAG_LOG, "The following error has occurred: ${error.message}")
-        hideProgress()
-        SimpleDialog(context!!, getString(R.string.label_error), getString(R.string.message_error_operation))
+        TextDialog(context!!, messageTitle, messageDescription)
                 .also { dialog ->
                     dialog.updatePositiveButton(getString(R.string.label_ok)) {
                         Navigation.findNavController(view!!).navigateUp()
@@ -169,24 +168,23 @@ class NavigationFragment : LocationTrackerFragment() {
                 }
     }
 
-    private fun onSessionFinished() {
-        SimpleDialog(context!!, getString(R.string.label_good_job), getString(R.string.message_session_finished))
+    private fun onLandmarksDiscovered() {
+        TextDialog(context!!, getString(R.string.label_good_job), getString(R.string.message_session_finished))
                 .also { dialog ->
                     dialog.updatePositiveButton(getString(R.string.label_ok)) {
                         displayProgress()
-                        viewModel.saveSessionProgress(getUserId())
-                        viewModel.wipeSessionCache(getUserId())
+                        viewModel.finishSession(getUserId()!!)
                     }
                     dialog.show()
                 }
     }
 
     private fun reinitializeBeaconsIfNeeded(landmarks: List<Landmark>) {
-        val sharedPrefs = context!!.getSharedPreferences(getUserId(), Context.MODE_PRIVATE)
+        val sharedPrefs = context!!.getSharedPreferences(getUserId()!!, Context.MODE_PRIVATE)
         sharedPrefs?.let {
             for (landmark in landmarks) {
                 if (!sharedPrefs.contains(landmark.id))
-                    getBeaconManager().setupBeacon(landmark.id, landmark.lat, landmark.lng, getUserId())
+                    getBeaconManager().setupBeacon(landmark.id, landmark.lat, landmark.lng, getUserId()!!)
             }
         }
     }

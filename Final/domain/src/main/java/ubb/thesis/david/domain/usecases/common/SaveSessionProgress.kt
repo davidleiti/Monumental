@@ -9,6 +9,7 @@ import ubb.thesis.david.domain.usecases.base.CompletableUseCase
 import java.util.*
 
 class SaveSessionProgress(private val userId: String,
+                          private val finalizeSession: Boolean,
                           private val sessionManager: SessionManager,
                           private val cloudDataSource: CloudDataSource,
                           transformer: CompletableTransformer) : CompletableUseCase(transformer) {
@@ -19,11 +20,12 @@ class SaveSessionProgress(private val userId: String,
                     sessionManager.getSessionLandmarks(userId)
                             .map { sessionData ->
                                 Backup(session, sessionData).also { backup ->
-                                    if (backup.landmarks.filter { it.value == null }.isEmpty())
+                                    if (finalizeSession)
                                         backup.session.timeFinished = Date()
                                 }
                             }
                 }.flatMapCompletable { backup ->
                     cloudDataSource.updateSessionBackup(backup)
                 }
+
 }

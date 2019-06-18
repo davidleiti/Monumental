@@ -1,6 +1,6 @@
 package ubb.thesis.david.monumental.view
 
-interface UiActions {
+interface FragmentHostActions {
     fun setTitle(text: String?)
     fun disableUserNavigation()
     fun enableUserNavigation()

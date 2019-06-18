@@ -14,35 +14,38 @@ import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_home.view.*
 import kotlinx.android.synthetic.main.progress_overlay.*
-import ubb.thesis.david.data.utils.debug
-import ubb.thesis.david.data.utils.info
+import ubb.thesis.david.data.FirebaseAuthenticatorAdapter
+import ubb.thesis.david.data.FirebaseDataAdapter
+import ubb.thesis.david.data.FirebaseLandmarkDetector
+import ubb.thesis.david.data.FirebaseStorageAdapter
+import ubb.thesis.david.domain.*
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.ClientProvider
 import ubb.thesis.david.monumental.geofencing.GeofencingClientAdapter
 import ubb.thesis.david.monumental.utils.fadeIn
 import ubb.thesis.david.monumental.utils.fadeOut
 
-class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
-    NavigationView.OnNavigationItemSelectedListener,
-    GoogleApiClient.OnConnectionFailedListener,
-    GoogleApiClient.ConnectionCallbacks {
+class HostActivity : AppCompatActivity(), FragmentHostActions, ClientProvider,
+    NavigationView.OnNavigationItemSelectedListener {
 
+    // Authentication clients
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val googleApiClient: GoogleApiClient by lazy { initializeGoogleApiClient() }
     private val googleSignInClient: GoogleSignInClient by lazy { initializeGoogleSignInClient() }
-    private val geofencingClientAdapter: GeofencingClientAdapter by lazy {
-        GeofencingClientAdapter(this)
-    }
 
+    // Interface adapter instances
+    private val geofencingClientAdapter: BeaconManager by lazy { GeofencingClientAdapter(this) }
+    private val firebaseDataAdapter: CloudDataSource by lazy { FirebaseDataAdapter() }
+    private val firebaseStorageAdapter: ImageStorage by lazy { FirebaseStorageAdapter() }
+    private val firebaseAuthenticationAdapter: UserAuthenticator by lazy { FirebaseAuthenticatorAdapter() }
+    private val firebaseLandmarkDetector: LandmarkDetector by lazy { FirebaseLandmarkDetector(this) }
+
+    // Startup flag
     var shouldDisplaySplash = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +68,56 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         handleIntent(intent)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val activeFragments = nav_host_fragment.childFragmentManager.fragments
+        if (activeFragments.size > 0)
+            activeFragments[0].onActivityResult(requestCode, resultCode, data)
+        else
+            super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
+            if (progress_overlay.visibility == View.GONE)
+                super.onBackPressed()
+        }
+    }
+
+    // ClientProvider actions
+    override fun getBeaconManager(): BeaconManager = geofencingClientAdapter
+    override fun getDataSource(): CloudDataSource = firebaseDataAdapter
+    override fun getImageStorage(): ImageStorage = firebaseStorageAdapter
+    override fun getUserAuthenticator(): UserAuthenticator = firebaseAuthenticationAdapter
+    override fun getLandmarkDetector(): LandmarkDetector = firebaseLandmarkDetector
+    override fun getSignInClient(): GoogleSignInClient = googleSignInClient
+
+    // FragmentHostActions
+    override fun displayProgress() = progress_overlay.fadeIn()
+    override fun hideProgress() = progress_overlay.fadeOut()
+
+    override fun setTitle(text: String?) {
+        text?.let { toolbar_title.text = it } ?: run { toolbar_title.text = "" }
+    }
+
+    override fun enableUserNavigation() {
+        supportActionBar?.show()
+
+        // Initialize drawer layout components if it has been hidden previously
+        if (drawer_layout.getDrawerLockMode(nav_view) == DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            initDrawer()
+
+        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    }
+
+    override fun disableUserNavigation() {
+        supportActionBar?.hide()
+        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+
+    fun getUserId(): String? = firebaseAuth.currentUser?.uid
+
     private fun handleIntent(intent: Intent?) {
         intent?.let {
             if (it.hasExtra(KEY_LAUNCH_AT_DESTINATION)) {
@@ -85,41 +138,6 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         nav_view.setNavigationItemSelectedListener(this)
     }
 
-    override fun getAuth(): FirebaseAuth = firebaseAuth
-
-    override fun getUserId(): String = firebaseAuth.currentUser!!.uid
-
-    override fun getSignInClient(): GoogleSignInClient = googleSignInClient
-
-    override fun getGeofencingClient(): GeofencingClientAdapter = geofencingClientAdapter
-
-    override fun getApiClient(): GoogleApiClient {
-        if (!googleApiClient.isConnected)
-            googleApiClient.connect()
-        return googleApiClient
-    }
-
-    override fun displayProgress() = progress_overlay.fadeIn()
-
-    override fun hideProgress() = progress_overlay.fadeOut()
-
-    override fun enableUserNavigation() {
-        supportActionBar?.show()
-        val shouldInit = drawer_layout.getDrawerLockMode(nav_view) != DrawerLayout.LOCK_MODE_UNLOCKED
-        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-        if (shouldInit)     // Only populate drawer views if the drawer has been previously hidden
-            initDrawer()
-    }
-
-    override fun disableUserNavigation() {
-        supportActionBar?.hide()
-        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-    }
-
-    override fun setTitle(text: String?) {
-        text?.let { toolbar_title.text = it } ?: run { toolbar_title.text = "" }
-    }
-
     private fun initDrawer() {
         firebaseAuth.currentUser?.run {
             with(nav_view) {
@@ -138,22 +156,13 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
                             .placeholder(R.drawable.ic_account_circle_white_24dp)
                             .into(image_header_profile)
                 } ?: run {
-                    image_header_profile.setImageResource(
-                            R.drawable.ic_account_circle_white_24dp)
+                    image_header_profile.setImageResource(R.drawable.ic_account_circle_white_24dp)
                 }
             }
         }
     }
 
-    override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            if (progress_overlay.visibility == View.GONE)
-                super.onBackPressed()
-        }
-    }
-
+    // Setup navigation options
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         drawer_layout.closeDrawer(GravityCompat.START)
         return when (item.itemId) {
@@ -163,16 +172,12 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
                 navigateToLogin()
                 false
             }
-            else -> true
+            R.id.option_history -> {
+                navigateToHistory()
+                false
+            }
+            else -> false
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val activeFragments = nav_host_fragment.childFragmentManager.fragments
-        if (activeFragments.size > 0)
-            activeFragments[0].onActivityResult(requestCode, resultCode, data)
-        else
-            super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun navigateToSession() {
@@ -198,38 +203,32 @@ class HostActivity : AppCompatActivity(), UiActions, ClientProvider,
         Navigation.findNavController(fragmentView!!).navigate(R.id.loginDestination, null, options)
     }
 
-    override fun onConnected(p0: Bundle?) =
-        info(TAG_LOG, "GoogleApiClient connection successful!")
-
-    override fun onConnectionSuspended(p0: Int) =
-        debug(TAG_LOG, "GoogleApiClient connection suspended!")
-
-    override fun onConnectionFailed(p0: ConnectionResult) =
-        debug(TAG_LOG, "Failed to connect to the GoogleApiClient, cause: ${p0.errorMessage}")
-
-    private fun initializeGoogleApiClient(): GoogleApiClient =
-        GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
+    private fun navigateToHistory() {
+        val fragmentView = nav_host_fragment.childFragmentManager.fragments[0].view
+        val options = NavOptions.Builder()
+                .setEnterAnim(R.anim.fade_in_right)
+                .setExitAnim(R.anim.nav_default_exit_anim)
+                .setPopEnterAnim(R.anim.nav_default_pop_enter_anim)
+                .setPopExitAnim(R.anim.fade_out_right)
                 .build()
+        Navigation.findNavController(fragmentView!!).navigate(R.id.nav_history, null, options)
+    }
 
-    private fun initializeGoogleSignInClient() =
-        GoogleSignIn.getClient(this,
-                               GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                       .requestIdToken(getString(
-                                               R.string.default_web_client_id))
-                                       .requestEmail()
-                                       .build())
+    private fun initializeGoogleSignInClient(): GoogleSignInClient {
+        val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+        return GoogleSignIn.getClient(this, options)
+    }
 
     private fun signOut() {
-        getAuth().signOut()
+        firebaseAuth.signOut()
         googleSignInClient.signOut()
         LoginManager.getInstance().logOut()
     }
 
     companion object {
-        private const val TAG_LOG = "MainLogger"
         const val KEY_LAUNCH_AT_DESTINATION = "NavigateToSpecifiedDestination"
         const val DESTINATION_NAVIGATION = 1
     }

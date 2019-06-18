@@ -4,7 +4,6 @@ import androidx.work.*
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -24,10 +23,9 @@ import ubb.thesis.david.domain.entities.Session
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-class FirebaseDataSource : CloudDataSource {
+class FirebaseDataAdapter : CloudDataSource {
 
     private val storage = FirebaseFirestore.getInstance()
-    private val imageStorage = FirebaseStorage.getInstance()
 
     override fun getUserSessions(userId: String): Maybe<List<Session>> {
         val sessionsRetrieved: MaybeSubject<List<Session>> = MaybeSubject.create()
@@ -35,10 +33,11 @@ class FirebaseDataSource : CloudDataSource {
         storage.collection("$ROOT/$userId/sessions").get()
                 .addOnSuccessListener { querySnapshot ->
                     val sessions = querySnapshot.documents.map { it.extractSessionData() }
+                    logEvent("Retrieved sessions $sessions successfully.")
                     sessionsRetrieved.onSuccess(sessions)
                 }
                 .addOnFailureListener { error ->
-                    debug(TAG_LOG, "Failed to retrieve sessions with error ${error.message}")
+                    logEvent("Failed to retrieve sessions with error ${error.message}")
                     sessionsRetrieved.onError(error)
                 }
 
@@ -48,7 +47,7 @@ class FirebaseDataSource : CloudDataSource {
     override fun getSessionDetails(userId: String, sessionId: String): Maybe<Map<Landmark, Discovery?>> {
         val dataRetrieved: MaybeSubject<Map<Landmark, Discovery?>> = MaybeSubject.create()
 
-        storage.collection("$ROOT/$userId/sessions/$sessionId/landmarks").get()
+        storage.collection("$ROOT/$userId/sessions/$sessionId/$COLL_LANDMARKS").get()
                 .addOnSuccessListener { querySnapshot ->
                     val data = querySnapshot.documents.map { it.extractLandmarkData() }.toMap()
                     logEvent("Retrieved cloud backup successfully: $data")
@@ -64,8 +63,8 @@ class FirebaseDataSource : CloudDataSource {
     override fun createSession(session: Session, landmarks: List<Landmark>): Single<String> {
         val creationCompleted = SingleSubject.create<String>()
 
-        val newSessionRef = storage.collection("$ROOT/${session.userId}/sessions").document()
-        val landmarksRef = newSessionRef.collection("landmarks")
+        val newSessionRef = storage.collection("$ROOT/${session.userId}/$COLL_SESSIONS").document()
+        val landmarksRef = newSessionRef.collection(COLL_LANDMARKS)
 
         storage.runTransaction { transaction ->
             transaction.set(newSessionRef, session.asDataMapping())
@@ -89,8 +88,8 @@ class FirebaseDataSource : CloudDataSource {
     override fun updateSessionBackup(backup: Backup): Completable {
         val updateCompleted = CompletableSubject.create()
 
-        val sessionRef = storage.document("$ROOT/${backup.session.userId}/sessions/${backup.session.sessionId}")
-        val landmarksRef = sessionRef.collection("landmarks")
+        val sessionRef = storage.document("$ROOT/${backup.session.userId}/$COLL_SESSIONS/${backup.session.sessionId}")
+        val landmarksRef = sessionRef.collection(COLL_LANDMARKS)
 
         storage.runTransaction { transaction ->
             transaction.set(sessionRef, backup.session.asDataMapping())
@@ -117,14 +116,15 @@ class FirebaseDataSource : CloudDataSource {
     override fun wipeSessionBackup(userId: String): Completable {
         val wipeCompleted = CompletableSubject.create()
 
-        storage.collection("$ROOT/$userId/sessions").whereEqualTo("timeFinished", null).get()
+        storage.collection("$ROOT/$userId/$COLL_SESSIONS").whereEqualTo("timeFinished", null).get()
                 .addOnSuccessListener { snapshot ->
 
                     storage.runTransaction { transaction ->
                         snapshot.documents.forEach { document ->
-                            val wipeImagesBlock = CountDownLatch(1)
-                            deleteSessionImages(userId, document, wipeImagesBlock)
-                            wipeImagesBlock.await()
+                            val wipeRelatedDataBarrier = CountDownLatch(1)
+
+                            wipeRelatedSessionData(userId, document, wipeRelatedDataBarrier)
+                            wipeRelatedDataBarrier.await()
 
                             transaction.delete(document.reference)
                         }
@@ -143,14 +143,18 @@ class FirebaseDataSource : CloudDataSource {
         return wipeCompleted
     }
 
-    private fun deleteSessionImages(userId: String, session: DocumentSnapshot, countDownLatch: CountDownLatch) {
-        session.reference.collection("landmarks").get()
+    private fun wipeRelatedSessionData(userId: String, session: DocumentSnapshot, countDownLatch: CountDownLatch) {
+        session.reference.collection(COLL_LANDMARKS).get()
                 .addOnSuccessListener { querySnapshot ->
                     val workManager = WorkManager.getInstance()
 
                     querySnapshot.documents.filter { it["photoId"] != null }.forEach { landmarkSnapshot ->
                         val photoId = landmarkSnapshot.extractLandmarkData().first.id
                         workManager.enqueue(createDeleteTask(userId, photoId))
+                    }
+
+                    querySnapshot.documents.forEach { document ->
+                        document.reference.delete()
                     }
                     countDownLatch.countDown()
                 }
@@ -178,6 +182,8 @@ class FirebaseDataSource : CloudDataSource {
     companion object {
         private const val TAG_LOG = "FirebaseDataSourceLogger"
         private const val ROOT = "users"
+        private const val COLL_SESSIONS = "sessions"
+        private const val COLL_LANDMARKS = "landmarks"
     }
 
 }

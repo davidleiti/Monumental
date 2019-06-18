@@ -24,7 +24,7 @@ class CategoriesFragment : BaseFragment(), View.OnClickListener {
 
     override fun usesNavigationDrawer(): Boolean = true
 
-    override fun title(): String? = "Categories"
+    override fun title(): String? = getString(R.string.title_categories)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_categories, container, false)

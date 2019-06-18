@@ -23,19 +23,19 @@ class LoginViewModel(private val userAuthenticator: UserAuthenticator,
     private val _emailError = MutableLiveData<String?>()
     private val _passwordError = MutableLiveData<String?>()
     private val _authenticationFinished = MutableLiveData<Unit>()
-    private val _errorsOccurred = MutableLiveData<Throwable>()
+    private val _errors = MutableLiveData<Throwable>()
 
     // Exposed observable properties
     val emailError: LiveData<String?> = _emailError
     val passwordError: LiveData<String?> = _passwordError
     val authenticationFinished: LiveData<Unit> = _authenticationFinished
-    val errorsOccurred: LiveData<Throwable> = _errorsOccurred
+    val errors: LiveData<Throwable> = _errors
 
     fun emailAuth(email: String, password: String) {
         EmailLogin(email, password, userAuthenticator, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ _authenticationFinished.value = Unit },
-                           { error -> _errorsOccurred.value = error })
+                           { error -> _errors.value = error })
                 .also { addDisposable(it) }
     }
 
@@ -47,7 +47,7 @@ class LoginViewModel(private val userAuthenticator: UserAuthenticator,
         ThirdPartyLogin(credentials, userAuthenticator, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ _authenticationFinished.value = Unit },
-                           { error -> _errorsOccurred.value = error })
+                           { error -> _errors.value = error })
                 .also { addDisposable(it) }
     }
 
