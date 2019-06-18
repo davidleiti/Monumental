@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -11,7 +12,7 @@
                 type="ubb.thesis.david.monumental.view.history.SessionLandmarksViewModel" />
     </data>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -25,12 +26,36 @@
                 tools:visibility="visible" />
 
         <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/textView"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="32dp"
+                android:textSize="24sp"
+                android:textAlignment="center"
                 android:text="@string/message_no_landmarks_discovered"
                 android:visibility="@{viewModel.displayList ? View.GONE : View.VISIBLE }"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="gone" />
 
-    </FrameLayout>
+        <ImageView
+                android:id="@+id/image_not_found"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/cd_none_found"
+                android:visibility="@{viewModel.displayList ? View.GONE : View.VISIBLE }"
+                app:layout_constraintHorizontal_bias="0.485"
+                app:layout_constraintEnd_toEndOf="@+id/textView"
+                app:layout_constraintStart_toStartOf="@+id/textView"
+                app:layout_constraintTop_toBottomOf="@+id/textView"
+                app:srcCompat="@drawable/baseline_explore_off_black_48"
+                tools:visibility="gone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

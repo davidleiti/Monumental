@@ -143,7 +143,7 @@
     <string name="label_landmarks">%1$d total landmarks</string>
     <string name="landmarks_placeholder">4 total landmarks</string>
     <string name="cd_session_info">Session info</string>
-    <string name="message_no_sessions">No sessions recorded yet…</string>
+    <string name="message_no_sessions">No sessions started yet…</string>
     <string name="label_sign_out">Sign out</string>
     <string name="label_session_history">Session history</string>
     <string name="title_navigation">Navigation</string>
@@ -163,4 +163,6 @@
     <string name="message_error_download_file">Failed to create download file…</string>
     <string name="message_save_failed">Failed to save image…</string>
     <string name="message_save_success">Image has been saved, you can now access it from your gallery!</string>
+    <string name="cd_none_found">Not found icon</string>
+    <string name="cd_none_started">None started icon</string>
 </resources>

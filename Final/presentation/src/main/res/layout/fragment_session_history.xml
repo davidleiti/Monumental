@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -11,7 +12,7 @@
                 type="ubb.thesis.david.monumental.view.history.SessionHistoryViewModel" />
     </data>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -22,14 +23,39 @@
                 android:layout_marginTop="56dp"
                 android:visibility="@{viewModel.displayList ? View.VISIBLE : View.GONE }"
                 tools:listitem="@layout/item_custom"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
         <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/message_none_started"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:textSize="24sp"
+                android:textAlignment="center"
                 android:text="@string/message_no_sessions"
                 android:visibility="@{viewModel.displayList ? View.GONE : View.VISIBLE }"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:visibility="gone" />
+
+        <ImageView
+                android:id="@+id/icon_none_started"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/cd_none_started"
+                android:visibility="@{viewModel.displayList ? View.GONE : View.VISIBLE }"
+                app:layout_constraintTop_toBottomOf="@+id/message_none_started"
+                app:layout_constraintStart_toStartOf="@+id/message_none_started"
+                app:layout_constraintEnd_toEndOf="@+id/message_none_started"
+                app:srcCompat="@drawable/baseline_history_black_48dp"
                 tools:visibility="gone"/>
-    </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>
