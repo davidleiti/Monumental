@@ -37,14 +37,17 @@ sealed class FileUtils {
         }
 
         fun copyToShared(context: Context, sourcePath: String): Boolean {
-            val tempFile = File(sourcePath)
-            val sharedFile = createSharedFile(tempFile.name)
+            val sourceFile = File(sourcePath)
+            val extension = sourceFile.extension
+            val fileName = sourceFile.name.replaceFirst(".$extension", "")
+            val storageDirectory = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES)
 
             var source: FileChannel? = null
             var destination: FileChannel? = null
 
             return try {
-                source = FileInputStream(tempFile).channel
+                val sharedFile = File.createTempFile(fileName, ".$extension", storageDirectory)
+                source = FileInputStream(sourceFile).channel
                 destination = FileOutputStream(sharedFile).channel
                 destination.transferFrom(source, 0, source.size())
                 performMediaScan(context, sharedFile!!.absolutePath)
