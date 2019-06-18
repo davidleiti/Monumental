@@ -25,6 +25,7 @@ import java.util.*
 class SessionLandmarksFragment : BaseFragment() {
 
     private lateinit var viewModel: SessionLandmarksViewModel
+    private lateinit var listAdapter: LandmarkDataListAdapter
 
     override fun usesNavigationDrawer() = true
 
@@ -68,12 +69,12 @@ class SessionLandmarksFragment : BaseFragment() {
         info(TAG_LOG, "Retrieved ${landmarkData.size} discovered landmarks for this session.")
         hideProgress()
 
-        if (landmarkData.isNotEmpty()) {
+        if (landmarkData.isNotEmpty() && ::listAdapter.isInitialized.not()) {
             val sortedByDiscovery = landmarkData.toList().sortedBy { (_, discovery) ->
                 discovery?.time
             }.toMap()
 
-            val listAdapter = LandmarkDataListAdapter(context!!, sortedByDiscovery) { photoId ->
+            listAdapter = LandmarkDataListAdapter(sortedByDiscovery) { photoId ->
                 downloadImage(photoId)
             }
             list_landmarks.adapter = listAdapter

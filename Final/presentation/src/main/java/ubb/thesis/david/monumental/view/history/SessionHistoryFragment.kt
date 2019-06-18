@@ -21,12 +21,12 @@ import ubb.thesis.david.monumental.utils.getViewModel
 
 class SessionHistoryFragment : BaseFragment() {
 
+    private lateinit var viewModel: SessionHistoryViewModel
+    private lateinit var listAdapter: SessionListAdapter
+
     override fun usesNavigationDrawer() = true
 
     override fun title(): String? = getString(R.string.title_session_history)
-
-    private lateinit var viewModel: SessionHistoryViewModel
-    private lateinit var listAdapter: SessionListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -62,8 +62,8 @@ class SessionHistoryFragment : BaseFragment() {
     private fun onSessionsRetrieved(sessions: List<Session>) {
         info(TAG_LOG, "Retrieved ${sessions.size} sessions from the cloud successfully!")
         hideProgress()
-        if (sessions.isNotEmpty()) {
-            listAdapter = SessionListAdapter(context!!, sessions.sortedByDescending { it.timeStarted }) { sessionId ->
+        if (sessions.isNotEmpty() && ::listAdapter.isInitialized.not()) {
+            listAdapter = SessionListAdapter(sessions.sortedByDescending { it.timeStarted }) { sessionId ->
                 Navigation.findNavController(view!!)
                         .navigate(SessionHistoryFragmentDirections.actionLoadDetails(sessionId))
             }
