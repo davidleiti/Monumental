@@ -69,7 +69,7 @@ class SessionLandmarksFragment : BaseFragment() {
         info(TAG_LOG, "Retrieved ${landmarkData.size} discovered landmarks for this session.")
         hideProgress()
 
-        if (landmarkData.isNotEmpty() && ::listAdapter.isInitialized.not()) {
+        if (landmarkData.isNotEmpty()) {
             val sortedByDiscovery = landmarkData.toList().sortedBy { (_, discovery) ->
                 discovery?.time
             }.toMap()

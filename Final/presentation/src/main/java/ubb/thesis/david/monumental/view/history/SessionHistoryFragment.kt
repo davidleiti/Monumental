@@ -62,7 +62,7 @@ class SessionHistoryFragment : BaseFragment() {
     private fun onSessionsRetrieved(sessions: List<Session>) {
         info(TAG_LOG, "Retrieved ${sessions.size} sessions from the cloud successfully!")
         hideProgress()
-        if (sessions.isNotEmpty() && ::listAdapter.isInitialized.not()) {
+        if (sessions.isNotEmpty()) {
             listAdapter = SessionListAdapter(sessions.sortedByDescending { it.timeStarted }) { sessionId ->
                 Navigation.findNavController(view!!)
                         .navigate(SessionHistoryFragmentDirections.actionLoadDetails(sessionId))
