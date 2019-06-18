@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">NavigationDemo</string>
-    <string name="navigation_icon">Navigation icon</string>
-    <string name="heading_value_placeholder">Heading value</string>
-    <string name="bearing_placeholder">Bearing from Iulius</string>
-    <string name="seek_target">Seek target</string>
-</resources>
