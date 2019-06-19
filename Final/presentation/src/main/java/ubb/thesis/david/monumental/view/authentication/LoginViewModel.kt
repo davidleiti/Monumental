@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.AuthCredential
 import ubb.thesis.david.domain.UserAuthenticator
 import ubb.thesis.david.domain.entities.Credentials
-import ubb.thesis.david.domain.usecases.cloud.EmailLogin
-import ubb.thesis.david.domain.usecases.cloud.ThirdPartyLogin
+import ubb.thesis.david.domain.usecases.cloud.authentication.EmailLogin
+import ubb.thesis.david.domain.usecases.cloud.authentication.ThirdPartyLogin
 import ubb.thesis.david.monumental.MainApplication
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
@@ -32,7 +32,8 @@ class LoginViewModel(private val userAuthenticator: UserAuthenticator,
     val errors: LiveData<Throwable> = _errors
 
     fun emailAuth(email: String, password: String) {
-        EmailLogin(email, password, userAuthenticator, AsyncTransformerFactory.create())
+        EmailLogin(email, password, userAuthenticator,
+                                                                         AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ _authenticationFinished.value = Unit },
                            { error -> _errors.value = error })
@@ -44,7 +45,8 @@ class LoginViewModel(private val userAuthenticator: UserAuthenticator,
             override fun getCredentials() = authCredentials
         }
 
-        ThirdPartyLogin(credentials, userAuthenticator, AsyncTransformerFactory.create())
+        ThirdPartyLogin(credentials, userAuthenticator,
+                                                                              AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ _authenticationFinished.value = Unit },
                            { error -> _errors.value = error })

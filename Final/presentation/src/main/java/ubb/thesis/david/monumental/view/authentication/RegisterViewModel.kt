@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ubb.thesis.david.domain.UserAuthenticator
-import ubb.thesis.david.domain.usecases.cloud.EmailRegister
+import ubb.thesis.david.domain.usecases.cloud.authentication.EmailRegister
 import ubb.thesis.david.monumental.MainApplication
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
@@ -31,7 +31,8 @@ class RegisterViewModel(private val userAuthenticator: UserAuthenticator,
     fun signUp(email: String, password: String) {
         val params = EmailRegister.Params(email, password)
 
-        EmailRegister(params, userAuthenticator, AsyncTransformerFactory.create())
+        EmailRegister(params, userAuthenticator,
+                                                                            AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({ _registrationFinished.value = Unit },
                            { error -> _errors.value = error })
