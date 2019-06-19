@@ -2,6 +2,7 @@
   <dictionary name="David">
     <words>
       <w>anko</w>
+      <w>crashlytics</w>
       <w>firebase</w>
       <w>firestore</w>
       <w>geofence</w>
