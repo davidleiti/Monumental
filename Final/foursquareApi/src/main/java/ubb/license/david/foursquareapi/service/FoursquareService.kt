@@ -1,21 +1,21 @@
-package ubb.license.david.foursquareapi
+package ubb.license.david.foursquareapi.service
 
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import ubb.license.david.foursquareapi.FoursquareApi.PARAM_CATEGORIES
-import ubb.license.david.foursquareapi.FoursquareApi.PARAM_CLIENT_ID
-import ubb.license.david.foursquareapi.FoursquareApi.PARAM_CLIENT_SECRET
-import ubb.license.david.foursquareapi.FoursquareApi.PARAM_LAT_LONG
-import ubb.license.david.foursquareapi.FoursquareApi.PARAM_RADIUS
-import ubb.license.david.foursquareapi.FoursquareApi.PARAM_SECTION
-import ubb.license.david.foursquareapi.FoursquareApi.PARAM_VERSION
-import ubb.license.david.foursquareapi.FoursquareApi.PATH_VENUE_ID
-import ubb.license.david.foursquareapi.FoursquareApi.URL_DETAILS
-import ubb.license.david.foursquareapi.FoursquareApi.URL_EXPLORE
-import ubb.license.david.foursquareapi.FoursquareApi.URL_PHOTOS
-import ubb.license.david.foursquareapi.FoursquareApi.URL_SEARCH
+import ubb.license.david.foursquareapi.service.FoursquareApi.PARAM_CATEGORIES
+import ubb.license.david.foursquareapi.service.FoursquareApi.PARAM_CLIENT_ID
+import ubb.license.david.foursquareapi.service.FoursquareApi.PARAM_CLIENT_SECRET
+import ubb.license.david.foursquareapi.service.FoursquareApi.PARAM_LAT_LONG
+import ubb.license.david.foursquareapi.service.FoursquareApi.PARAM_RADIUS
+import ubb.license.david.foursquareapi.service.FoursquareApi.PARAM_SECTION
+import ubb.license.david.foursquareapi.service.FoursquareApi.PARAM_VERSION
+import ubb.license.david.foursquareapi.service.FoursquareApi.PATH_VENUE_ID
+import ubb.license.david.foursquareapi.service.FoursquareApi.URL_DETAILS
+import ubb.license.david.foursquareapi.service.FoursquareApi.URL_EXPLORE
+import ubb.license.david.foursquareapi.service.FoursquareApi.URL_PHOTOS
+import ubb.license.david.foursquareapi.service.FoursquareApi.URL_SEARCH
 import ubb.license.david.foursquareapi.responses.ApiResponse
 
 internal interface FoursquareService {

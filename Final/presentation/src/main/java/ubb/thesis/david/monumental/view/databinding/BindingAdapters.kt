@@ -1,4 +1,4 @@
-package ubb.thesis.david.monumental.databinding
+package ubb.thesis.david.monumental.view.databinding
 
 import android.transition.TransitionManager
 import android.view.View

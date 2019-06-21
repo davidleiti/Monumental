@@ -20,10 +20,10 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_home.view.*
 import kotlinx.android.synthetic.main.progress_overlay.*
-import ubb.thesis.david.data.FirebaseAuthenticatorAdapter
-import ubb.thesis.david.data.FirebaseDataAdapter
-import ubb.thesis.david.data.FirebaseLandmarkDetector
-import ubb.thesis.david.data.FirebaseStorageAdapter
+import ubb.thesis.david.data.adapters.FirebaseAuthenticatorAdapter
+import ubb.thesis.david.data.adapters.FirebaseDataAdapter
+import ubb.thesis.david.data.adapters.FirebaseLandmarkDetector
+import ubb.thesis.david.data.adapters.FirebaseStorageAdapter
 import ubb.thesis.david.domain.*
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.ClientProvider
@@ -43,7 +43,9 @@ class HostActivity : AppCompatActivity(), FragmentHostActions, ClientProvider,
     private val firebaseDataAdapter: CloudDataSource by lazy { FirebaseDataAdapter() }
     private val firebaseStorageAdapter: ImageStorage by lazy { FirebaseStorageAdapter() }
     private val firebaseAuthenticationAdapter: UserAuthenticator by lazy { FirebaseAuthenticatorAdapter() }
-    private val firebaseLandmarkDetector: LandmarkDetector by lazy { FirebaseLandmarkDetector(this) }
+    private val firebaseLandmarkDetector: LandmarkDetector by lazy {
+        FirebaseLandmarkDetector(this)
+    }
 
     // Startup flag
     var shouldDisplaySplash = true

@@ -1,4 +1,4 @@
-package ubb.thesis.david.data.background
+package ubb.thesis.david.data.workers
 
 import android.content.Context
 import androidx.work.WorkerParameters

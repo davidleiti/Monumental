@@ -2,7 +2,7 @@ package ubb.thesis.david.monumental.view.session
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import ubb.thesis.david.data.FirebaseLandmarkDetector
+import ubb.thesis.david.data.adapters.FirebaseLandmarkDetector
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.BeaconManager
@@ -12,8 +12,8 @@ import ubb.thesis.david.domain.SessionManager
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.domain.usecases.cloud.UploadImage
 import ubb.thesis.david.domain.usecases.detection.DetectLandmark
-import ubb.thesis.david.domain.usecases.detection.FilterImageCloud
-import ubb.thesis.david.domain.usecases.detection.FilterImageLocal
+import ubb.thesis.david.domain.usecases.detection.LooseLabelFiltering
+import ubb.thesis.david.domain.usecases.detection.StrictLabelFiltering
 import ubb.thesis.david.domain.usecases.local.UpdateCachedLandmark
 import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
@@ -43,7 +43,7 @@ class SnapshotViewModel(private val beaconManager: BeaconManager,
     val errors: LiveData<Throwable> = _errors
 
     fun filterLabelInitial(path: String) {
-        FilterImageLocal(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
+        StrictLabelFiltering(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
                 .execute()
                 .subscribe({ passed ->
                                if (passed)
@@ -78,7 +78,7 @@ class SnapshotViewModel(private val beaconManager: BeaconManager,
     }
 
     fun filterImageFinal(path: String) {
-        FilterImageCloud(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
+        LooseLabelFiltering(path, landmarkDetector, AsyncTransformerFactory.create<Boolean>())
                 .execute()
                 .subscribe({ passed ->
                                if (passed)

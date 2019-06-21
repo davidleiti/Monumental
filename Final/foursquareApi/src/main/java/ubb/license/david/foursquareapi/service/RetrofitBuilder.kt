@@ -1,4 +1,4 @@
-package ubb.license.david.foursquareapi
+package ubb.license.david.foursquareapi.service
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson

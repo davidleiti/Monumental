@@ -1,8 +1,8 @@
-package ubb.thesis.david.data
+package ubb.thesis.david.data.adapters
 
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
-import ubb.license.david.foursquareapi.FoursquareApi
+import ubb.license.david.foursquareapi.service.FoursquareApi
 import ubb.license.david.foursquareapi.model.Photo
 import ubb.license.david.foursquareapi.model.Venue
 import ubb.thesis.david.domain.LandmarkProvider

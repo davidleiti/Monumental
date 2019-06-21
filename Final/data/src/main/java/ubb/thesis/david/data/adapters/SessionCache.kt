@@ -1,4 +1,4 @@
-package ubb.thesis.david.data
+package ubb.thesis.david.data.adapters
 
 import io.reactivex.Completable
 import io.reactivex.Maybe

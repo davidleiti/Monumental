@@ -1,4 +1,4 @@
-package ubb.thesis.david.data
+package ubb.thesis.david.data.adapters
 
 import androidx.work.*
 import com.google.firebase.firestore.DocumentSnapshot
@@ -10,7 +10,7 @@ import io.reactivex.Single
 import io.reactivex.subjects.CompletableSubject
 import io.reactivex.subjects.MaybeSubject
 import io.reactivex.subjects.SingleSubject
-import ubb.thesis.david.data.background.DeleteWorker
+import ubb.thesis.david.data.workers.DeleteWorker
 import ubb.thesis.david.data.utils.asDataMapping
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.extractLandmarkData
@@ -64,7 +64,8 @@ class FirebaseDataAdapter : CloudDataSource {
         val creationCompleted = SingleSubject.create<String>()
 
         val newSessionRef = storage.collection("$ROOT/${session.userId}/$COLL_SESSIONS").document()
-        val landmarksRef = newSessionRef.collection(COLL_LANDMARKS)
+        val landmarksRef = newSessionRef.collection(
+                COLL_LANDMARKS)
 
         storage.runTransaction { transaction ->
             transaction.set(newSessionRef, session.asDataMapping())
@@ -89,7 +90,8 @@ class FirebaseDataAdapter : CloudDataSource {
         val updateCompleted = CompletableSubject.create()
 
         val sessionRef = storage.document("$ROOT/${backup.session.userId}/$COLL_SESSIONS/${backup.session.sessionId}")
-        val landmarksRef = sessionRef.collection(COLL_LANDMARKS)
+        val landmarksRef = sessionRef.collection(
+                COLL_LANDMARKS)
 
         storage.runTransaction { transaction ->
             transaction.set(sessionRef, backup.session.asDataMapping())

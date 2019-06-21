@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.AuthCredential
 import ubb.thesis.david.domain.UserAuthenticator
-import ubb.thesis.david.domain.entities.Credentials
+import ubb.thesis.david.domain.entities.Credential
 import ubb.thesis.david.domain.usecases.cloud.authentication.EmailLogin
 import ubb.thesis.david.domain.usecases.cloud.authentication.ThirdPartyLogin
 import ubb.thesis.david.monumental.MainApplication
@@ -41,7 +41,7 @@ class LoginViewModel(private val userAuthenticator: UserAuthenticator,
     }
 
     fun thirdPartyAuth(authCredentials: AuthCredential) {
-        val credentials = object : Credentials {
+        val credentials = object : Credential {
             override fun getCredentials() = authCredentials
         }
 

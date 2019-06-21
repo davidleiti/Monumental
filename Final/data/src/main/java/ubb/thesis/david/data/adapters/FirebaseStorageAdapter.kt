@@ -1,4 +1,4 @@
-package ubb.thesis.david.data
+package ubb.thesis.david.data.adapters
 
 import androidx.work.*
 import com.google.firebase.storage.FirebaseStorage
@@ -6,8 +6,8 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.subjects.CompletableSubject
 import io.reactivex.subjects.SingleSubject
-import ubb.thesis.david.data.background.DownloadWorker
-import ubb.thesis.david.data.background.UploadWorker
+import ubb.thesis.david.data.workers.DownloadWorker
+import ubb.thesis.david.data.workers.UploadWorker
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.domain.ImageStorage
 import java.util.concurrent.TimeUnit
@@ -79,7 +79,8 @@ class FirebaseStorageAdapter : ImageStorage {
                                     TimeUnit.MILLISECONDS)
                 .build()
 
-    private fun logEvent(message: String) = debug(TAG_LOG, message)
+    private fun logEvent(message: String) = debug(
+            TAG_LOG, message)
 
     companion object {
         private const val TAG_LOG = "FirebaseImageStorageLogger"

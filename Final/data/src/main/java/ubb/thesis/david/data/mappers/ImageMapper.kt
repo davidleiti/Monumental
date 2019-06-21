@@ -1,4 +1,4 @@
-package ubb.thesis.david.data.common
+package ubb.thesis.david.data.mappers
 
 import ubb.thesis.david.domain.entities.ImageEntity
 import ubb.license.david.foursquareapi.model.Photo

@@ -1,4 +1,4 @@
-package ubb.license.david.foursquareapi
+package ubb.license.david.foursquareapi.service
 
 import io.reactivex.Single
 import ubb.license.david.foursquareapi.model.Photo
@@ -11,7 +11,8 @@ object FoursquareApi {
     private val clientSecret: String
     private val version: String
     private val service: FoursquareService =
-        RetrofitBuilder.build().create(FoursquareService::class.java)
+        RetrofitBuilder.build()
+                .create(FoursquareService::class.java)
 
     init {
         val resources = ResourceBundle.getBundle("config")
@@ -23,23 +24,35 @@ object FoursquareApi {
     // Check is needed due to a bug in the Retrofit+Gson conversion due to it using Unsafe classes in the background,
     // causing the fields to potentially be null without throwing exceptions in spite of the Kotlin restrictions
     fun searchVenues(location: String, radius: Int, categories: String): Single<List<Venue>> =
-        service.fetchSearch(location, radius, categories, clientId, clientSecret, version)
+        service.fetchSearch(location, radius, categories,
+                                                                                  clientId,
+                                                                                  clientSecret,
+                                                                                  version)
             .map { response ->
                 response.body.venues.filter { venue -> venue.location.city != null }
             }
 
     fun exploreVenues(location: String, radius: Int, section: String): Single<List<Venue>> =
-        service.fetchExplore(location, radius, section, clientId, clientSecret, version)
+        service.fetchExplore(location, radius, section,
+                                                                                   clientId,
+                                                                                   clientSecret,
+                                                                                   version)
             .map { response ->
                 response.body.groups.map { group -> group.getVenues() }.flatten()
             }
 
     fun venueDetails(venueId: String): Single<Venue> =
-        service.fetchDetails(venueId, clientId, clientSecret, version)
+        service.fetchDetails(venueId,
+                                                                                   clientId,
+                                                                                   clientSecret,
+                                                                                   version)
             .map { response -> response.body.venue }
 
     fun venuePhotos(venueId: String): Single<List<Photo>> =
-        service.fetchPhotos(venueId, clientId, clientSecret, version)
+        service.fetchPhotos(venueId,
+                                                                                  clientId,
+                                                                                  clientSecret,
+                                                                                  version)
             .map { response -> response.body.photos.items }
 
     const val ID_MONUMENT = "4bf58dd8d48988d12d941735"

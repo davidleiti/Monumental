@@ -13,7 +13,7 @@ import android.widget.ImageView
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_categories.*
 import org.jetbrains.anko.layoutInflater
-import ubb.license.david.foursquareapi.FoursquareApi
+import ubb.license.david.foursquareapi.service.FoursquareApi
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
 import ubb.thesis.david.monumental.utils.shortToast

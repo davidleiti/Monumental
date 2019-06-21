@@ -1,4 +1,4 @@
-package ubb.thesis.david.data.background
+package ubb.thesis.david.data.workers
 
 import android.content.Context
 import android.widget.Toast

@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_session_history.*
-import ubb.thesis.david.data.FirebaseDataAdapter
+import ubb.thesis.david.data.adapters.FirebaseDataAdapter
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Session

@@ -1,4 +1,4 @@
-package ubb.thesis.david.data.common
+package ubb.thesis.david.data.mappers
 
 import ubb.license.david.foursquareapi.model.Location
 import ubb.license.david.foursquareapi.model.Venue

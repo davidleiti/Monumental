@@ -1,4 +1,4 @@
-package ubb.thesis.david.data
+package ubb.thesis.david.data.adapters
 
 import android.content.Context
 import android.location.Location
@@ -58,7 +58,8 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
                         labelingTask.onError(error)
                     }
         } ?: run {
-            labelingTask.onError(Throwable(ERROR_CREATE_IMAGE))
+            labelingTask.onError(Throwable(
+                    ERROR_CREATE_IMAGE))
         }
 
         return labelingTask
@@ -71,14 +72,16 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
             cloudImageLabeler.processImage(image)
                     .addOnSuccessListener { labels ->
                         debug(TAG_LOG, "Labels predicted: ${labels.map { it.text + '(' + it.confidence + ')' }}")
-                        labelingTask.onSuccess(passesFilters(labels.map { it.text }, LABELS_SPECIFIC))
+                        labelingTask.onSuccess(passesFilters(labels.map { it.text },
+                                                             LABELS_SPECIFIC))
                     }
                     .addOnFailureListener { error ->
                         debug(TAG_LOG, "Failed to detect landmark with error ${error.message}")
                         labelingTask.onError(error)
                     }
         } ?: run {
-            labelingTask.onError(Throwable(ERROR_CREATE_IMAGE))
+            labelingTask.onError(Throwable(
+                    ERROR_CREATE_IMAGE))
         }
 
         return labelingTask
@@ -99,7 +102,8 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
                         detectionTask.onError(error)
                     }
         } ?: run {
-            detectionTask.onError(Throwable(ERROR_CREATE_IMAGE))
+            detectionTask.onError(Throwable(
+                    ERROR_CREATE_IMAGE))
         }
 
         return detectionTask

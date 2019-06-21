@@ -14,7 +14,7 @@
     <string name="error_email">Not a valid address.</string>
     <string name="message_sign_in_cancelled">Sign in attempt cancelled.</string>
     <string name="warning_sign_in_provider">Failed to sign in with third party provider</string>
-    <string name="warning_sign_in_email">There was a problem signing in, please check your credentials and your internet connection!</string>
+    <string name="warning_sign_in_email">There was a problem signing in, please check your credential and your internet connection!</string>
     <string name="fb_login_protocol_scheme">fb372591466897067</string>
 
     <!-- Venue categories -->
@@ -130,10 +130,10 @@
     <string name="message_error_basic">An unexpected error has occurred!</string>
     <string name="message_progress_saved">Your progress has been saved successfully!</string>
     <string name="label_good_job">Good job!</string>
-    <string name="label_load">Load session</string>
+    <string name="label_load">Sync session</string>
     <string name="message_no_session_found">No active session was found</string>
     <string name="message_error_operation">Couldn\'t perform operation, please check your internet connection!</string>
-    <string name="message_error_signin">There was an error signing in, please check your credentials and your internet connection!</string>
+    <string name="message_error_signin">There was an error signing in, please check your credential and your internet connection!</string>
     <string name="label_sign_up">Sign up</string>
     <string name="label_show">Show</string>
     <string name="message_error_signup">Failed to create account. There might already be an account registered with this email or no internet connection is available.</string>
