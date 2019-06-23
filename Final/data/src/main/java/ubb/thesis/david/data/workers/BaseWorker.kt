@@ -22,14 +22,14 @@ abstract class BaseWorker(appContext: Context, workerParameters: WorkerParameter
         return delayedResult
     }
 
-    protected fun displayProgress(message: String) =
-        applicationContext.runOnUiThread {
-            Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
-        }
-
     protected fun onWorkDone(result: Result) {
         delayedResult = result
         progressBarrier.countDown()
     }
+
+    protected fun displayProgress(message: String) =
+        applicationContext.runOnUiThread {
+            Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
+        }
 
 }
