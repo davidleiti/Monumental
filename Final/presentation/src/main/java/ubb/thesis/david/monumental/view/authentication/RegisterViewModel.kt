@@ -1,6 +1,5 @@
 package ubb.thesis.david.monumental.view.authentication
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ubb.thesis.david.domain.UserAuthenticator
@@ -12,9 +11,6 @@ import ubb.thesis.david.monumental.common.BaseAndroidViewModel
 
 class RegisterViewModel(private val userAuthenticator: UserAuthenticator,
                         appContext: MainApplication) : BaseAndroidViewModel(appContext) {
-
-    // Resource
-    private val resources = getApplication<Application>().resources
 
     // Observable sources
     private val _emailError = MutableLiveData<String?>()
@@ -40,7 +36,7 @@ class RegisterViewModel(private val userAuthenticator: UserAuthenticator,
                 .also { addDisposable(it) }
     }
 
-    fun validateEmail(email: String?) : Boolean {
+    fun validateEmail(email: String?): Boolean {
         val pattern = "^[\\w!#\$%&]+(.[\\w!#\$%&]+)*@\\w+\\.\\w+$"
 
         return if (email != null && pattern.toRegex() matches email) {

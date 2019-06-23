@@ -1,6 +1,5 @@
 package ubb.thesis.david.monumental.view.authentication
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.AuthCredential
@@ -15,9 +14,6 @@ import ubb.thesis.david.monumental.common.BaseAndroidViewModel
 
 class LoginViewModel(private val userAuthenticator: UserAuthenticator,
                      appContext: MainApplication) : BaseAndroidViewModel(appContext) {
-
-    // Resource
-    private val resources = getApplication<Application>().resources
 
     // Observable sources
     private val _emailError = MutableLiveData<String?>()
