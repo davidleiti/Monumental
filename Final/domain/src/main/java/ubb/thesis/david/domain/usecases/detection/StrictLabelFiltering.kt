@@ -5,12 +5,12 @@ import ubb.thesis.david.domain.LandmarkDetector
 import ubb.thesis.david.domain.common.Transformer
 import ubb.thesis.david.domain.usecases.base.ObservableUseCase
 
-class StrictLabelFiltering(private val photoId: String,
+class StrictLabelFiltering(private val imagePath: String,
                            private val landmarkDetector: LandmarkDetector,
                            transformer: Transformer<Boolean>)
     : ObservableUseCase<Boolean>(transformer) {
 
     override fun createSource(): Observable<Boolean> =
-        landmarkDetector.filterImageLocal(photoId).toObservable()
+        landmarkDetector.filterImageLocal(imagePath).toObservable()
 
 }

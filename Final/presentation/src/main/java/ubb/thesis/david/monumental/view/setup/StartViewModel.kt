@@ -78,7 +78,7 @@ class StartViewModel(private val beaconManager: BeaconManager,
     }
 
     private fun cacheSession(backup: Backup) {
-        CacheSession(backup, sessionManager, AsyncTransformerFactory.create())
+        CacheSession(backup, sessionManager, beaconManager, AsyncTransformerFactory.create())
                 .execute()
                 .subscribe({
                                _backupLoaded.value = true

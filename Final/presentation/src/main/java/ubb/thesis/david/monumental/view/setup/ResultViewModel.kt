@@ -29,7 +29,7 @@ class ResultViewModel(private val beaconManager: BeaconManager,
     val errors: LiveData<Throwable> = _errors
 
     fun searchLandmarks(lat: Double, long: Double, radius: Int, limit: Int, categories: String) {
-        val params = SearchLandmarks.RequestValues(lat, long, radius, categories, limit)
+        val params = SearchLandmarks.Params(lat, long, radius, categories, limit)
         SearchLandmarks(params, landmarkApi, AsyncTransformerFactory.create<List<Landmark>>())
                 .execute()
                 .subscribe({ _landmarksObservable.value = it },

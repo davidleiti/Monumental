@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+apply plugin: 'io.fabric'   // Crashlytics
 
+// Kotlin plugins
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -81,9 +82,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.0.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
-    // Testing
+    // Lifecycle-aware components
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
+
+    // Testing
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

@@ -32,7 +32,7 @@ dependencies {
     api project(':domain')
     api project(':foursquareApi')
 
-    // Room
+    // Room database
     implementation "androidx.room:room-runtime:2.1.0"
     implementation 'androidx.room:room-rxjava2:2.1.0'
     kapt "androidx.room:room-compiler:2.1.0"
@@ -47,7 +47,7 @@ dependencies {
     // Background work
     implementation 'android.arch.work:work-runtime-ktx:1.0.1'
 
-    // Landmark recognition
+    // Landmark recognition and image labeling
     implementation 'com.google.firebase:firebase-ml-vision:20.0.0'
     implementation 'com.google.firebase:firebase-ml-vision-image-label-model:17.0.2'
 
