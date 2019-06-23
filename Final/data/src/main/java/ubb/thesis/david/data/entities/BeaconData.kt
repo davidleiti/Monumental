@@ -5,7 +5,6 @@ import ubb.thesis.david.domain.entities.Discovery
 import ubb.thesis.david.domain.entities.Landmark
 import java.util.*
 
-// TODO think of a better entity name
 @Entity(tableName = "beacons",
         primaryKeys = ["id", "userId"])
 data class BeaconData(val id: String,

@@ -3,7 +3,7 @@ package ubb.thesis.david.data.cache
 import androidx.room.TypeConverter
 import java.util.*
 
-class RoomConverter {
+class DataConverter {
 
     @TypeConverter
     fun dateToTimeStamp(date: Date?) = date?.time

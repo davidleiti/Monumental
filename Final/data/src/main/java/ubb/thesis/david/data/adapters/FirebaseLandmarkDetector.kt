@@ -58,8 +58,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
                         labelingTask.onError(error)
                     }
         } ?: run {
-            labelingTask.onError(Throwable(
-                    ERROR_CREATE_IMAGE))
+            labelingTask.onError(Throwable(ERROR_CREATE_IMAGE))
         }
 
         return labelingTask
@@ -72,16 +71,14 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
             cloudImageLabeler.processImage(image)
                     .addOnSuccessListener { labels ->
                         debug(TAG_LOG, "Labels predicted: ${labels.map { it.text + '(' + it.confidence + ')' }}")
-                        labelingTask.onSuccess(passesFilters(labels.map { it.text },
-                                                             LABELS_SPECIFIC))
+                        labelingTask.onSuccess(passesFilters(labels.map { it.text }, LABELS_SPECIFIC))
                     }
                     .addOnFailureListener { error ->
                         debug(TAG_LOG, "Failed to detect landmark with error ${error.message}")
                         labelingTask.onError(error)
                     }
         } ?: run {
-            labelingTask.onError(Throwable(
-                    ERROR_CREATE_IMAGE))
+            labelingTask.onError(Throwable(ERROR_CREATE_IMAGE))
         }
 
         return labelingTask
@@ -102,8 +99,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
                         detectionTask.onError(error)
                     }
         } ?: run {
-            detectionTask.onError(Throwable(
-                    ERROR_CREATE_IMAGE))
+            detectionTask.onError(Throwable(ERROR_CREATE_IMAGE))
         }
 
         return detectionTask
@@ -111,7 +107,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
 
     private fun verifyDetectedLandmark(target: Landmark, landmarks: List<FirebaseVisionCloudLandmark>): String {
         if (landmarks.isEmpty())
-            return NONE_DETECTED
+            return RESULT_NONE_DETECTED
 
         val sorted = landmarks.sortedBy { it.confidence }
 
@@ -122,7 +118,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
 
         return if (sorted[0].toLocation().distanceTo(targetLocation) <= DETECTION_DISTANCE_THRESHOLD)
             sorted[0].landmark
-        else NONE_DETECTED
+        else RESULT_NONE_DETECTED
     }
 
     private fun passesFilters(labels: List<String>, filters: Array<String>): Boolean {
@@ -141,7 +137,7 @@ class FirebaseLandmarkDetector(private val context: Context) : LandmarkDetector 
     }
 
     companion object {
-        const val NONE_DETECTED = "No landmark detected"
+        const val RESULT_NONE_DETECTED = "No landmark detected"
 
         private const val TAG_LOG = "FirebaseLandmarkDetectorLogger"
         private const val ERROR_CREATE_IMAGE = "Failed to create image at path, see log stacktrace for details"

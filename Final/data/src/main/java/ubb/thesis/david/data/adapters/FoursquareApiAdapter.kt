@@ -38,7 +38,7 @@ class FoursquareApiAdapter(private val api: FoursquareApi,
         api.venuePhotos(id).map { it.map { photo -> imageMapper.mapFrom(photo) } }
 
     private fun combineResults(searchResults: List<Landmark>,
-                               exploreResults: List<Landmark>): List<Landmark> {
+                                 exploreResults: List<Landmark>): List<Landmark> {
         val allVenues = ArrayList<Landmark>().apply {
             addAll(searchResults)
             addAll(exploreResults)

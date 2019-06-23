@@ -14,8 +14,8 @@ class FusedNavigator(context: Context, location: Location) : Navigator(context, 
 
     private var gravity = FloatArray(3)
     private var geomagnetic = FloatArray(3)
-    private val rMat = FloatArray(9)
-    private val iMat = FloatArray(9)
+    private val rotationMatrix = FloatArray(9)
+    private val inclinationMatrix = FloatArray(9)
 
     override fun start() {
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)
@@ -50,11 +50,11 @@ class FusedNavigator(context: Context, location: Location) : Navigator(context, 
     }
 
     private fun calculateHeading(): Float {
-        val success = SensorManager.getRotationMatrix(rMat, iMat, gravity, geomagnetic)
+        val success = SensorManager.getRotationMatrix(rotationMatrix, inclinationMatrix, gravity, geomagnetic)
         if (success) {
             val orientation = FloatArray(3)
             return ((Math.toDegrees(
-                    SensorManager.getOrientation(rMat, orientation)[0].toDouble()) + 360) % 360).toFloat()
+                    SensorManager.getOrientation(rotationMatrix, orientation)[0].toDouble()) + 360) % 360).toFloat()
         }
         return -1F
     }

@@ -12,7 +12,7 @@ import java.nio.channels.FileChannel
 import java.text.SimpleDateFormat
 import java.util.*
 
-sealed class FileUtils {
+sealed class FileOperations {
     companion object {
 
         fun createTempFile(context: Context): File? {

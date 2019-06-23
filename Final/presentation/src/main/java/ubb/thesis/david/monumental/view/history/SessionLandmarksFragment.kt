@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_session_landmarks.*
-import ubb.thesis.david.data.utils.FileUtils
+import ubb.thesis.david.data.utils.FileOperations
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Discovery
@@ -94,7 +94,7 @@ class SessionLandmarksFragment : BaseFragment() {
 
     private fun downloadImage(photoId: String) {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val targetFile = FileUtils.createSharedFile("${photoId}_$timeStamp")
+        val targetFile = FileOperations.createSharedFile("${photoId}_$timeStamp")
 
         targetFile?.let { file ->
             viewModel.downloadImage(getUserId()!!, photoId, file.absolutePath)

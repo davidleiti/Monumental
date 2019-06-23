@@ -9,8 +9,8 @@ import ubb.thesis.david.data.utils.info
 class DeleteWorker(appContext: Context, workerParameters: WorkerParameters) : BaseWorker(appContext, workerParameters) {
 
     override fun executeTask() {
-        val userId = inputData.getString("userId")
-        val photoId = inputData.getString("photoId")
+        val userId = inputData.getString(ARG_USER_ID)
+        val photoId = inputData.getString(ARG_PHOTO_ID)
 
         val storage = FirebaseStorage.getInstance()
         val imageRef = storage.getReference("$userId/images/$photoId")
@@ -32,6 +32,8 @@ class DeleteWorker(appContext: Context, workerParameters: WorkerParameters) : Ba
 
     companion object {
         private const val TAG_LOG = "DeleteWorkerLogger"
+        const val ARG_USER_ID = "userId"
+        const val ARG_PHOTO_ID = "photoId"
     }
 
 }

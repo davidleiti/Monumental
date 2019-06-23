@@ -24,33 +24,20 @@ class SessionCache private constructor(private val database: SessionDatabase) :
     override fun saveSessionBackup(backup: Backup): Completable =
         saveSessionData(backup.session, backup.landmarks.map { BeaconData.fromMapEntry(backup.session.userId, it) })
 
-    private fun saveSessionData(session: Session, beacons: List<BeaconData>) =
-        Completable.fromCallable {
-            database.runInTransaction {
-                val sessionData = SessionData.fromEntity(session)
-                database.sessionDao().createSession(sessionData)
-                database.beaconDao().addBeacons(beacons)
-            }
-        }.doOnComplete {
-            info(TAG_LOG, "Session for user ${session.userId} setup successfully.")
-        }.doOnError {
-            debug(TAG_LOG, "Failed to set up session for user ${session.userId}, cause: ${it.message}")
-        }
-
     override fun getSession(userId: String): Maybe<Session> =
         database.sessionDao().getUserSession(userId)
                 .doOnSuccess {
-                    info(TAG_LOG, "Session $it retrieved successfully.")
-                }.doOnError {
-                    debug(TAG_LOG, "Failed to retrieve session data of user $userId, cause: ${it.message}")
+                    info(TAG_LOG, "Cached session $it retrieved successfully.")
+                }.doOnError { error ->
+                    debug(TAG_LOG, "Failed to retrieve session data of user $userId, cause: ${error.message}")
                 }.map { SessionData.toEntity(it) }
 
     override fun getSessionLandmarks(userId: String): Maybe<Map<Landmark, Discovery?>> =
         database.beaconDao().getSessionBeacons(userId)
                 .doOnSuccess {
-                    info(TAG_LOG, "Landmarks of user $userId retrieved successfully.")
-                }.doOnError {
-                    debug(TAG_LOG, "Failed to retrieve landmarks from user $userId's session")
+                    info(TAG_LOG, "Cached landmarks of user $userId retrieved successfully.")
+                }.doOnError { error ->
+                    debug(TAG_LOG, "Failed to retrieve cached landmarks with error ${error.message}")
                 }.map { beacons ->
                     val entityMap = HashMap<Landmark, Discovery?>()
                     beacons.forEach { data ->
@@ -61,6 +48,11 @@ class SessionCache private constructor(private val database: SessionDatabase) :
 
     override fun updateLandmark(landmark: Landmark, userId: String, photoId: String?, foundAt: Date?): Completable =
         database.beaconDao().updateBeacon(BeaconData.fromEntity(landmark, userId, photoId, foundAt))
+                .doOnComplete {
+                    info(TAG_LOG, "Cached data of landmark ${landmark.id} has been updated successfully!")
+                }.doOnError { error ->
+                    debug(TAG_LOG, "Failed to update cached landmark ${landmark.id} with error ${error.message}")
+                }
 
     override fun wipeSession(userId: String): Completable =
         Completable.fromCallable {
@@ -69,21 +61,22 @@ class SessionCache private constructor(private val database: SessionDatabase) :
                 database.beaconDao().clearSessionBeacons(userId)
             }
         }.doOnComplete {
-            info(TAG_LOG, "Wiped session data of user $userId")
-        }.doOnError {
-            debug(TAG_LOG, "Failed to wipe session data of user $userId, cause: ${it.message}")
+            info(TAG_LOG, "Wiped cached session data of user $userId")
+        }.doOnError { error ->
+            debug(TAG_LOG, "Failed to wipe cached session data of user $userId with error: ${error.message}")
         }
 
-    private fun wipeDatabase(): Completable =
+    private fun saveSessionData(session: Session, beacons: List<BeaconData>) =
         Completable.fromCallable {
             database.runInTransaction {
-                database.sessionDao().clearSessions()
-                database.beaconDao().clearBeacons()
+                val sessionData = SessionData.fromEntity(session)
+                database.sessionDao().createSession(sessionData)
+                database.beaconDao().addBeacons(beacons)
             }
         }.doOnComplete {
-            info(TAG_LOG, "Wiped the session cache database entirely.")
-        }.doOnError {
-            debug(TAG_LOG, "Failed to wipe session cache, cause: ${it.message}")
+            info(TAG_LOG, "Session for cache for user ${session.userId} has been set up successfully.")
+        }.doOnError { error ->
+            debug(TAG_LOG, "Failed to set up session cache for user ${session.userId} with error: ${error.message}")
         }
 
     companion object {

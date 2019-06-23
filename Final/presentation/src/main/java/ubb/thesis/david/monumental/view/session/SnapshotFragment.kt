@@ -17,7 +17,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_snapshot.*
-import ubb.thesis.david.data.utils.FileUtils
+import ubb.thesis.david.data.utils.FileOperations
 import ubb.thesis.david.data.utils.info
 import ubb.thesis.david.domain.entities.Landmark
 import ubb.thesis.david.monumental.R
@@ -181,7 +181,7 @@ class SnapshotFragment : BaseFragment() {
     private fun launchCaptureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             takePictureIntent.resolveActivity(context!!.packageManager)?.also {
-                FileUtils.createTempFile(context!!)?.let {
+                FileOperations.createTempFile(context!!)?.let {
                     invalidatedPhotoPath = tempPhotoPath
                     tempPhotoPath = it.absolutePath
 
@@ -207,14 +207,14 @@ class SnapshotFragment : BaseFragment() {
     }
 
     private fun savePhoto() {
-        if (FileUtils.copyToShared(context!!, tempPhotoPath!!))
+        if (FileOperations.copyToShared(context!!, tempPhotoPath!!))
             TextDialog(context!!, getString(R.string.label_success), getString(R.string.message_save_success)).show()
         else
             TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_save_failed)).show()
     }
 
     private fun deletePhoto(path: String) {
-        if (FileUtils.deleteFile(context!!, path))
+        if (FileOperations.deleteFile(context!!, path))
             info(TAG_LOGGER, "Successfully deleted photo at path $path")
         else
             info(TAG_LOGGER, "Failed to delete photo at path $path")

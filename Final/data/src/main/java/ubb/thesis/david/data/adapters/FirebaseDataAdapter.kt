@@ -10,11 +10,13 @@ import io.reactivex.Single
 import io.reactivex.subjects.CompletableSubject
 import io.reactivex.subjects.MaybeSubject
 import io.reactivex.subjects.SingleSubject
-import ubb.thesis.david.data.workers.DeleteWorker
 import ubb.thesis.david.data.utils.asDataMapping
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.extractLandmarkData
 import ubb.thesis.david.data.utils.extractSessionData
+import ubb.thesis.david.data.workers.DeleteWorker
+import ubb.thesis.david.data.workers.DeleteWorker.Companion.ARG_PHOTO_ID
+import ubb.thesis.david.data.workers.DeleteWorker.Companion.ARG_USER_ID
 import ubb.thesis.david.domain.CloudDataSource
 import ubb.thesis.david.domain.entities.Backup
 import ubb.thesis.david.domain.entities.Discovery
@@ -28,44 +30,43 @@ class FirebaseDataAdapter : CloudDataSource {
     private val storage = FirebaseFirestore.getInstance()
 
     override fun getUserSessions(userId: String): Maybe<List<Session>> {
-        val sessionsRetrieved: MaybeSubject<List<Session>> = MaybeSubject.create()
+        val retrieveSessionsTask: MaybeSubject<List<Session>> = MaybeSubject.create()
 
-        storage.collection("$ROOT/$userId/sessions").get()
+        storage.collection("$ROOT/$userId/$COLL_SESSIONS").get()
                 .addOnSuccessListener { querySnapshot ->
                     val sessions = querySnapshot.documents.map { it.extractSessionData() }
                     logEvent("Retrieved sessions $sessions successfully.")
-                    sessionsRetrieved.onSuccess(sessions)
+                    retrieveSessionsTask.onSuccess(sessions)
                 }
                 .addOnFailureListener { error ->
                     logEvent("Failed to retrieve sessions with error ${error.message}")
-                    sessionsRetrieved.onError(error)
+                    retrieveSessionsTask.onError(error)
                 }
 
-        return sessionsRetrieved
+        return retrieveSessionsTask
     }
 
     override fun getSessionDetails(userId: String, sessionId: String): Maybe<Map<Landmark, Discovery?>> {
-        val dataRetrieved: MaybeSubject<Map<Landmark, Discovery?>> = MaybeSubject.create()
+        val retrieveDetailsTask: MaybeSubject<Map<Landmark, Discovery?>> = MaybeSubject.create()
 
-        storage.collection("$ROOT/$userId/sessions/$sessionId/$COLL_LANDMARKS").get()
+        storage.collection("$ROOT/$userId/$COLL_SESSIONS/$sessionId/$COLL_LANDMARKS").get()
                 .addOnSuccessListener { querySnapshot ->
                     val data = querySnapshot.documents.map { it.extractLandmarkData() }.toMap()
                     logEvent("Retrieved cloud backup successfully: $data")
-                    dataRetrieved.onSuccess(data)
+                    retrieveDetailsTask.onSuccess(data)
                 }.addOnFailureListener { error ->
                     logEvent("Failed to retrieve session details with error ${error.message}")
-                    dataRetrieved.onError(error)
+                    retrieveDetailsTask.onError(error)
                 }
 
-        return dataRetrieved
+        return retrieveDetailsTask
     }
 
     override fun createSession(session: Session, landmarks: List<Landmark>): Single<String> {
-        val creationCompleted = SingleSubject.create<String>()
+        val creationTask = SingleSubject.create<String>()
 
         val newSessionRef = storage.collection("$ROOT/${session.userId}/$COLL_SESSIONS").document()
-        val landmarksRef = newSessionRef.collection(
-                COLL_LANDMARKS)
+        val landmarksRef = newSessionRef.collection(COLL_LANDMARKS)
 
         storage.runTransaction { transaction ->
             transaction.set(newSessionRef, session.asDataMapping())
@@ -77,21 +78,20 @@ class FirebaseDataAdapter : CloudDataSource {
 
         }.addOnSuccessListener {
             logEvent("Session $session has been created successfully")
-            creationCompleted.onSuccess(newSessionRef.id)
+            creationTask.onSuccess(newSessionRef.id)
         }.addOnFailureListener { ex ->
             logEvent("Session creation has failed with the following error: ${ex.message}")
-            creationCompleted.onError(ex)
+            creationTask.onError(ex)
         }
 
-        return creationCompleted
+        return creationTask
     }
 
     override fun updateSessionBackup(backup: Backup): Completable {
-        val updateCompleted = CompletableSubject.create()
+        val updateTask = CompletableSubject.create()
 
         val sessionRef = storage.document("$ROOT/${backup.session.userId}/$COLL_SESSIONS/${backup.session.sessionId}")
-        val landmarksRef = sessionRef.collection(
-                COLL_LANDMARKS)
+        val landmarksRef = sessionRef.collection(COLL_LANDMARKS)
 
         storage.runTransaction { transaction ->
             transaction.set(sessionRef, backup.session.asDataMapping())
@@ -106,17 +106,17 @@ class FirebaseDataAdapter : CloudDataSource {
             }
         }.addOnSuccessListener {
             logEvent("Updated session successfully.")
-            updateCompleted.onComplete()
+            updateTask.onComplete()
         }.addOnFailureListener { error ->
             logEvent("Failed to update session data with error ${error.message}")
-            updateCompleted.onError(error)
+            updateTask.onError(error)
         }
 
-        return updateCompleted
+        return updateTask
     }
 
     override fun wipeSessionBackup(userId: String): Completable {
-        val wipeCompleted = CompletableSubject.create()
+        val wipeTask = CompletableSubject.create()
 
         storage.collection("$ROOT/$userId/$COLL_SESSIONS").whereEqualTo("timeFinished", null).get()
                 .addOnSuccessListener { snapshot ->
@@ -132,17 +132,17 @@ class FirebaseDataAdapter : CloudDataSource {
                         }
                     }.addOnSuccessListener {
                         logEvent("Wiped session data of unfinished sessions successfully!")
-                        wipeCompleted.onComplete()
+                        wipeTask.onComplete()
                     }.addOnFailureListener { error ->
                         logEvent("Failed to wipe unfinished sessions with the following error: ${error.message}")
-                        wipeCompleted.onError(error)
+                        wipeTask.onError(error)
                     }
                 }.addOnFailureListener { error ->
                     logEvent("Failed to query unfinished sessions with the following error: ${error.message}")
-                    wipeCompleted.onError(error)
+                    wipeTask.onError(error)
                 }
 
-        return wipeCompleted
+        return wipeTask
     }
 
     private fun wipeRelatedSessionData(userId: String, session: DocumentSnapshot, countDownLatch: CountDownLatch) {
@@ -163,8 +163,8 @@ class FirebaseDataAdapter : CloudDataSource {
     }
 
     private fun createDeleteTask(userId: String, photoId: String): OneTimeWorkRequest {
-        val imageData = workDataOf("userId" to userId,
-                                   "photoId" to photoId)
+        val imageData = workDataOf(ARG_USER_ID to userId,
+                                   ARG_PHOTO_ID to photoId)
 
         val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)

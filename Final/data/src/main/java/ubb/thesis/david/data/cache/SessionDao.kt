@@ -23,9 +23,6 @@ interface SessionDao {
     @Update
     fun updateSession(session: SessionData): Completable
 
-    @Query("DELETE FROM sessions")
-    fun clearSessions()
-
     @Query("DELETE FROM sessions WHERE userId = :userId")
     fun clearUserSession(userId: String)
 }

@@ -13,9 +13,9 @@ class UploadWorker(appContext: Context, workerParameters: WorkerParameters) :
     BaseWorker(appContext, workerParameters) {
 
     override fun executeTask() {
-        val userId = inputData.getString("userId")
-        val photoId = inputData.getString("photoId")
-        val photoPath = inputData.getString("photoPath")
+        val userId = inputData.getString(ARG_USER_ID)
+        val photoId = inputData.getString(ARG_PHOTO_ID)
+        val photoPath = inputData.getString(ARG_PHOTO_PATH)
 
         val storage = FirebaseStorage.getInstance()
         val imageRef = storage.getReference("$userId/images/$photoId")
@@ -44,6 +44,9 @@ class UploadWorker(appContext: Context, workerParameters: WorkerParameters) :
 
     companion object {
         private const val TAG_LOG = "UploadWorkerLogger"
+        const val ARG_USER_ID = "userId"
+        const val ARG_PHOTO_ID = "photoId"
+        const val ARG_PHOTO_PATH = "photoPath"
     }
 
 }

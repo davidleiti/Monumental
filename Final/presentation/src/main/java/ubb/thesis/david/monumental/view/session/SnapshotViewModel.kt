@@ -63,13 +63,13 @@ class SnapshotViewModel(private val beaconManager: BeaconManager,
         DetectLandmark(landmark, imagePath, landmarkDetector, AsyncTransformerFactory.create<String>())
                 .execute()
                 .subscribe({ detection ->
-                               if (detection != FirebaseLandmarkDetector.NONE_DETECTED)
+                               if (detection != FirebaseLandmarkDetector.RESULT_NONE_DETECTED)
                                    info(TAG_LOG,
                                         "Recognized the following landmark while analyzing the image: $detection")
                                else
                                    info(TAG_LOG, "Failed to recognize any landmark while analyzing the image")
 
-                               _detectionPass.value = detection != FirebaseLandmarkDetector.NONE_DETECTED
+                               _detectionPass.value = detection != FirebaseLandmarkDetector.RESULT_NONE_DETECTED
                            }, { error ->
                                debug(TAG_LOG, "Error encountered while detecting, message: ${error.message}")
                                _errors.value = error

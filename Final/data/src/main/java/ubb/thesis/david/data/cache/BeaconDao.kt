@@ -23,9 +23,6 @@ interface BeaconDao {
     @Update
     fun updateBeacon(landmark: BeaconData): Completable
 
-    @Query("DELETE FROM beacons")
-    fun clearBeacons()
-
     @Query("DELETE FROM beacons WHERE userId = :userId")
     fun clearSessionBeacons(userId: String)
 }

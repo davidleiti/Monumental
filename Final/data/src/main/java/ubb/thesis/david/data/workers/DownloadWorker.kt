@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.work.WorkerParameters
 import com.google.firebase.storage.FirebaseStorage
 import ubb.thesis.david.data.R
-import ubb.thesis.david.data.utils.FileUtils
+import ubb.thesis.david.data.utils.FileOperations
 import ubb.thesis.david.data.utils.debug
 import ubb.thesis.david.data.utils.info
 import java.io.File
@@ -14,9 +14,9 @@ class DownloadWorker(appContext: Context, workerParameters: WorkerParameters) :
     BaseWorker(appContext, workerParameters) {
 
     override fun executeTask() {
-        val userId = inputData.getString("userId")
-        val photoId = inputData.getString("photoId")
-        val targetPath = inputData.getString("targetPath")
+        val userId = inputData.getString(ARG_USER_ID)
+        val photoId = inputData.getString(ARG_PHOTO_ID)
+        val targetPath = inputData.getString(ARG_TARGET_PATH)
 
         val storage = FirebaseStorage.getInstance()
         val imageRef = storage.getReference("$userId/images/$photoId")
@@ -45,10 +45,13 @@ class DownloadWorker(appContext: Context, workerParameters: WorkerParameters) :
     }
 
     private fun performMediaScan(filePath: String) =
-        FileUtils.performMediaScan(applicationContext, filePath)
+        FileOperations.performMediaScan(applicationContext, filePath)
 
     companion object {
         private const val TAG_LOG = "DownloadWorkerLogger"
+        const val ARG_USER_ID = "userId"
+        const val ARG_PHOTO_ID = "photoId"
+        const val ARG_TARGET_PATH = "targetPath"
     }
 
 }
