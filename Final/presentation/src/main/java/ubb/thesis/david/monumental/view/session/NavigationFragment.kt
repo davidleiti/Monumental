@@ -194,6 +194,6 @@ class NavigationFragment : LocationTrackerFragment() {
     }
 
     companion object {
-        private const val TAG_LOG = "SessionLogger"
+        private const val TAG_LOG = "NavigationViewLogger"
     }
 }

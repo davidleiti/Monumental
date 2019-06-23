@@ -165,4 +165,6 @@
     <string name="message_save_success">Image has been saved, you can now access it from your gallery!</string>
     <string name="cd_none_found">Not found icon</string>
     <string name="cd_none_started">None started icon</string>
+    <string name="password_no_spec_char">Password must contain at least one special character and number</string>
+    <string name="distance_meters">%1$d m</string>
 </resources>

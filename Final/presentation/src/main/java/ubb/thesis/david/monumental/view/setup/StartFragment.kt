@@ -92,8 +92,7 @@ class StartFragment : BaseFragment() {
 
     private fun onBackupQueryCompleted(success: Boolean) {
         if (!success) {
-            TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_no_session_found))
-                    .show()
+            TextDialog(context!!, getString(R.string.label_error), getString(R.string.message_no_session_found)).show()
             checkCachedSession()
         }
     }

@@ -16,6 +16,7 @@ import org.jetbrains.anko.layoutInflater
 import ubb.license.david.foursquareapi.service.FoursquareApi
 import ubb.thesis.david.monumental.R
 import ubb.thesis.david.monumental.common.BaseFragment
+import ubb.thesis.david.monumental.common.TextDialog
 import ubb.thesis.david.monumental.utils.shortToast
 
 class CategoriesFragment : BaseFragment(), View.OnClickListener {
@@ -51,7 +52,7 @@ class CategoriesFragment : BaseFragment(), View.OnClickListener {
         when (v.id) {
             R.id.button_next -> {
                 if (listAdapter.itemsChecked() == 0) {
-                    context?.shortToast(getString(R.string.message_none_selected))
+                    onNoneChecked()
                 } else {
                     advance()
                 }
@@ -63,6 +64,10 @@ class CategoriesFragment : BaseFragment(), View.OnClickListener {
     private fun setSelection(check: Boolean) {
         for (catIndex: Int in 0 until listAdapter.count)
             listAdapter.setChecked(check, catIndex)
+    }
+
+    private fun onNoneChecked() {
+        TextDialog(context!!, getString(R.string.label_warning), getString(R.string.message_none_selected)).show()
     }
 
     private fun advance() {

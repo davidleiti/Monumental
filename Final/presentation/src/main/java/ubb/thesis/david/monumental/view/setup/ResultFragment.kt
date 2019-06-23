@@ -42,7 +42,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
     override fun onStart() {
         super.onStart()
         if (!::landmarksRetrieved.isInitialized)
-            loadVenues()
+            loadLandmarks()
     }
 
     override fun onClick(v: View) {
@@ -78,7 +78,7 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
         })
     }
 
-    private fun loadVenues() {
+    private fun loadLandmarks() {
         displayProgress()
 
         val args = ResultFragmentArgs.fromBundle(arguments!!)
@@ -117,13 +117,12 @@ class ResultFragment : BaseFragment(), View.OnClickListener {
         TextDialog(context!!, getString(R.string.label_error), getString(R.string.default_error_message))
                 .also { dialog ->
                     dialog.updatePositiveButton(getString(R.string.label_retry)) {
-                        loadVenues()
+                        loadLandmarks()
                     }
                     dialog.setupNegativeButton(getString(R.string.cancel)) {
                         navigateStart()
                     }
                 }.show()
-
 
     private fun beginSession() =
         Navigation.findNavController(view!!).navigate(ResultFragmentDirections.actionBeginSession())

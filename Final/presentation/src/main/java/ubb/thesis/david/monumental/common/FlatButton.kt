@@ -55,13 +55,13 @@ class FlatButton(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
 
     private fun backgroundInverted(): Drawable =
         GradientDrawable().also {
-            val backgroundColor = ContextCompat.getColor(context, R.color.white)
+            val backgroundColor = getColor(context, R.color.white)
             it.setColor(backgroundColor)
             it.setStroke(1, getColor(context, R.color.primary))
         }
 
     private fun backgroundNormal(): ColorDrawable =
-        ContextCompat.getColor(context, R.color.primary).run {
+        getColor(context, R.color.primary).run {
             ColorDrawable(this)
         }
 }

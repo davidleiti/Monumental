@@ -2,7 +2,6 @@ package ubb.thesis.david.monumental.view.setup
 
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -63,10 +62,9 @@ class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapRe
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
 
-            @SuppressLint("SetTextI18n")
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val radius = (progress + 1) * RADIUS_FACTOR
-                label_radius.text = "$radius m"
+                label_radius.text = getString(R.string.distance_meters, radius)
                 updateMap()
             }
         })
@@ -140,11 +138,11 @@ class DetailsFragment : LocationTrackerFragment(), View.OnClickListener, OnMapRe
         val radius = ((sb_radius.progress + 1) * RADIUS_FACTOR).toDouble()
 
         locationCircle?.remove()
-        locationCircle = googleMap.addCircle(CircleOptions()
-                                                     .center(center)
-                                                     .radius(radius)
-                                                     .fillColor(context!!.getColor(R.color.primary_opaque))
-                                                     .strokeColor(context!!.getColor(R.color.primary)))
+        locationCircle = googleMap.addCircle(
+                CircleOptions().center(center)
+                        .radius(radius)
+                        .fillColor(context!!.getColor(R.color.primary_opaque))
+                        .strokeColor(context!!.getColor(R.color.primary)))
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(center, zoomValue()))
     }

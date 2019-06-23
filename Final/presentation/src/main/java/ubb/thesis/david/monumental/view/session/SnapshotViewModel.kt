@@ -120,7 +120,7 @@ class SnapshotViewModel(private val beaconManager: BeaconManager,
     }
 
     companion object {
-        private const val TAG_LOG = "SnapshotLogger"
+        private const val TAG_LOG = "SnapshotViewLogger"
     }
 
 }

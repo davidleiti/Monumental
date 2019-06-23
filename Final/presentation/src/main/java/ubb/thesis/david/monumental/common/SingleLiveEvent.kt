@@ -34,12 +34,6 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
         super.setValue(t)
     }
 
-
-    @MainThread
-    fun call() {
-        value = null
-    }
-
     companion object {
         private const val TAG_LOG = "SingleLiveEventLogger"
     }

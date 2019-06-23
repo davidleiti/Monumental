@@ -27,7 +27,6 @@ class StartViewModel(private val beaconManager: BeaconManager,
     BaseAndroidViewModel(application) {
 
     // Resources
-    private val resources = getApplication<Application>().resources
     private val sessionManager = Configuration.provideSessionManager()
 
     // Observable sources
@@ -72,7 +71,9 @@ class StartViewModel(private val beaconManager: BeaconManager,
         GetCachedSession(userId, sessionManager, AsyncTransformerFactory.create<Session>())
                 .execute()
                 .subscribe({ session -> updateState(session) },
-                           { debug(TAG_LOG, "Failed to retrieve session data for user $userId") },
+                           { error ->
+                               debug(TAG_LOG, "Failed to retrieve session data for user $userId with error $error")
+                           },
                            { if (_sessionAvailable.value == false) updateState(null) })
                 .also { addDisposable(it) }
     }
@@ -92,7 +93,7 @@ class StartViewModel(private val beaconManager: BeaconManager,
     fun wipeSessionData(userId: String) {
         WipeActiveSession(userId, cloudDataSource, sessionManager, beaconManager, AsyncTransformerFactory.create())
                 .execute()
-                .subscribe({ _sessionWiped.call() },
+                .subscribe({ _sessionWiped.value = null },
                            { error -> _errors.value = error })
                 .also { addDisposable(it) }
     }

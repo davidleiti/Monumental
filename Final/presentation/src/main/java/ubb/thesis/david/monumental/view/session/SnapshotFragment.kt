@@ -87,10 +87,9 @@ class SnapshotFragment : BaseFragment() {
         if (passed) {
             viewModel.detectLandmark(targetLandmark, tempPhotoPath!!)
         } else {
+            hideProgress()
             TextDialog(context!!, getString(R.string.message_oops), getString(R.string.desc_photo_invalid))
                     .show()
-
-            hideProgress()
         }
     }
 
@@ -105,9 +104,9 @@ class SnapshotFragment : BaseFragment() {
         if (passed)
             onLandmarkRecognized()
         else {
+            hideProgress()
             TextDialog(context!!, getString(R.string.title_unrecognized_photo),
                        getString(R.string.desc_unrecognized_photo)).show()
-            hideProgress()
         }
     }
 
@@ -215,13 +214,13 @@ class SnapshotFragment : BaseFragment() {
 
     private fun deletePhoto(path: String) {
         if (FileOperations.deleteFile(context!!, path))
-            info(TAG_LOGGER, "Successfully deleted photo at path $path")
+            info(TAG_LOG, "Successfully deleted photo at path $path")
         else
-            info(TAG_LOGGER, "Failed to delete photo at path $path")
+            info(TAG_LOG, "Failed to delete photo at path $path")
     }
 
     companion object {
-        private const val TAG_LOGGER = "SnapshotLogger"
+        private const val TAG_LOG = "SnapshotViewLogger"
         private const val RC_REQUEST_PERMISSIONS = 10
         private const val RC_IMAGE_CAPTURE = 15
     }

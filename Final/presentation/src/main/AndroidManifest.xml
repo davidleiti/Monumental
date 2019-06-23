@@ -58,7 +58,7 @@
                 android:enabled="true"
                 tools:ignore="ExportedReceiver" />
 
-        <!-- ImageEntity cache content provider -->
+        <!-- Image cache content provider -->
         <provider
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="ubb.thesis.david.monumental"

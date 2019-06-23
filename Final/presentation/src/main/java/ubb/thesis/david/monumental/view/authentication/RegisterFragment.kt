@@ -64,7 +64,7 @@ class RegisterFragment : BaseFragment() {
 
         field_email.apply {
             addTextChangedListener {
-                if (viewModel.emailError.value != null) validateEmail()
+                validateEmail()
             }
             setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) validateEmail()
@@ -73,7 +73,7 @@ class RegisterFragment : BaseFragment() {
 
         field_password.apply {
             addTextChangedListener {
-                if (viewModel.passwordError.value != null) validatePassword()
+                validatePassword()
             }
             setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) validatePassword()
@@ -119,10 +119,7 @@ class RegisterFragment : BaseFragment() {
 
     private fun validatePassword() = viewModel.validatePassword(field_password.text.toString())
 
-    private fun validateFields(): Boolean {
-        validateEmail()
-        validatePassword()
-        return viewModel.emailError.value == null && viewModel.passwordError.value == null
-    }
+    private fun validateFields(): Boolean =
+        validateEmail() && validatePassword()
 
 }

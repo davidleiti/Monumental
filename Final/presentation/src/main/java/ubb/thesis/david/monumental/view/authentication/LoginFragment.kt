@@ -86,7 +86,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
         field_email.apply {
             addTextChangedListener {
-                if (viewModel.emailError.value != null) validateEmail()
+                validateEmail()
             }
             setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) validateEmail()
@@ -95,7 +95,7 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
         field_password.apply {
             addTextChangedListener {
-                if (viewModel.passwordError.value != null) validatePassword()
+                validatePassword()
             }
             setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) validatePassword()
@@ -198,11 +198,8 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
 
     private fun validatePassword() = viewModel.validatePassword(field_password.text.toString())
 
-    private fun validateFields(): Boolean {
-        validateEmail()
-        validatePassword()
-        return viewModel.emailError.value == null && viewModel.passwordError.value == null
-    }
+    private fun validateFields(): Boolean =
+        validateEmail() && validatePassword()
 
     private fun navigateToSignUp() =
         Navigation.findNavController(view!!).navigate(LoginFragmentDirections.actionRegister())
