@@ -1,6 +1,7 @@
 package ubb.thesis.david.monumental.view.session
 
 import android.location.Location
+import androidx.databinding.Bindable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ubb.thesis.david.data.utils.debug
@@ -17,6 +18,7 @@ import ubb.thesis.david.monumental.Configuration
 import ubb.thesis.david.monumental.common.AsyncTransformerFactory
 import ubb.thesis.david.monumental.common.BaseViewModel
 import ubb.thesis.david.monumental.common.SingleLiveEvent
+import ubb.thesis.david.monumental.utils.default
 
 class NavigationViewModel(private val cloudDataSource: CloudDataSource,
                           private val beaconManager: BeaconManager) : BaseViewModel() {

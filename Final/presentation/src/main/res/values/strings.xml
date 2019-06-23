@@ -14,7 +14,7 @@
     <string name="error_email">Not a valid address.</string>
     <string name="message_sign_in_cancelled">Sign in attempt cancelled.</string>
     <string name="warning_sign_in_provider">Failed to sign in with third party provider</string>
-    <string name="warning_sign_in_email">There was a problem signing in, please check your credential and your internet connection!</string>
+    <string name="warning_sign_in_email">There was a problem signing in, please check your credentials and internet connection!</string>
     <string name="fb_login_protocol_scheme">fb372591466897067</string>
 
     <!-- Venue categories -->
