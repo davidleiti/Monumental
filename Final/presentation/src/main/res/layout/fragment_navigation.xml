@@ -111,8 +111,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:animatedVisibility="@{(viewModel.nearestLandmark != null) ? View.VISIBLE : View.GONE}" />
-                <!--app:animatedVisibility="@{(viewModel.distanceToTarget &lt; 100) ? View.VISIBLE : View.GONE }"-->
+                app:animatedVisibility="@{(viewModel.distanceToTarget &lt; 100) ? View.VISIBLE : View.GONE }" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
