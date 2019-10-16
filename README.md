@@ -6,12 +6,10 @@ Android app written for presenting the practical application of the architectura
 
 #### 4.1.1 Overview
 
-Monumental is a tourism application implemented on the Android operating sys-
-tem created with the purpose of demonstrating the way the architectural concepts and
+Monumental is a tourism application implemented on the Android operating system created with the purpose of demonstrating the way the architectural concepts and
 models presented in the previous theoretical chapters may be applied in a practice.
 The goal of this chapter is to present the steps that constitute the development process
-of the application starting from the original requirements up until the actual imple-
-mentation activities and details.
+of the application starting from the original requirements up until the actual implementation activities and details.
 
 #### 4.1.2 Purpose
 
@@ -33,8 +31,7 @@ incoming notifications triggered by arriving close to such a beacon.
 
 #### 4.1.3 Definitions
 
-Beacon : Geographic location represented by its coordinates in the Geographic coordi-
-nate system specified as a pair of latitude and longitude values.
+Beacon : Geographic location represented by its coordinates in the Geographic coordinate system specified as a pair of latitude and longitude values.
 Geo-fence : A circular region set up around a beacon with its size given as the radius
 starting from the center point i.e. the coordinates of the beacon.
 
@@ -43,16 +40,13 @@ starting from the center point i.e. the coordinates of the beacon.
 - The user should be able to create an account with a combination of an email address
     and a password.
 - The users should be able to authenticate themselves with their created email and
-    password accounts or via third-party providers such as Google or Facebook ac-
-    counts.
+    password accounts or via third-party providers such as Google or Facebook accounts.
 - The user should be able to create exploration sessions after being localized by the
-    application and specifying the desired details such as radius of search, the limit im-
-    posed on the number of landmarks to be found, as well as the preferred categories.
+    application and specifying the desired details such as radius of search, the limit imposed on the number of landmarks to be found, as well as the preferred categories.
     After searching for points of interest based on the above criteria, the application
     should present the number of landmarks discovered. The user then should have the
     option to start the session or adjust the search criteria. After starting a session, the
-    relevant information should be saved on the cloud and be cached locally on the de-
-    vice by the application such that it will not further rely on internet access for basic
+    relevant information should be saved on the cloud and be cached locally on the device by the application such that it will not further rely on internet access for basic
     operations.
 - The user may save their active session progress at any time to synchronize their
     locally cached data with the cloud database.
@@ -61,13 +55,10 @@ starting from the center point i.e. the coordinates of the beacon.
     and wiping the local cache.
 
 
-- After logging out of the application, any active session started by the user is sus-
-    pended, allowing him/her to resume it after relogging.
+- After logging out of the application, any active session started by the user is suspended, allowing him/her to resume it after relogging.
 - The application should provide means for resuming, finishing, and synchronizing
     their active session backed up on the cloud on any logged in device.
-- When there is an active session, the application must provide a mechanism for guid-
-    ing the user to the closest beacon set up by showing the general direction and dis-
-    tance from it.
+- When there is an active session, the application must provide a mechanism for guiding the user to the closest beacon set up by showing the general direction and distance from it.
 - When there is an active session and the user’s device enters the area of a geo-fence
     set up around one of the session’s beacons, the application should notify the user and
     prompt him/her to take a photo of the landmark represented by the beacon. This
@@ -83,16 +74,14 @@ starting from the center point i.e. the coordinates of the beacon.
     locally.
 - After landmark discovery, the application should enqueue the upload process of the
     respective image to the cloud storage.
-- The users should be able to view their finished sessions and their discovered land-
-    marks along with their respective images on any logged in device.
+- The users should be able to view their finished sessions and their discovered landmarks along with their respective images on any logged in device.
 
 #### 4.1.5 Non-functional Requirements
 
 
 **Usability requirements**
 
-- The application should provide clear indications related to its usage and under-
-    standable error messages in the case of unexpected faults.
+- The application should provide clear indications related to its usage and understandable error messages in the case of unexpected faults.
 
 
 - The application should be built with support for system enabled accessibility
@@ -118,20 +107,15 @@ starting from the center point i.e. the coordinates of the beacon.
 - Once a session has been created, the user should be able to resume it without
     any active network connectivity. The navigation mechanisms should also be
     functional with GPS access alone.
-- During active session navigation, the application should receive frequent loca-
-    tion updates in order to provide the most accurate directions possible.
-- The navigation mechanisms relying on device sensor readings such as accelerom-
-    eters or geomagnetic field sensors should work consistently from any point of
+- During active session navigation, the application should receive frequent location updates in order to provide the most accurate directions possible.
+- The navigation mechanisms relying on device sensor readings such as accelerometers or geomagnetic field sensors should work consistently from any point of
     the globe without being decalibrated by the geomagnetic fields.
-- Geo-fence trigger events should be triggered in at most 20 seconds from enter-
-    ing the specified radius.
+- Geo-fence trigger events should be triggered in at most 20 seconds from entering the specified radius.
 - The application should use minimal network traffic, using local storage and
     caching mechanisms wherever possible.
 - The user interface should never be blocked due to long-running operations such
     as network requests or database read/write actions, but provide visual cues of
     their presence.
-
-
 
 **Supportability requirements**
 
@@ -143,36 +127,115 @@ starting from the center point i.e. the coordinates of the beacon.
     tablet model running on an Android API level of at least 24.
 - The application should record and track occurring errors and collect only the
     data relevant to the context of the fault and only from its own perspective.
+    
+    
+#### 4.1.6 Use cases
+
+The application’s use cases may be best presented by grouping them into three
+distinct categories based on the objects impacted by these interactions and the areas of
+the application in which they are to be found. As such, these categories include:
+
+- Use cases related to user authentication and registration, as illustrated in Figure
+    4.1.
+- Use cases describing the application’s session management (Figure 4.2).
+- Use cases describing possible interactions with individual session landmarks, depicted in Figure 4.3.
+
+Authentication  | Session | Landmark 
+:------------:|:---------------:|:----------------:
+![Imgur](https://i.imgur.com/ws66BZQ.png)  |  ![Imgur](https://i.imgur.com/JeRKJwB.png) | ![Imgur](https://i.imgur.com/sys0tek.png)
+
+
+
+
+
+### 4.2 Analysis
+
+![Imgur](https://i.imgur.com/TZLDMut.png)
+
+![Imgur](https://i.imgur.com/pxmihjC.png)
+
+The above interactions depicted in Figure 4.5 and Figure 4.4 illustrate how the
+individual components of an application with a clear separation of concerns primarily
+based on Clean Architecture interact with one another. In the subject application, the
+use cases and their related business logic is encapsulated into separate objects, whose
+lifetime is strictly linked to the time in which they perform the connection between the
+boundary objects and the control objects that implement the actual operations defined
+in the use case, with the possibility of dynamically chaining or substituting such operations in the case of more complex interactions, such as for the **SaveSessionProgress**
+use case.
+
+### 4.3 Design
+
+Having defined the analysis model in Section 4.2, this section will focus on presenting the application’s system design model, with an added emphasis on its subsystem decomposition. As it is illustrated in Figure 4.6, the application is structured into
+three main subsystems – or modules in this context – as well as with an additional
+subsystem in the form of the **FoursquareApi** , encapsulating the networking implementation and subsequent data extraction details of retrieving nearby landmark data
+from the external Foursquare REST API service. As such, in the following parts of this
+thesis, this module will not be taken into consideration regarding the core architecture
+since it is not of central importance in that context.
+
+![Imgur](https://i.imgur.com/rarBRSO.png)
+
+Based on the previous statement and according to the model described in Chapter 2, the three core modules of the application are considered to be the following:
+
+- **Domain** : encapsulating the central entity objects and the use case objects describing the possible scenarios of interaction based on the business rules defined during specification. This being the highest level module of the application’s architecture, it is a completely platform independent Java module, providing greaterreusability and portability to other JVM powered environments.
+
+
+- **Data** : providing implementations in the form of interface adapters for the operations defined in the domain layer. This module is primarily responsible for
+    facilitating the local data management of the system and its interaction with external agencies such as cloud services, providers, and data storage. Furthermore,
+    it defines entity objects and related mappers local to this module which are of
+    greater convenience when interacting with the specific frameworks and libraries
+    employed.
+- **Presentation** : exclusively being the module containing the boundary objects found
+    during analysis. This is the place where both the **View** and **ViewModel** components of the systems MVVM architecture are implemented, defining the user
+    interface along with all the presentation logic. This being the lowest level subsystem, additional platform-specific components are implemented here such as
+    those responsible for managing the geofences, these relying heavily on Android’s
+    architecture components.
+The way these aforementioned modules depend on one another is perfectly in
+line with the principles of Clean Architecture, with the domain module being completely unaware of any other subsystem, and the modules above it in the hierarchy
+each relying only on components residing beneath them. Furthermore, Figure 4.7 illustrates the control objects discerned during analysis and their subsequent implementations in lower level modules.
+
+
+![Imgur](https://i.imgur.com/sGedgz5.png)
+```
+Figure 4.7: Component diagram of the interface adapters
+```
+
+### 4.4 Implementation
+
+![Imgur](https://i.imgur.com/Blld1Bh.png)
+```
+Figure 4.8: Simplified class diagram
+```
 
 #### 4.4.1 Technologies & Libraries
 
-Regarding the technologies and libraries used during implementation the follow-
-ing key ones may be evidentiated:
+Regarding the technologies and libraries used during implementation the following key ones may be evidentiated:
 
-- **Firebase** : A number of services offered within the Firebase development plat-
-    form have been used given the level of abstraction provided by them on top
+- **Firebase** : A number of services offered within the Firebase development platform have been used given the level of abstraction provided by them on top
     of the implementation details of the application’s cloud interaction needs. The
     respective services employed: **Authorization** : for managing user authentication
-    and data management, **Firestore** : for persisting session data online within a well-
-    optimized NoSQL database, **Storage** : for backing up landmark images captured
+    and data management, **Firestore** : for persisting session data online within a well-optimized NoSQL database, **Storage** : for backing up landmark images captured
     by the users within their discovery sessions, and **MLKit** : for making use of the
     large volume of images and metadata available on the cloud for image labeling
     and landmark detection.
 - **RxJava & RxAndroid** : Reactive Extensions provide the primary mechanism for
-    facilitating the interaction between components of the system, having all opera-
-    tions of the interface adapters communicate via reactive sources.
+    facilitating the interaction between components of the system, having all operations of the interface adapters communicate via reactive sources.
 - **Lifecycle-Aware components and ViewModel** : For the implementation of the
     presentation layer in a lifecycle-conscious manner, making sure observable stream
     subscriptions and ViewModel presence are managed without being impacted by
     the changes in the state of Android’s UI components.
-- **Retrofit** : Providing a concise interface for creating and managing REST API re-
-    quests with the possibility of wrapping them into observable sources.
+- **Retrofit** : Providing a concise interface for creating and managing REST API requests with the possibility of wrapping them into observable sources.
 - **Room Persistence Library** : For the implementation of the local session cache,
     providing a level of abstraction on top of Android’s SQLite system database.
 - **WorkManager** : For enqueueing and executing long-running background tasks
     which may impose certain constraints on their execution such as network access
     or storage availability.
-- **Navigation Component** : For implementing the Single Activity Model as pre-
-    sented in Section 3.3, essentially defining the flow of the application’s UI naviga-
-    tion in a concise and clear manner, having it described as a collection of destina-
-    tions and possible navigation actions between said destinations.
+- **Navigation Component** : For implementing the Single Activity Model as presented in Section 3.3, essentially defining the flow of the application’s UI navigation in a concise and clear manner, having it described as a collection of destinations and possible navigation actions between said destinations.
+    
+    
+Authentication |  Home | Session setup 
+:-------------:|:----------------:|:----------------:
+![Imgur](https://i.imgur.com/6fdEIAU.jpg)  |  ![Imgur](https://i.imgur.com/ok1C3cb.jpg) | ![Imgur](https://i.imgur.com/eMzDEpy.jpg)
+
+Landmark categories |  Navigation | Landmark detection
+:-------------:|:----------------:|:----------------:
+![Imgur](https://i.imgur.com/CUAqHYr.jpg)  |  ![Imgur](https://i.imgur.com/URcHoDJ.jpg) | ![Imgur](https://i.imgur.com/PkY6kom.jpg)
