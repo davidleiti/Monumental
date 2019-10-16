@@ -34,8 +34,8 @@ incoming notifications triggered by arriving close to such a beacon.
 
 #### 4.1.3 Definitions
 
-Beacon : Geographic location represented by its coordinates in the Geographic coordinate system specified as a pair of latitude and longitude values.
-Geo-fence : A circular region set up around a beacon with its size given as the radius
+-   Beacon : Geographic location represented by its coordinates in the Geographic coordinate system specified as a pair of latitude and longitude values.
+-   Geo-fence : A circular region set up around a beacon with its size given as the radius
 starting from the center point i.e. the coordinates of the beacon.
 
 #### 4.1.4 Functional Requirements
