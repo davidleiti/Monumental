@@ -1,9 +1,8 @@
-# Monumental
-
-### Core concepts: 
+### Main concepts: 
 -   Clean Architecture
 -   Reactive Programming
 -   Architectural Patterns
+-   Android Development
 
 ### 4.1 Specification
 
