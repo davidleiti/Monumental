@@ -1,6 +1,9 @@
 # Monumental
 
-Android app written for presenting the practical application of the architectural concepts described in my Bachelor's Thesis.
+### Core concepts: 
+-   Clean Architecture
+-   Reactive Programming
+-   Architectural Patterns
 
 ### 4.1 Specification
 
