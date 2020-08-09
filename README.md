@@ -1,19 +1,20 @@
-### Main concepts: 
+## Monumental
+
+Monumental is a traveling application that allows the users to search their neighouring area in order to discover the closest and most popular landmarks and to capture these discoveries by taking a picture of the found landmarks. These pictures will in turn be processed using a landmark detection algorithm to verify the authenticity of the pictures and save the user's discoveries into their traveling history which will be available for review at any time.
+
+### Main theoretical concepts: 
 -   Clean Architecture
 -   Reactive Programming
--   Architectural Patterns
+-   Architectural Patterns (MVVM)
 -   Android Development
 
-### 4.1 Specification
+### Specification
 
-#### 4.1.1 Overview
+#### Overview
 
-Monumental is a tourism application implemented on the Android operating system created with the purpose of demonstrating the way the architectural concepts and
-models presented in the previous theoretical chapters may be applied in a practice.
-The goal of this chapter is to present the steps that constitute the development process
-of the application starting from the original requirements up until the actual implementation activities and details.
-
-#### 4.1.2 Purpose
+Monumental is a tourism application implemented for Android created with the purpose of demonstrating the way that different the architectural concepts and
+models application design models may be applied in a practice. The goal of this documentation is to go into detail regarding the development process and architecture of the application, showcasing how the above theoretical concepts were used as the guiding principles of the application.
+#### Purpose
 
 The goal of this application is to provide a way for users to discover popular
 monuments while exploring new cities by being notified when in the neighborhood of
@@ -31,13 +32,13 @@ By only providing a general direction and distance from the beacons, the user is
 free to roam around and experience his/her surroundings, being able to rely on the
 incoming notifications triggered by arriving close to such a beacon.
 
-#### 4.1.3 Definitions
+#### Definitions
 
 -   Beacon : Geographic location represented by its coordinates in the Geographic coordinate system specified as a pair of latitude and longitude values.
 -   Geo-fence : A circular region set up around a beacon with its size given as the radius
 starting from the center point i.e. the coordinates of the beacon.
 
-#### 4.1.4 Functional Requirements
+#### Functional Requirements
 
 - The user should be able to create an account with a combination of an email address
     and a password.
@@ -78,7 +79,7 @@ starting from the center point i.e. the coordinates of the beacon.
     respective image to the cloud storage.
 - The users should be able to view their finished sessions and their discovered landmarks along with their respective images on any logged in device.
 
-#### 4.1.5 Non-functional Requirements
+#### Non-functional Requirements
 
 
 **Usability requirements**
@@ -131,7 +132,7 @@ starting from the center point i.e. the coordinates of the beacon.
     data relevant to the context of the fault and only from its own perspective.
     
     
-#### 4.1.6 Use cases
+#### Use cases
 
 The application’s use cases may be best presented by grouping them into three
 distinct categories based on the objects impacted by these interactions and the areas of
@@ -150,7 +151,7 @@ Authentication  | Session | Landmark
 
 
 
-### 4.2 Analysis
+### Analysis
 
 ![Imgur](https://i.imgur.com/TZLDMut.png)
 
@@ -165,7 +166,7 @@ boundary objects and the control objects that implement the actual operations de
 in the use case, with the possibility of dynamically chaining or substituting such operations in the case of more complex interactions, such as for the **SaveSessionProgress**
 use case.
 
-### 4.3 Design
+### Design
 
 Having defined the analysis model in Section 4.2, this section will focus on presenting the application’s system design model, with an added emphasis on its subsystem decomposition. As it is illustrated in Figure 4.6, the application is structured into
 three main subsystems – or modules in this context – as well as with an additional
@@ -201,14 +202,14 @@ each relying only on components residing beneath them. Furthermore, Figure 4.7 i
 Figure 4.7: Component diagram of the interface adapters
 ```
 
-### 4.4 Implementation
+### Implementation
 
 ![Imgur](https://i.imgur.com/Blld1Bh.png)
 ```
 Figure 4.8: Simplified class diagram
 ```
 
-#### 4.4.1 Technologies & Libraries
+#### Technologies & Libraries
 
 Regarding the technologies and libraries used during implementation the following key ones may be evidentiated:
 
