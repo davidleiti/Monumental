@@ -143,7 +143,7 @@ the application in which they are to be found. As such, these categories include
 - Use cases describing the application’s session management (Figure 4.2).
 - Use cases describing possible interactions with individual session landmarks, depicted in Figure 4.3.
 
-Authentication  | Session | Landmark 
+**4.1** Authentication  | **4.2** Session | **4.3** Landmark 
 :------------:|:---------------:|:----------------:
 ![Imgur](https://i.imgur.com/ws66BZQ.png)  |  ![Imgur](https://i.imgur.com/JeRKJwB.png) | ![Imgur](https://i.imgur.com/sys0tek.png)
 
@@ -154,8 +154,10 @@ Authentication  | Session | Landmark
 ### Analysis
 
 ![Imgur](https://i.imgur.com/TZLDMut.png)
+```Figure 4.5 Sequence diagram: Finishing a user session```
 
 ![Imgur](https://i.imgur.com/pxmihjC.png)
+```Figure 4.5 Sequence diagram: Landmark detection process```
 
 The above interactions depicted in Figure 4.5 and Figure 4.4 illustrate how the
 individual components of an application with a clear separation of concerns primarily
@@ -168,7 +170,7 @@ use case.
 
 ### Design
 
-Having defined the analysis model in Section 4.2, this section will focus on presenting the application’s system design model, with an added emphasis on its subsystem decomposition. As it is illustrated in Figure 4.6, the application is structured into
+Having previously defined the analysis model, this section will focus on presenting the application’s system design model, with an added emphasis on its subsystem decomposition. As it is illustrated in Figure 4.6, the application is structured into
 three main subsystems – or modules in this context – as well as with an additional
 subsystem in the form of the **FoursquareApi** , encapsulating the networking implementation and subsequent data extraction details of retrieving nearby landmark data
 from the external Foursquare REST API service. As such, in the following parts of this
@@ -177,7 +179,7 @@ since it is not of central importance in that context.
 
 ![Imgur](https://i.imgur.com/rarBRSO.png)
 
-Based on the previous statement and according to the model described in Chapter 2, the three core modules of the application are considered to be the following:
+Based on the previous statement and according to the guiding architectural model, the three core modules of the application are considered to be the following:
 
 - **Domain** : encapsulating the central entity objects and the use case objects describing the possible scenarios of interaction based on the business rules defined during specification. This being the highest level module of the application’s architecture, it is a completely platform independent Java module, providing greaterreusability and portability to other JVM powered environments.
 
@@ -232,7 +234,7 @@ Regarding the technologies and libraries used during implementation the followin
 - **WorkManager** : For enqueueing and executing long-running background tasks
     which may impose certain constraints on their execution such as network access
     or storage availability.
-- **Navigation Component** : For implementing the Single Activity Model as presented in Section 3.3, essentially defining the flow of the application’s UI navigation in a concise and clear manner, having it described as a collection of destinations and possible navigation actions between said destinations.
+- **Navigation Component** : For implementing the Single Activity Model essentially defining the flow of the application’s UI navigation in a concise and clear manner, having it described as a collection of destinations and possible navigation actions between said destinations.
     
     
 Authentication |  Home | Session setup 
